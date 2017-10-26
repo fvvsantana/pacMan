@@ -9,8 +9,8 @@ public class GridView{
 
     private int rows;
     private int cols;
-
-	private CellView[][] grid;
+	
+    private CellView[][] grid;
     private double cellWidth;
     private double cellHeight;
 
