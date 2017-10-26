@@ -15,6 +15,10 @@ public abstract class GhostModel {
         this.col = col;
         eatable = false;
         }
+    
+    public GhostModel (){
+    	this (0,0);
+    }
     public void setEatable (boolean eatable){
     	this.eatable = eatable;
     }

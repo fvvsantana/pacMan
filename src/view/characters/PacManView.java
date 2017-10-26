@@ -16,19 +16,19 @@ public class PacManView{
     public void setOrientation(Orientation orientation){
         switch(orientation){
             case UP:
-                img.setRotate(-90);
+                img.setRotate(-80);
                 break;
 
             case RIGHT:
-                img.setRotate(0);
+                img.setRotate(10);
                 break;
 
             case DOWN:
-                img.setRotate(90);
+                img.setRotate(70);
                 break;
 
             case LEFT:
-                img.setRotate(180);
+                img.setRotate(120);
                 break;
 
         }
