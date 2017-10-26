@@ -21,15 +21,15 @@ public class PacManModel extends CellModel{
         lives = 3;
         fruits = new ArrayList<>();
     }
-    public void setScore (int score){
+    public void addScore (int score){
         this.score +=score;
     }
     public int getScore (){
         return score;
     }
     
-    public void setLives (int live){
-        lives +=live;
+    public void addLive (int lives){
+        this.lives +=lives;
     }
     public int getLives (){
         return lives;
