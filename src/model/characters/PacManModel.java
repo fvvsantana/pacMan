@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import utils.Orientation;
 
 public class PacManModel extends CellModel{
-    int row;
-    int col;
+    private int row;
+    private int col;
     Orientation orientation;
-    int score;
-    int lives;
+    private int score;
+    private int lives;
     ArrayList<FruitModel> fruits;
 
     public PacManModel(int row, int col) {
