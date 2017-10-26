@@ -13,6 +13,7 @@ import view.grid.PacDotCellView;
 import view.grid.PowerPelletCellView;
 
 import model.Maps;
+import model.characters.CharacterModel;
 import model.grid.GridModel;
 import model.grid.CellModel;
 import model.grid.ObstacleCellModel;
@@ -59,6 +60,7 @@ class Controller{
             @Override
             public void handle(long now) {
                 //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
+                updatePacManModel();
                 updatePacManView(pacManModel);
             }
 
@@ -97,63 +99,61 @@ class Controller{
         return mapView;
     }
 
-    //move the pacManModel to the specified orientation
-    private void movePacManModel(Orientation orientation){
-        switch(orientation){
-            case UP:
-                if(pacManModel.getRow() > 0){
-                    pacManModel.moveUp();
-                }
-                pacManModel.setOrientation(Orientation.UP);
-                break;
-
-            case DOWN:
-                if(pacManModel.getRow() < mapModel.getRows()-1){
-                    pacManModel.moveDown();
-                }
-                pacManModel.setOrientation(Orientation.DOWN);
-                break;
-
-            case LEFT:
-                if(pacManModel.getCol() > 0){
-                    pacManModel.moveLeft();
-                }
-                pacManModel.setOrientation(Orientation.LEFT);
-                break;
-
-            case RIGHT:
-                if(pacManModel.getCol() < mapModel.getCols()-1){
-                    pacManModel.moveRight();
-                }
-                pacManModel.setOrientation(Orientation.RIGHT);
-                break;
-
-        }
-    }
-
     //add a controller to the PacManModel
     private void addPacManModelController(Scene scene){
         scene.setOnKeyPressed((KeyEvent event) -> {
             switch(event.getCode()){
                 case UP:
-                    movePacManModel(Orientation.UP);
+                    pacManModel.setOrientation(Orientation.UP);
                     break;
                     
                 case RIGHT:
-                    movePacManModel(Orientation.RIGHT);
+                    pacManModel.setOrientation(Orientation.RIGHT);
                     break;
                     
                 case DOWN:
-                    movePacManModel(Orientation.DOWN);
+                    pacManModel.setOrientation(Orientation.DOWN);
                     break;
                     
                 case LEFT:
-                    movePacManModel(Orientation.LEFT);
+                    pacManModel.setOrientation(Orientation.LEFT);
                     break;
             }
         });
-
     }
+    
+    //move the pacManModel to the specified orientation 
+    private void updatePacManModel(){ 
+        switch(pacManModel.getOrientation()){ 
+            case UP: 
+                if(pacManModel.getRow() > 0){ 
+                    pacManModel.moveUp();
+                } 
+                pacManModel.setOrientation(Orientation.UP); 
+                break; 
+ 
+            case DOWN: 
+                if(pacManModel.getRow() < mapModel.getRows()-1){ 
+                    pacManModel.moveDown(); 
+                } 
+                pacManModel.setOrientation(Orientation.DOWN); 
+                break; 
+ 
+            case LEFT: 
+                if(pacManModel.getCol() > 0){ 
+                    pacManModel.moveLeft(); 
+                } 
+                pacManModel.setOrientation(Orientation.LEFT); 
+                break; 
+ 
+            case RIGHT: 
+                if(pacManModel.getCol() < mapModel.getCols()-1){ 
+                    pacManModel.moveRight(); 
+                } 
+                pacManModel.setOrientation(Orientation.RIGHT); 
+                break; 
+        } 
+    } 
 
     //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
     public void updatePacManView(PacManModel pacManModel){

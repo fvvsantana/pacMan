@@ -1,15 +1,11 @@
 package view.characters;
 
-import javafx.scene.image.ImageView;
 import utils.Orientation;
-import utils.Position;
 
-public class PacManView{
-    ImageView img;
+public class PacManView extends CharacterView{
 
     public PacManView() {
-        img = new ImageView("/images/pacman.png");
-
+        super("/images/pacman.png");
     }
 
     //set image orientation
@@ -33,14 +29,4 @@ public class PacManView{
 
         }
     }
-
-    public ImageView getImg() {
-        return img;
-    }
-
-    public void setPosition(Position position){
-        img.setX(position.getX());
-        img.setY(position.getY());
-    }
-
 }
