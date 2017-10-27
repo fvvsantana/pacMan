@@ -68,10 +68,13 @@ public abstract class Maps{
                             break;
                         case 2:
                             grid.addCell(new PacDotCellModel(), i, j);
+                            break;
                         case 3:
                             grid.addCell(new PowerPelletCellModel(), i, j);
+                            break;
                         default:
                             grid.addCell(new EmptyCellModel(), i, j);
+                            break;
                     }
                 }
             }
