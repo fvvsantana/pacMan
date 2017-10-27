@@ -52,7 +52,7 @@ class Controller{
         addPacManModelController(view.getScene());
 
         //set PacManView in the View
-        view.setPacManView(new PacManView());
+        view.createPacManView();
 
         view.addPacManToTheMapContainer();
 
@@ -123,11 +123,13 @@ class Controller{
     }
     
     //move the pacManModel to the specified orientation 
-    private void updatePacManModel(){ 
+    private void updatePacManModel(){
+        pacManModel.setMoving(false);
         switch(pacManModel.getOrientation()){ 
             case UP: 
                 if(pacManModel.getRow() > 0){ 
                     pacManModel.moveUp();
+                    pacManModel.setMoving(true);
                 } 
                 pacManModel.setOrientation(Orientation.UP); 
                 break; 
@@ -135,6 +137,7 @@ class Controller{
             case DOWN: 
                 if(pacManModel.getRow() < mapModel.getRows()-1){ 
                     pacManModel.moveDown(); 
+                    pacManModel.setMoving(true);
                 } 
                 pacManModel.setOrientation(Orientation.DOWN); 
                 break; 
@@ -142,6 +145,7 @@ class Controller{
             case LEFT: 
                 if(pacManModel.getCol() > 0){ 
                     pacManModel.moveLeft(); 
+                    pacManModel.setMoving(true);
                 } 
                 pacManModel.setOrientation(Orientation.LEFT); 
                 break; 
@@ -149,6 +153,7 @@ class Controller{
             case RIGHT: 
                 if(pacManModel.getCol() < mapModel.getCols()-1){ 
                     pacManModel.moveRight(); 
+                    pacManModel.setMoving(true);
                 } 
                 pacManModel.setOrientation(Orientation.RIGHT); 
                 break; 
@@ -158,8 +163,8 @@ class Controller{
     //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
     public void updatePacManView(PacManModel pacManModel){
         view.getPacManView().setPosition(view.getGrid().getCellPosition(pacManModel.getRow(), pacManModel.getCol()));
-        view.getPacManView().getImg().setFitWidth(view.getGrid().getCellWidth());
-        view.getPacManView().getImg().setFitHeight(view.getGrid().getCellHeight());
         view.getPacManView().setOrientation(pacManModel.getOrientation());
+        if (pacManModel.isMoving())
+            view.getPacManView().updateArc();
     }
 }

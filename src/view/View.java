@@ -28,8 +28,8 @@ public class View{
 
     private PacManView pacManView;
 
-    //layout configuration
     public View(Stage stage){
+        //layout configuration
         this.stage = stage;
         root = new BorderPane();
 		root.setStyle("-fx-background-color: black");
@@ -63,7 +63,7 @@ public class View{
     }
 
     public void addPacManToTheMapContainer(){
-        mapContainer.getChildren().add(pacManView.getImg());
+        mapContainer.getChildren().add(pacManView.getArc());
     }
 
     //update the screen
@@ -100,6 +100,12 @@ public class View{
 
     public Group getMapContainer() {
         return mapContainer;
+    }
+    
+    public void createPacManView () {
+        pacManView = new PacManView();
+        pacManView.getArc().setRadiusX(grid.getCellWidth()/2);
+        pacManView.getArc().setRadiusY(grid.getCellHeight()/2);
     }
 
     public void setPacManView(PacManView pacManView) {
