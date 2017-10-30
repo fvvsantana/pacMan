@@ -22,7 +22,7 @@ public class GridView{
         this.width = width;
         this.height = height;
 
-		grid = new CellView[rows][cols];
+        grid = new CellView[rows][cols];
         cellWidth = width/cols;
         cellHeight = height/rows;
     }
@@ -41,7 +41,7 @@ public class GridView{
     }
 
     public CellView getCell(int row, int col){
-            return grid[row][col];
+        return grid[row][col];
     }
 
     public double getCellWidth() {

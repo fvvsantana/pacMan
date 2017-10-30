@@ -1,7 +1,7 @@
 package model.grid;
 
 public class GridModel{
-	private CellModel[][] grid;
+    private CellModel[][] grid;
     private final int rows;
     private final int cols;
 
@@ -22,9 +22,9 @@ public class GridModel{
         grid[row][col] = null;
     }
 
-	public CellModel getCell(int row, int col){
-		return grid[row][col];
-	}
+    public CellModel getCell(int row, int col){
+        return grid[row][col];
+    }
 
     public int getRows() {
         return rows;
