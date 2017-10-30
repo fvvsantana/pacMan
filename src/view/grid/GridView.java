@@ -65,7 +65,7 @@ public class GridView{
         return new Position(position.getX() + col * cellWidth, position.getY() + row * cellHeight);
     }
     
-    public Position getCellPosition(float row, float col){
+    public Position getCellPosition(double row, double col){
         return new Position(position.getX() + col * cellWidth, position.getY() + row * cellHeight);
     }
 

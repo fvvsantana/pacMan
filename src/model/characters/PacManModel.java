@@ -9,7 +9,7 @@ public class PacManModel extends CharacterModel{
     int lives;
     ArrayList<FruitModel> fruits;
 
-    public PacManModel(int row, int col) {
+    public PacManModel(double row, double col) {
         super(row, col);
         moving = true;
         score = 0;

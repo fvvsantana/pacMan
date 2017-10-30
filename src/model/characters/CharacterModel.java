@@ -3,27 +3,27 @@ package model.characters;
 import utils.Orientation;
 
 public abstract class CharacterModel {
-    float row;
-    float col;
-    float speed;
+    double row;
+    double col;
+    double speed;
     Orientation orientation;
 
     // multiple constructors
-    public CharacterModel(float row, float col) {
+    public CharacterModel(double row, double col) {
         this.row = row;
         this.col = col;
         orientation = Orientation.RIGHT;
         speed = 0.05f;
     }
 
-    public CharacterModel(float row, float col, Orientation orientation) {
+    public CharacterModel(double row, double col, Orientation orientation) {
         this.row = row;
         this.col = col;
         this.orientation = orientation;
         speed = 0.05f;
     }
 
-    public CharacterModel(float row, float col, float speed, Orientation orientation) {
+    public CharacterModel(double row, double col, double speed, Orientation orientation) {
         this.row = row;
         this.col = col;
         this.speed = speed;
@@ -46,27 +46,27 @@ public abstract class CharacterModel {
         col += speed;
     }
 
-    public float getRow() {
+    public double getRow() {
         return row;
     }
 
-    public float getCol() {
+    public double getCol() {
         return col;
     }
 
-    public float getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
-    public void setRow(float row) {
+    public void setRow(double row) {
         this.row = row;
     }
 
-    public void setCol(float col) {
+    public void setCol(double col) {
         this.col = col;
     }
 
-    public void setSpeed(float speed) {
+    public void setSpeed(double speed) {
         this.speed = speed;
     }
 
