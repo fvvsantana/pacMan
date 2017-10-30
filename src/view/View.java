@@ -103,9 +103,7 @@ public class View{
     }
     
     public void createPacManView () {
-        pacManView = new PacManView();
-        pacManView.getArc().setRadiusX(grid.getCellWidth()/2);
-        pacManView.getArc().setRadiusY(grid.getCellHeight()/2);
+        pacManView = new PacManView(grid.getCellWidth()/2, grid.getCellHeight()/2);
     }
 
     public void setPacManView(PacManView pacManView) {
