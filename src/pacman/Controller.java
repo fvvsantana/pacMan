@@ -13,7 +13,6 @@ import view.grid.PacDotCellView;
 import view.grid.PowerPelletCellView;
 
 import model.Maps;
-import model.characters.CharacterModel;
 import model.grid.GridModel;
 import model.grid.CellModel;
 import model.grid.ObstacleCellModel;
@@ -52,7 +51,7 @@ class Controller{
         addPacManModelController(view.getScene());
 
         //set PacManView in the View
-        view.createPacManView();
+        view.setPacManView(new PacManView(view.getGrid().getCellWidth()/2, view.getGrid().getCellHeight()/2));
 
         view.addPacManToTheMapContainer();
 

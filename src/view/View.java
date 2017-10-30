@@ -101,10 +101,6 @@ public class View{
     public Group getMapContainer() {
         return mapContainer;
     }
-    
-    public void createPacManView () {
-        pacManView = new PacManView(grid.getCellWidth()/2, grid.getCellHeight()/2);
-    }
 
     public void setPacManView(PacManView pacManView) {
         this.pacManView = pacManView;
