@@ -40,9 +40,9 @@ public class GridView{
         grid[row][col] = null;
     }
 
-	public CellView getCell(int row, int col){
-		return grid[row][col];
-	}
+    public CellView getCell(int row, int col){
+            return grid[row][col];
+    }
 
     public double getCellWidth() {
         return cellWidth;
@@ -62,6 +62,10 @@ public class GridView{
 
     //get the position where the cell is placed relative to its container
     public Position getCellPosition(int row, int col){
+        return new Position(position.getX() + col * cellWidth, position.getY() + row * cellHeight);
+    }
+    
+    public Position getCellPosition(double row, double col){
         return new Position(position.getX() + col * cellWidth, position.getY() + row * cellHeight);
     }
 
