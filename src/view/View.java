@@ -13,7 +13,7 @@ import utils.Position;
 
 public class View{
     private final double SCREEN_WIDTH = 600;
-    private final double SCREEN_HEIGHT = 600;
+    private final double SCREEN_HEIGHT = 660;
 
     private Stage stage;
     private BorderPane root;

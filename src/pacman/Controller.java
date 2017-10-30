@@ -33,7 +33,7 @@ class Controller{
         view = new View(primaryStage);
 
         //get the mapModel from the Maps class
-        mapModel = Maps.emptyMap();
+        mapModel = Maps.mainMap();
 
         //generate the visual grid
         view.setGrid(generateGridView(mapModel));
