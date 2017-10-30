@@ -45,7 +45,7 @@ class Controller{
         view.drawMap();
 
         //create a PacManModel setting his position as (0,0)
-        pacManModel = new PacManModel(0, 0);
+        pacManModel = new PacManModel(1, 1);
 
         //add a controller to the PacManModel
         addPacManModelController(view.getScene());
@@ -125,35 +125,43 @@ class Controller{
     private void updatePacManModel(){
         pacManModel.setMoving(false);
         switch(pacManModel.getOrientation()){ 
-            case UP: 
-                if(pacManModel.getRow() > 0){ 
-                    pacManModel.moveUp();
-                    pacManModel.setMoving(true);
+            case UP:  
+                pacManModel.moveUp();
+                pacManModel.setMoving(true);
+                if (collisionCheckUp()){
+                    pacManModel.setMoving(false);
+                    pacManModel.setRow((int)(pacManModel.getRow() + 0.1));
                 } 
                 pacManModel.setOrientation(Orientation.UP); 
                 break; 
  
-            case DOWN: 
-                if(pacManModel.getRow() < mapModel.getRows()-1){ 
-                    pacManModel.moveDown(); 
-                    pacManModel.setMoving(true);
-                } 
+            case DOWN:  
+                pacManModel.moveDown(); 
+                pacManModel.setMoving(true);
+                if (collisionCheckDown()){
+                    pacManModel.setMoving(false);
+                    pacManModel.setRow((int)(pacManModel.getRow()));
+                }
                 pacManModel.setOrientation(Orientation.DOWN); 
                 break; 
  
             case LEFT: 
-                if(pacManModel.getCol() > 0){ 
-                    pacManModel.moveLeft(); 
-                    pacManModel.setMoving(true);
-                } 
+                pacManModel.moveLeft(); 
+                pacManModel.setMoving(true);
+                if (collisionCheckLeft()){
+                    pacManModel.setMoving(false);
+                    pacManModel.setCol((int)(pacManModel.getCol() + 0.9));
+                }
                 pacManModel.setOrientation(Orientation.LEFT); 
                 break; 
  
             case RIGHT: 
-                if(pacManModel.getCol() < mapModel.getCols()-1){ 
-                    pacManModel.moveRight(); 
-                    pacManModel.setMoving(true);
-                } 
+                pacManModel.moveRight(); 
+                pacManModel.setMoving(true);
+                if (collisionCheckRight()){
+                    pacManModel.setMoving(false);
+                    pacManModel.setCol((int)(pacManModel.getCol()));
+                }
                 pacManModel.setOrientation(Orientation.RIGHT); 
                 break; 
         } 
@@ -165,5 +173,37 @@ class Controller{
         view.getPacManView().setOrientation(pacManModel.getOrientation());
         if (pacManModel.isMoving())
             view.getPacManView().updateArc();
+    }
+    
+    public boolean collisionCheckUp(){
+        int x = (int)(pacManModel.getRow());
+        int y1 = (int)(pacManModel.getCol());
+        int y2 = (int)(pacManModel.getCol() + 0.99);
+        return (mapModel.getCell(x, y1) instanceof ObstacleCellModel ||
+                mapModel.getCell(x, y2) instanceof ObstacleCellModel);
+    }
+    
+    public boolean collisionCheckDown(){
+        int x = (int)(pacManModel.getRow() + 0.99);
+        int y1 = (int)(pacManModel.getCol());
+        int y2 = (int)(pacManModel.getCol() + 0.99);
+        return (mapModel.getCell(x, y1) instanceof ObstacleCellModel ||
+                mapModel.getCell(x, y2) instanceof ObstacleCellModel);
+    }
+    
+    public boolean collisionCheckLeft(){
+        int x1 = (int)(pacManModel.getRow());
+        int x2 = (int)(pacManModel.getRow() + 0.99);
+        int y = (int)(pacManModel.getCol());
+        return (mapModel.getCell(x1, y) instanceof ObstacleCellModel ||
+                mapModel.getCell(x2, y) instanceof ObstacleCellModel);
+    }
+    
+    public boolean collisionCheckRight(){
+        int x1 = (int)(pacManModel.getRow());
+        int x2 = (int)(pacManModel.getRow() + 0.99);
+        int y = (int)(pacManModel.getCol() + 0.99);
+        return (mapModel.getCell(x1, y) instanceof ObstacleCellModel ||
+                mapModel.getCell(x2, y) instanceof ObstacleCellModel);
     }
 }
