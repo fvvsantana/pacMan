@@ -13,6 +13,7 @@ import view.grid.PacDotCellView;
 import view.grid.PowerPelletCellView;
 
 import model.Maps;
+import model.characters.CharacterModel;
 import model.grid.GridModel;
 import model.grid.CellModel;
 import model.grid.ObstacleCellModel;
@@ -103,19 +104,19 @@ class Controller{
         scene.setOnKeyPressed((KeyEvent event) -> {
             switch(event.getCode()){
                 case UP:
-                    pacManModel.setOrientation(Orientation.UP);
+                    pacManModel.setNextOrientation(Orientation.UP);
                     break;
                     
                 case RIGHT:
-                    pacManModel.setOrientation(Orientation.RIGHT);
+                    pacManModel.setNextOrientation(Orientation.RIGHT);
                     break;
                     
                 case DOWN:
-                    pacManModel.setOrientation(Orientation.DOWN);
+                    pacManModel.setNextOrientation(Orientation.DOWN);
                     break;
                     
                 case LEFT:
-                    pacManModel.setOrientation(Orientation.LEFT);
+                    pacManModel.setNextOrientation(Orientation.LEFT);
                     break;
             }
         });
@@ -123,48 +124,23 @@ class Controller{
     
     //move the pacManModel to the specified orientation 
     private void updatePacManModel(){
-        pacManModel.setMoving(false);
-        switch(pacManModel.getOrientation()){ 
-            case UP:  
-                pacManModel.moveUp();
-                pacManModel.setMoving(true);
-                if (collisionCheckUp()){
-                    pacManModel.setMoving(false);
-                    pacManModel.setRow((int)(pacManModel.getRow() + 0.1));
-                } 
-                pacManModel.setOrientation(Orientation.UP); 
-                break; 
- 
-            case DOWN:  
-                pacManModel.moveDown(); 
-                pacManModel.setMoving(true);
-                if (collisionCheckDown()){
-                    pacManModel.setMoving(false);
-                    pacManModel.setRow((int)(pacManModel.getRow()));
-                }
-                pacManModel.setOrientation(Orientation.DOWN); 
-                break; 
- 
-            case LEFT: 
-                pacManModel.moveLeft(); 
-                pacManModel.setMoving(true);
-                if (collisionCheckLeft()){
-                    pacManModel.setMoving(false);
-                    pacManModel.setCol((int)(pacManModel.getCol() + 0.9));
-                }
-                pacManModel.setOrientation(Orientation.LEFT); 
-                break; 
- 
-            case RIGHT: 
-                pacManModel.moveRight(); 
-                pacManModel.setMoving(true);
-                if (collisionCheckRight()){
-                    pacManModel.setMoving(false);
-                    pacManModel.setCol((int)(pacManModel.getCol()));
-                }
-                pacManModel.setOrientation(Orientation.RIGHT); 
-                break; 
-        } 
+        // verifica se esta num tunel
+        if (pacManModel.getOrientation() == pacManModel.getNextOrientation() && checkTunnel(pacManModel)){
+            pacManModel.move();
+            return;
+        }
+        
+        // verifica se deve atualizar a orientacao atual
+        if (!checkCollisionNext(pacManModel))
+            pacManModel.setOrientation(pacManModel.getNextOrientation());
+        
+        // depois atualiza a posicao atual
+        if (!checkCollision(pacManModel)) {
+            pacManModel.setMoving(true);
+            pacManModel.move();
+        } else {
+            pacManModel.setMoving(false);
+        }
     } 
 
     //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
@@ -175,35 +151,63 @@ class Controller{
             view.getPacManView().updateArc();
     }
     
-    public boolean collisionCheckUp(){
-        int x = (int)(pacManModel.getRow());
-        int y1 = (int)(pacManModel.getCol());
-        int y2 = (int)(pacManModel.getCol() + 0.99);
-        return (mapModel.getCell(x, y1) instanceof ObstacleCellModel ||
-                mapModel.getCell(x, y2) instanceof ObstacleCellModel);
+    public boolean checkTunnel(CharacterModel characterModel) {
+        Orientation orientation = characterModel.getOrientation();
+        int row = characterModel.getRow();
+        int col = characterModel.getCol();
+        switch (orientation) {
+            case RIGHT:
+                if (characterModel.getRealCol() > mapModel.getCols())
+                    characterModel.setRealCol(-1);
+                return characterModel.getRealCol()+1 >= mapModel.getCols();
+            case LEFT:
+                if (characterModel.getRealCol() <= -1)
+                    characterModel.setRealCol(mapModel.getCols());
+                return characterModel.getRealCol() < 1;
+            default:
+                return false;
+        }
     }
     
-    public boolean collisionCheckDown(){
-        int x = (int)(pacManModel.getRow() + 0.99);
-        int y1 = (int)(pacManModel.getCol());
-        int y2 = (int)(pacManModel.getCol() + 0.99);
-        return (mapModel.getCell(x, y1) instanceof ObstacleCellModel ||
-                mapModel.getCell(x, y2) instanceof ObstacleCellModel);
+    public boolean checkCollision(CharacterModel characterModel) {
+        Orientation orientation = characterModel.getOrientation();
+        int row = characterModel.getRow();
+        int col = characterModel.getCol();
+        switch (orientation) {
+            case UP:
+                return col%CharacterModel.FATOR == 0 &&
+                  mapModel.getCell((row-1)/CharacterModel.FATOR, col/CharacterModel.FATOR) instanceof ObstacleCellModel;
+            case DOWN:
+                return col%CharacterModel.FATOR == 0 &&
+                  mapModel.getCell((row+1)/CharacterModel.FATOR+1,col/CharacterModel.FATOR) instanceof ObstacleCellModel;
+            case LEFT:
+                return row%CharacterModel.FATOR == 0 &&
+                  mapModel.getCell(row/CharacterModel.FATOR, (col-1)/CharacterModel.FATOR) instanceof ObstacleCellModel;
+            case RIGHT:
+                return row%CharacterModel.FATOR == 0 &&
+                  mapModel.getCell(row/CharacterModel.FATOR,(col+1)/CharacterModel.FATOR+1) instanceof ObstacleCellModel;
+        }
+        return true;
     }
     
-    public boolean collisionCheckLeft(){
-        int x1 = (int)(pacManModel.getRow());
-        int x2 = (int)(pacManModel.getRow() + 0.99);
-        int y = (int)(pacManModel.getCol());
-        return (mapModel.getCell(x1, y) instanceof ObstacleCellModel ||
-                mapModel.getCell(x2, y) instanceof ObstacleCellModel);
-    }
-    
-    public boolean collisionCheckRight(){
-        int x1 = (int)(pacManModel.getRow());
-        int x2 = (int)(pacManModel.getRow() + 0.99);
-        int y = (int)(pacManModel.getCol() + 0.99);
-        return (mapModel.getCell(x1, y) instanceof ObstacleCellModel ||
-                mapModel.getCell(x2, y) instanceof ObstacleCellModel);
+    public boolean checkCollisionNext(PacManModel characterModel) {
+        Orientation orientation = characterModel.getNextOrientation();
+        int row = characterModel.getRow();
+        int col = characterModel.getCol();
+        switch (orientation) {
+            case UP:
+                return col%CharacterModel.FATOR != 0 ||
+                    mapModel.getCell(row/CharacterModel.FATOR-1, col/CharacterModel.FATOR) instanceof ObstacleCellModel;
+            case DOWN:
+                return col%CharacterModel.FATOR != 0 ||
+                    mapModel.getCell(row/CharacterModel.FATOR+1, col/CharacterModel.FATOR) instanceof ObstacleCellModel;
+            case LEFT:
+                return row%CharacterModel.FATOR != 0 ||
+                    mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR-1) instanceof ObstacleCellModel;
+            case RIGHT:
+                return row%CharacterModel.FATOR != 0 ||
+                    mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR+1) instanceof ObstacleCellModel;
+        }
+        return true;
     }
 }
