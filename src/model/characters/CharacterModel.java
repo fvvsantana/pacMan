@@ -3,31 +3,43 @@ package model.characters;
 import utils.Orientation;
 
 public abstract class CharacterModel {
-    double row;
-    double col;
-    double speed;
+    
+    // valores serao multiplicados pelo fator para manter inteiros
+    public static final int FATOR = 100;
+    
+    int row;
+    int col;
+    int speed;
     Orientation orientation;
 
     // multiple constructors
-    public CharacterModel(double row, double col) {
-        this.row = row;
-        this.col = col;
-        orientation = Orientation.RIGHT;
-        speed = 0.05f;
+    public CharacterModel(double realRow, double realCol) {
+        this(realRow, realCol, 0.05, Orientation.RIGHT);
     }
 
-    public CharacterModel(double row, double col, Orientation orientation) {
-        this.row = row;
-        this.col = col;
+    public CharacterModel(double realRow, double realCol, double realSpeed, Orientation orientation) {
+        this.row = (int) (FATOR * realRow);
+        this.col = (int) (FATOR * realCol);
+        this.speed = (int) (FATOR * realSpeed);
         this.orientation = orientation;
-        speed = 0.05f;
+        System.out.printf("Criou.\nrow:%d\ncol:%d\nspeed:%d\n", row, col, speed);
     }
-
-    public CharacterModel(double row, double col, double speed, Orientation orientation) {
-        this.row = row;
-        this.col = col;
-        this.speed = speed;
-        this.orientation = orientation;
+    
+    public void move() {
+        switch(orientation) {
+            case UP:
+                row -= speed;
+                break;
+            case DOWN:
+                row += speed;
+                break;
+            case LEFT:
+                col -= speed;
+                break;
+            case RIGHT:
+                col += speed;
+                break;
+        }
     }
     
     public void moveUp() {
@@ -46,28 +58,52 @@ public abstract class CharacterModel {
         col += speed;
     }
 
-    public double getRow() {
+    public int getRow() {
         return row;
     }
+    
+    public double getRealRow() {
+        return (double) row/FATOR;
+    }
 
-    public double getCol() {
+    public int getCol() {
         return col;
     }
 
-    public double getSpeed() {
+    public double getRealCol() {
+        return (double) col/FATOR;
+    }
+    
+    public int getSpeed() {
         return speed;
     }
-
-    public void setRow(double row) {
+    
+    public double getRealSpeed() {
+        return (double) speed/FATOR;
+    }
+    
+    public void setRow(int row) {
         this.row = row;
     }
 
-    public void setCol(double col) {
+    public void setRealRow(double row) {
+        this.row = (int) (FATOR * row);
+    }
+    
+    public void setCol(int col) {
         this.col = col;
     }
 
-    public void setSpeed(double speed) {
+    public void setRealCol(double col) {
+        this.col = (int) (FATOR * col);
+    }
+
+    public void setSpeed(int speed) {
         this.speed = speed;
+    }
+
+    public void setRealSpeed(double speed) {
+        this.speed = (int) (FATOR * speed);
     }
 
     public Orientation getOrientation() {

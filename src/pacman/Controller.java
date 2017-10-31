@@ -169,7 +169,7 @@ class Controller{
 
     //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
     public void updatePacManView(PacManModel pacManModel){
-        view.getPacManView().setPosition(view.getGrid().getCellPosition(pacManModel.getRow(), pacManModel.getCol()));
+        view.getPacManView().setPosition(view.getGrid().getCellPosition(pacManModel.getRealRow(), pacManModel.getRealCol()));
         view.getPacManView().setOrientation(pacManModel.getOrientation());
         if (pacManModel.isMoving())
             view.getPacManView().updateArc();
