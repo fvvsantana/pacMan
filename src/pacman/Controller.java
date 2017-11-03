@@ -20,14 +20,17 @@ import model.grid.ObstacleCellModel;
 import model.grid.PacDotCellModel;
 import model.grid.PowerPelletCellModel;
 import model.characters.PacManModel;
+import model.characters.RedGhostModel;
 
 import utils.Orientation;
 import view.characters.PacManView;
+import view.characters.RedGhostView;
 
 class Controller{
     View view;
     GridModel mapModel;
     PacManModel pacManModel;
+    RedGhostModel redGhostModel;
     
     public void run(Stage primaryStage){
         //generate the layout
@@ -46,22 +49,33 @@ class Controller{
         view.drawMap();
 
         //create a PacManModel setting his position as (0,0)
-        pacManModel = new PacManModel(1, 1);
+        pacManModel = new PacManModel(20, 20);
+        redGhostModel = new RedGhostModel (20,20);
 
         //add a controller to the PacManModel
         addPacManModelController(view.getScene());
+        
+        
 
         //set PacManView in the View
         view.setPacManView(new PacManView(view.getGrid().getCellWidth()/2, view.getGrid().getCellHeight()/2));
-
+        
         view.addPacManToTheMapContainer();
-
+        
+        
+        view.setRedGhostView(new RedGhostView());
+        
+        view.addRedGhostToTheMapContainer();
+        
         new AnimationTimer() {
             @Override
             public void handle(long now) {
                 //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
                 updatePacManModel();
                 updatePacManView(pacManModel);
+                //updateRedGhostModel();
+                updateRedGhostView(redGhostModel);
+                
             }
 
         }.start();
@@ -142,6 +156,29 @@ class Controller{
             pacManModel.setMoving(false);
         }
     } 
+    
+    private void updateRedGhostModel(){
+        // verifica se esta num tunel
+        if (redGhostModel.getOrientation() == redGhostModel.getNextOrientation() && checkTunnel(redGhostModel)){
+            redGhostModel.move();
+            return;
+        }
+        
+        // verifica se deve atualizar a orientacao atual
+        if (!checkCollisionNext(redGhostModel))
+            redGhostModel.setOrientation(redGhostModel.getNextOrientation());
+        
+        // depois atualiza a posicao atual
+        if (!checkCollision(redGhostModel)) {
+            redGhostModel.setMoving(true);
+            redGhostModel.move();
+        } else {
+            redGhostModel.setMoving(false);
+        }
+        
+    } 
+    
+    
 
     //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
     public void updatePacManView(PacManModel pacManModel){
@@ -149,6 +186,10 @@ class Controller{
         view.getPacManView().setOrientation(pacManModel.getOrientation());
         if (pacManModel.isMoving())
             view.getPacManView().updateArc();
+    }
+    
+    public void updateRedGhostView(RedGhostModel redGhostModel){
+        view.getRedGhostView().setPosition(view.getGrid().getCellPosition(redGhostModel.getRealRow(), redGhostModel.getRealCol()));
     }
     
     public boolean checkTunnel(CharacterModel characterModel) {
@@ -190,7 +231,7 @@ class Controller{
         return true;
     }
     
-    public boolean checkCollisionNext(PacManModel characterModel) {
+    public boolean checkCollisionNext(CharacterModel characterModel) {
         Orientation orientation = characterModel.getNextOrientation();
         int row = characterModel.getRow();
         int col = characterModel.getCol();
