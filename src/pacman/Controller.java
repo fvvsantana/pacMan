@@ -214,19 +214,20 @@ class Controller{
     
     public void updateRedGhost(RedGhostModel redGhostModel){
         view.getRedGhostView().setPosition(view.getGrid().getCellPosition(redGhostModel.getRealRow(), redGhostModel.getRealCol()));
-        
-        num = rand.nextInt(1001)+1;
-        if (num%2 == 1){
-        redGhostModel.setNextOrientation(pacManModel.getOrientation());
-        }else{
-            if(num > 750){
-                redGhostModel.setNextOrientation(Orientation.DOWN);
-            }else if (num > 500 && num <= 750){
-                redGhostModel.setNextOrientation(Orientation.UP);
-            }else if (num > 250 && num <= 500){
-                redGhostModel.setNextOrientation(Orientation.RIGHT);
+        if (checkCollision(redGhostModel)){
+            num = rand.nextInt(1001)+1;
+            if (num%2 == 1){
+            redGhostModel.setNextOrientation(pacManModel.getOrientation());
             }else{
-                redGhostModel.setNextOrientation(Orientation.LEFT);
+                if(num > 750){
+                    redGhostModel.setNextOrientation(Orientation.DOWN);
+                }else if (num > 500 && num <= 750){
+                    redGhostModel.setNextOrientation(Orientation.UP);
+                }else if (num > 250 && num <= 500){
+                    redGhostModel.setNextOrientation(Orientation.RIGHT);
+                }else{
+                    redGhostModel.setNextOrientation(Orientation.LEFT);
+                }
             }
         }
     // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
@@ -235,18 +236,20 @@ class Controller{
     public void updatePinkGhost(PinkGhostModel pinkGhostModel){
         view.getPinkGhostView().setPosition(view.getGrid().getCellPosition(pinkGhostModel.getRealRow(), pinkGhostModel.getRealCol()));
         
-        num = rand.nextInt(1001)+1;
-        if (num%2 == 1){
-        pinkGhostModel.setNextOrientation(pacManModel.getOrientation());
-        }else{
-            if(num > 750){
-                pinkGhostModel.setNextOrientation(Orientation.DOWN);
-            }else if (num > 500 && num <= 750){
-                pinkGhostModel.setNextOrientation(Orientation.UP);
-            }else if (num > 250 && num <= 500){
-                pinkGhostModel.setNextOrientation(Orientation.RIGHT);
+        if(checkCollision(pinkGhostModel)){
+            num = rand.nextInt(1001)+1;
+            if (num%2 == 1){
+            pinkGhostModel.setNextOrientation(pacManModel.getOrientation());
             }else{
-                pinkGhostModel.setNextOrientation(Orientation.LEFT);
+                if(num > 750){
+                    pinkGhostModel.setNextOrientation(Orientation.DOWN);
+                }else if (num > 500 && num <= 750){
+                    pinkGhostModel.setNextOrientation(Orientation.UP);
+                }else if (num > 250 && num <= 500){
+                    pinkGhostModel.setNextOrientation(Orientation.RIGHT);
+                }else{
+                    pinkGhostModel.setNextOrientation(Orientation.LEFT);
+                }
             }
         }
     // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
@@ -255,18 +258,20 @@ class Controller{
     public void updateCyanGhost(CyanGhostModel cyanGhostModel){
         view.getCyanGhostView().setPosition(view.getGrid().getCellPosition(cyanGhostModel.getRealRow(), cyanGhostModel.getRealCol()));
         
-        num = rand.nextInt(1001)+1;
-        if (num%2 == 1){
-        cyanGhostModel.setNextOrientation(pacManModel.getOrientation());
-        }else{
-            if(num > 750){
-                cyanGhostModel.setNextOrientation(Orientation.DOWN);
-            }else if (num > 500 && num <= 750){
-                cyanGhostModel.setNextOrientation(Orientation.UP);
-            }else if (num > 250 && num <= 500){
-                cyanGhostModel.setNextOrientation(Orientation.RIGHT);
+        if(checkCollisionNext(cyanGhostModel)){
+            num = rand.nextInt(1000)+1;
+            if (num%2 == 1){
+            cyanGhostModel.setNextOrientation(pacManModel.getOrientation());
             }else{
-                cyanGhostModel.setNextOrientation(Orientation.LEFT);
+                if(num > 750){
+                    cyanGhostModel.setNextOrientation(Orientation.DOWN);
+                }else if (num > 500 && num <= 750){
+                    cyanGhostModel.setNextOrientation(Orientation.UP);
+                }else if (num > 250 && num <= 500){
+                    cyanGhostModel.setNextOrientation(Orientation.RIGHT);
+                }else{
+                    cyanGhostModel.setNextOrientation(Orientation.LEFT);
+                }
             }
         }
     // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
@@ -274,19 +279,20 @@ class Controller{
     
     public void updateOrangeGhost(OrangeGhostModel orangeGhostModel){
         view.getOrangeGhostView().setPosition(view.getGrid().getCellPosition(orangeGhostModel.getRealRow(), orangeGhostModel.getRealCol()));
-        
-        num = rand.nextInt(1001)+1;
-        if (num%2 == 1){
-        orangeGhostModel.setNextOrientation(pacManModel.getOrientation());
-        }else{
-            if(num > 750){
-                orangeGhostModel.setNextOrientation(Orientation.DOWN);
-            }else if (num > 500 && num <= 750){
-                orangeGhostModel.setNextOrientation(Orientation.UP);
-            }else if (num > 250 && num <= 500){
-                orangeGhostModel.setNextOrientation(Orientation.RIGHT);
+        if(checkCollisionNext(orangeGhostModel)){
+            num = rand.nextInt(1001)+1;
+            if (num%2 == 1){
+            orangeGhostModel.setNextOrientation(pacManModel.getOrientation());
             }else{
-                orangeGhostModel.setNextOrientation(Orientation.LEFT);
+                if(num > 750){
+                    orangeGhostModel.setNextOrientation(Orientation.DOWN);
+                }else if (num > 500 && num <= 750){
+                    orangeGhostModel.setNextOrientation(Orientation.UP);
+                }else if (num > 250 && num <= 500){
+                    orangeGhostModel.setNextOrientation(Orientation.RIGHT);
+                }else{
+                    orangeGhostModel.setNextOrientation(Orientation.LEFT);
+                }
             }
         }
     // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
