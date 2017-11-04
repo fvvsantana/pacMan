@@ -1,8 +1,14 @@
+
 package view;
 
 import view.characters.PacManView;
 import view.characters.RedGhostView;
+import view.characters.PinkGhostView;
+import view.characters.OrangeGhostView;
+import view.characters.CyanGhostView;
+
 import view.grid.GridView;
+
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -30,7 +36,10 @@ public class View{
     private PacManView pacManView;
     
     private RedGhostView redGhostView;
-
+    private OrangeGhostView orangeGhostView;
+    private CyanGhostView cyanGhostView;
+    private PinkGhostView pinkGhostView;
+    
     public View(Stage stage){
         //layout configuration
         this.stage = stage;
@@ -72,6 +81,15 @@ public class View{
     public void addRedGhostToTheMapContainer(){
         mapContainer.getChildren().add(redGhostView.getImg());
     }
+    public void addCyanGhostToTheMapContainer(){
+        mapContainer.getChildren().add(cyanGhostView.getImg());
+    }
+    public void addOrangeGhostToTheMapContainer(){
+        mapContainer.getChildren().add(orangeGhostView.getImg());
+    }
+    public void addPinkGhostToTheMapContainer(){
+        mapContainer.getChildren().add(pinkGhostView.getImg());
+    }  
     
 
     //update the screen
@@ -117,6 +135,16 @@ public class View{
     public void setRedGhostView(RedGhostView redGhostView){
         this.redGhostView = redGhostView;
     }
+     public void setOrangeGhostView(OrangeGhostView orangeGhostView){
+        this.orangeGhostView = orangeGhostView;
+    }
+      public void setPinkGhostView(PinkGhostView pinkGhostView){
+        this.pinkGhostView = pinkGhostView;
+    }
+       public void setCyanGhostView(CyanGhostView cyanGhostView){
+        this.cyanGhostView = cyanGhostView;
+    }
+    
 
     public PacManView getPacManView() {
         return pacManView;
@@ -124,6 +152,15 @@ public class View{
     
     public RedGhostView getRedGhostView (){
         return redGhostView;
+    }
+    public CyanGhostView getCyanGhostView (){
+        return cyanGhostView;
+    }
+    public OrangeGhostView getOrangeGhostView (){
+        return orangeGhostView;
+    }
+    public PinkGhostView getPinkGhostView (){
+        return pinkGhostView;
     }
     //-------------------------------------
 

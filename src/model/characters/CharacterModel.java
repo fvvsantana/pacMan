@@ -23,6 +23,7 @@ public abstract class CharacterModel {
         this.col = (int) (FATOR * realCol);
         this.speed = (int) (FATOR * realSpeed);
         this.orientation = orientation;
+        nextOrientation = orientation;
         System.out.printf("Criou.\nrow:%d\ncol:%d\nspeed:%d\n", row, col, speed);
     }
     

@@ -1,11 +1,14 @@
 package pacman;
 
+import java.util.Random;
+
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyEvent;
 import javafx.animation.AnimationTimer;
 
 import view.View;
+
 import view.grid.GridView;
 import view.grid.CellView;
 import view.grid.ObstacleCellView;
@@ -14,23 +17,38 @@ import view.grid.PowerPelletCellView;
 
 import model.Maps;
 import model.characters.CharacterModel;
+
 import model.grid.GridModel;
 import model.grid.CellModel;
 import model.grid.ObstacleCellModel;
 import model.grid.PacDotCellModel;
 import model.grid.PowerPelletCellModel;
+
 import model.characters.PacManModel;
 import model.characters.RedGhostModel;
+import model.characters.PinkGhostModel;
+import model.characters.OrangeGhostModel;
+import model.characters.CyanGhostModel;
 
 import utils.Orientation;
+
 import view.characters.PacManView;
 import view.characters.RedGhostView;
+import view.characters.PinkGhostView;
+import view.characters.OrangeGhostView;
+import view.characters.CyanGhostView;
 
 class Controller{
     View view;
     GridModel mapModel;
     PacManModel pacManModel;
     RedGhostModel redGhostModel;
+    PinkGhostModel pinkGhostModel;
+    OrangeGhostModel orangeGhostModel;
+    CyanGhostModel cyanGhostModel;
+    
+    Random rand = new Random();
+    int num;
     
     public void run(Stage primaryStage){
         //generate the layout
@@ -49,8 +67,11 @@ class Controller{
         view.drawMap();
 
         //create a PacManModel setting his position as (0,0)
-        pacManModel = new PacManModel(20, 20);
-        redGhostModel = new RedGhostModel (20,20);
+        pacManModel = new PacManModel(2, 2);
+        redGhostModel = new RedGhostModel (2,2);
+        pinkGhostModel = new PinkGhostModel (20,2);
+        orangeGhostModel = new OrangeGhostModel (2,20);
+        cyanGhostModel = new CyanGhostModel (20,20);
 
         //add a controller to the PacManModel
         addPacManModelController(view.getScene());
@@ -67,14 +88,41 @@ class Controller{
         
         view.addRedGhostToTheMapContainer();
         
+        
+        view.setPinkGhostView(new PinkGhostView());
+        
+        view.addPinkGhostToTheMapContainer();
+        
+        
+        view.setOrangeGhostView(new OrangeGhostView());
+        
+        view.addOrangeGhostToTheMapContainer();
+        
+        
+        view.setCyanGhostView(new CyanGhostView());
+        
+        view.addCyanGhostToTheMapContainer();
+        
+        
+        
         new AnimationTimer() {
             @Override
             public void handle(long now) {
                 //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
-                updatePacManModel();
+                updateModels(pacManModel);
                 updatePacManView(pacManModel);
-                //updateRedGhostModel();
-                updateRedGhostView(redGhostModel);
+                
+                updateModels(redGhostModel);
+                updateRedGhost(redGhostModel);
+                
+                updatePinkGhost(pinkGhostModel);
+                updateModels(pinkGhostModel);
+                
+                updateCyanGhost(cyanGhostModel);
+                updateModels(cyanGhostModel);
+                
+                updateOrangeGhost(orangeGhostModel);
+                updateModels(orangeGhostModel);
                 
             }
 
@@ -135,51 +183,27 @@ class Controller{
             }
         });
     }
-    
+   
     //move the pacManModel to the specified orientation 
-    private void updatePacManModel(){
+    private void updateModels(CharacterModel characterModel){
         // verifica se esta num tunel
-        if (pacManModel.getOrientation() == pacManModel.getNextOrientation() && checkTunnel(pacManModel)){
-            pacManModel.move();
+        if (characterModel.getOrientation() == characterModel.getNextOrientation() && checkTunnel(characterModel)){
+            characterModel.move();
             return;
         }
         
         // verifica se deve atualizar a orientacao atual
-        if (!checkCollisionNext(pacManModel))
-            pacManModel.setOrientation(pacManModel.getNextOrientation());
+        if (!checkCollisionNext(characterModel))
+            characterModel.setOrientation(characterModel.getNextOrientation());
         
         // depois atualiza a posicao atual
-        if (!checkCollision(pacManModel)) {
-            pacManModel.setMoving(true);
-            pacManModel.move();
+        if (!checkCollision(characterModel)) {
+            characterModel.setMoving(true);
+            characterModel.move();
         } else {
-            pacManModel.setMoving(false);
+            characterModel.setMoving(false);
         }
     } 
-    
-    private void updateRedGhostModel(){
-        // verifica se esta num tunel
-        if (redGhostModel.getOrientation() == redGhostModel.getNextOrientation() && checkTunnel(redGhostModel)){
-            redGhostModel.move();
-            return;
-        }
-        
-        // verifica se deve atualizar a orientacao atual
-        if (!checkCollisionNext(redGhostModel))
-            redGhostModel.setOrientation(redGhostModel.getNextOrientation());
-        
-        // depois atualiza a posicao atual
-        if (!checkCollision(redGhostModel)) {
-            redGhostModel.setMoving(true);
-            redGhostModel.move();
-        } else {
-            redGhostModel.setMoving(false);
-        }
-        
-    } 
-    
-    
-
     //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
     public void updatePacManView(PacManModel pacManModel){
         view.getPacManView().setPosition(view.getGrid().getCellPosition(pacManModel.getRealRow(), pacManModel.getRealCol()));
@@ -188,8 +212,84 @@ class Controller{
             view.getPacManView().updateArc();
     }
     
-    public void updateRedGhostView(RedGhostModel redGhostModel){
+    public void updateRedGhost(RedGhostModel redGhostModel){
         view.getRedGhostView().setPosition(view.getGrid().getCellPosition(redGhostModel.getRealRow(), redGhostModel.getRealCol()));
+        
+        num = rand.nextInt(1001)+1;
+        if (num%2 == 1){
+        redGhostModel.setNextOrientation(pacManModel.getOrientation());
+        }else{
+            if(num > 750){
+                redGhostModel.setNextOrientation(Orientation.DOWN);
+            }else if (num > 500 && num <= 750){
+                redGhostModel.setNextOrientation(Orientation.UP);
+            }else if (num > 250 && num <= 500){
+                redGhostModel.setNextOrientation(Orientation.RIGHT);
+            }else{
+                redGhostModel.setNextOrientation(Orientation.LEFT);
+            }
+        }
+    // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
+    }
+    
+    public void updatePinkGhost(PinkGhostModel pinkGhostModel){
+        view.getPinkGhostView().setPosition(view.getGrid().getCellPosition(pinkGhostModel.getRealRow(), pinkGhostModel.getRealCol()));
+        
+        num = rand.nextInt(1001)+1;
+        if (num%2 == 1){
+        pinkGhostModel.setNextOrientation(pacManModel.getOrientation());
+        }else{
+            if(num > 750){
+                pinkGhostModel.setNextOrientation(Orientation.DOWN);
+            }else if (num > 500 && num <= 750){
+                pinkGhostModel.setNextOrientation(Orientation.UP);
+            }else if (num > 250 && num <= 500){
+                pinkGhostModel.setNextOrientation(Orientation.RIGHT);
+            }else{
+                pinkGhostModel.setNextOrientation(Orientation.LEFT);
+            }
+        }
+    // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
+    }
+    
+    public void updateCyanGhost(CyanGhostModel cyanGhostModel){
+        view.getCyanGhostView().setPosition(view.getGrid().getCellPosition(cyanGhostModel.getRealRow(), cyanGhostModel.getRealCol()));
+        
+        num = rand.nextInt(1001)+1;
+        if (num%2 == 1){
+        cyanGhostModel.setNextOrientation(pacManModel.getOrientation());
+        }else{
+            if(num > 750){
+                cyanGhostModel.setNextOrientation(Orientation.DOWN);
+            }else if (num > 500 && num <= 750){
+                cyanGhostModel.setNextOrientation(Orientation.UP);
+            }else if (num > 250 && num <= 500){
+                cyanGhostModel.setNextOrientation(Orientation.RIGHT);
+            }else{
+                cyanGhostModel.setNextOrientation(Orientation.LEFT);
+            }
+        }
+    // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
+    }
+    
+    public void updateOrangeGhost(OrangeGhostModel orangeGhostModel){
+        view.getOrangeGhostView().setPosition(view.getGrid().getCellPosition(orangeGhostModel.getRealRow(), orangeGhostModel.getRealCol()));
+        
+        num = rand.nextInt(1001)+1;
+        if (num%2 == 1){
+        orangeGhostModel.setNextOrientation(pacManModel.getOrientation());
+        }else{
+            if(num > 750){
+                orangeGhostModel.setNextOrientation(Orientation.DOWN);
+            }else if (num > 500 && num <= 750){
+                orangeGhostModel.setNextOrientation(Orientation.UP);
+            }else if (num > 250 && num <= 500){
+                orangeGhostModel.setNextOrientation(Orientation.RIGHT);
+            }else{
+                orangeGhostModel.setNextOrientation(Orientation.LEFT);
+            }
+        }
+    // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
     }
     
     public boolean checkTunnel(CharacterModel characterModel) {
