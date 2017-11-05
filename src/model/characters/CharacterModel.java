@@ -6,8 +6,7 @@ public abstract class CharacterModel {
     
     // valores serao multiplicados pelo fator para manter inteiros
     public static final int FATOR = 100;
-    Orientation nextOrientation;
-    boolean moving;
+    
     int row;
     int col;
     int speed;
@@ -113,20 +112,5 @@ public abstract class CharacterModel {
 
     public void setOrientation(Orientation orientation) {
         this.orientation = orientation;
-    }
-    public boolean isMoving() {
-        return moving;
-    }
-
-    public void setMoving(boolean moving) {
-        this.moving = moving;
-    }
-
-    public Orientation getNextOrientation() {
-        return nextOrientation;
-    }
-
-    public void setNextOrientation(Orientation nextOrientation) {
-        this.nextOrientation = nextOrientation;
     }
 }

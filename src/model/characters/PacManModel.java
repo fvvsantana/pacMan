@@ -2,9 +2,11 @@ package model.characters;
 
 import model.fruits.FruitModel;
 import java.util.ArrayList;
+import utils.Orientation;
 
 public class PacManModel extends CharacterModel{
-    
+    private Orientation nextOrientation;
+    boolean moving;
     int score;
     int lives;
     ArrayList<FruitModel> fruits;
@@ -17,19 +19,20 @@ public class PacManModel extends CharacterModel{
         lives = 3;
         fruits = new ArrayList<>();
     }
-    
-    public void addScore (int addscore){
-        score +=score;
-    }
-    public int getScore (){
-        return score;
-    }
-    public void addLive (int live){
-        lives +=live;
-    }
-    public int getLive (){
-        return lives;
+
+    public boolean isMoving() {
+        return moving;
     }
 
-    
+    public void setMoving(boolean moving) {
+        this.moving = moving;
+    }
+
+    public Orientation getNextOrientation() {
+        return nextOrientation;
+    }
+
+    public void setNextOrientation(Orientation nextOrientation) {
+        this.nextOrientation = nextOrientation;
+    }
 }

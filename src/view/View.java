@@ -1,7 +1,6 @@
 package view;
 
 import view.characters.PacManView;
-import view.characters.RedGhostView;
 import view.grid.GridView;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -28,8 +27,6 @@ public class View{
     private final double gridHeight;
 
     private PacManView pacManView;
-    
-    private RedGhostView redGhostView;
 
     public View(Stage stage){
         //layout configuration
@@ -68,11 +65,6 @@ public class View{
     public void addPacManToTheMapContainer(){
         mapContainer.getChildren().add(pacManView.getArc());
     }
-    
-    public void addRedGhostToTheMapContainer(){
-        mapContainer.getChildren().add(redGhostView.getImg());
-    }
-    
 
     //update the screen
     public void show(){
@@ -113,17 +105,9 @@ public class View{
     public void setPacManView(PacManView pacManView) {
         this.pacManView = pacManView;
     }
-    
-    public void setRedGhostView(RedGhostView redGhostView){
-        this.redGhostView = redGhostView;
-    }
 
     public PacManView getPacManView() {
         return pacManView;
-    }
-    
-    public RedGhostView getRedGhostView (){
-        return redGhostView;
     }
     //-------------------------------------
 
