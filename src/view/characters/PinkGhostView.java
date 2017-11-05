@@ -3,9 +3,9 @@ package view.characters;
 import utils.Orientation;
 
 public class PinkGhostView extends CharacterView {
-    
+   
     public PinkGhostView() {
-        super("/images/ghostpink1.png");
+        super("/images/ghostpink1.png", "/images/ghostpink2.png");
     }
 
     public void setOrientation(Orientation orientation) {

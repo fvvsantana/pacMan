@@ -67,11 +67,11 @@ class Controller{
         view.drawMap();
 
         //create a PacManModel setting his position as (0,0)
-        pacManModel = new PacManModel(2, 2);
-        redGhostModel = new RedGhostModel (2,2);
-        pinkGhostModel = new PinkGhostModel (20,2);
-        orangeGhostModel = new OrangeGhostModel (2,20);
-        cyanGhostModel = new CyanGhostModel (20,20);
+        pacManModel = new PacManModel(2,2);
+        redGhostModel = new RedGhostModel (3,2);
+        pinkGhostModel = new PinkGhostModel (4,2);
+        orangeGhostModel = new OrangeGhostModel (5,2);
+        cyanGhostModel = new CyanGhostModel (6,2);
 
         //add a controller to the PacManModel
         addPacManModelController(view.getScene());
@@ -214,20 +214,14 @@ class Controller{
     
     public void updateRedGhost(RedGhostModel redGhostModel){
         view.getRedGhostView().setPosition(view.getGrid().getCellPosition(redGhostModel.getRealRow(), redGhostModel.getRealCol()));
+        view.getRedGhostView().UpgradeImg();
+        
         if (checkCollision(redGhostModel)){
             num = rand.nextInt(1001)+1;
             if (num%2 == 1){
             redGhostModel.setNextOrientation(pacManModel.getOrientation());
             }else{
-                if(num > 750){
-                    redGhostModel.setNextOrientation(Orientation.DOWN);
-                }else if (num > 500 && num <= 750){
-                    redGhostModel.setNextOrientation(Orientation.UP);
-                }else if (num > 250 && num <= 500){
-                    redGhostModel.setNextOrientation(Orientation.RIGHT);
-                }else{
-                    redGhostModel.setNextOrientation(Orientation.LEFT);
-                }
+                RandomWalk(redGhostModel, num);
             }
         }
     // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
@@ -235,43 +229,31 @@ class Controller{
     
     public void updatePinkGhost(PinkGhostModel pinkGhostModel){
         view.getPinkGhostView().setPosition(view.getGrid().getCellPosition(pinkGhostModel.getRealRow(), pinkGhostModel.getRealCol()));
+        view.getPinkGhostView().UpgradeImg();
         
-        if(checkCollision(pinkGhostModel)){
-            num = rand.nextInt(1001)+1;
+        if(checkCollisionNext(pinkGhostModel)){
+            num = rand.nextInt(1000)+1;
             if (num%2 == 1){
             pinkGhostModel.setNextOrientation(pacManModel.getOrientation());
             }else{
-                if(num > 750){
-                    pinkGhostModel.setNextOrientation(Orientation.DOWN);
-                }else if (num > 500 && num <= 750){
-                    pinkGhostModel.setNextOrientation(Orientation.UP);
-                }else if (num > 250 && num <= 500){
-                    pinkGhostModel.setNextOrientation(Orientation.RIGHT);
-                }else{
-                    pinkGhostModel.setNextOrientation(Orientation.LEFT);
-                }
+                RandomWalk(pinkGhostModel, num);
             }
         }
+        
     // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
     }
     
     public void updateCyanGhost(CyanGhostModel cyanGhostModel){
         view.getCyanGhostView().setPosition(view.getGrid().getCellPosition(cyanGhostModel.getRealRow(), cyanGhostModel.getRealCol()));
+        view.getCyanGhostView().UpgradeImg();
         
         if(checkCollisionNext(cyanGhostModel)){
-            num = rand.nextInt(1000)+1;
-            if (num%2 == 1){
-            cyanGhostModel.setNextOrientation(pacManModel.getOrientation());
+            
+            if (DistanceBetweenCharacters(cyanGhostModel,pacManModel) <= 10){
+            cyanGhostModel.setNextOrientation(redGhostModel.getOrientation());
             }else{
-                if(num > 750){
-                    cyanGhostModel.setNextOrientation(Orientation.DOWN);
-                }else if (num > 500 && num <= 750){
-                    cyanGhostModel.setNextOrientation(Orientation.UP);
-                }else if (num > 250 && num <= 500){
-                    cyanGhostModel.setNextOrientation(Orientation.RIGHT);
-                }else{
-                    cyanGhostModel.setNextOrientation(Orientation.LEFT);
-                }
+                num = rand.nextInt(1000)+1;
+                RandomWalk(cyanGhostModel, num);
             }
         }
     // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
@@ -279,24 +261,35 @@ class Controller{
     
     public void updateOrangeGhost(OrangeGhostModel orangeGhostModel){
         view.getOrangeGhostView().setPosition(view.getGrid().getCellPosition(orangeGhostModel.getRealRow(), orangeGhostModel.getRealCol()));
+        view.getOrangeGhostView().UpgradeImg();
+        
+        
         if(checkCollisionNext(orangeGhostModel)){
-            num = rand.nextInt(1001)+1;
-            if (num%2 == 1){
-            orangeGhostModel.setNextOrientation(pacManModel.getOrientation());
-            }else{
-                if(num > 750){
-                    orangeGhostModel.setNextOrientation(Orientation.DOWN);
-                }else if (num > 500 && num <= 750){
-                    orangeGhostModel.setNextOrientation(Orientation.UP);
-                }else if (num > 250 && num <= 500){
-                    orangeGhostModel.setNextOrientation(Orientation.RIGHT);
-                }else{
-                    orangeGhostModel.setNextOrientation(Orientation.LEFT);
-                }
-            }
+            num = rand.nextInt(1000)+1;
+            RandomWalk(orangeGhostModel, num);
         }
     // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
     }
+    
+    public void RandomWalk (CharacterModel characterModel,int num){
+        
+       
+                if(num > 750){
+                    characterModel.setNextOrientation(Orientation.DOWN);
+                }else if (num > 500 && num <= 750){
+                    characterModel.setNextOrientation(Orientation.UP);
+                }else if (num > 250 && num <= 500){
+                    characterModel.setNextOrientation(Orientation.RIGHT);
+                }else{
+                    characterModel.setNextOrientation(Orientation.LEFT);
+                }
+            
+    }
+    public int DistanceBetweenCharacters (CharacterModel characterModel1, CharacterModel characterModel2){
+        return (int)Math.sqrt(Math.pow(characterModel1.getCol()+characterModel2.getCol(),2)    +
+                              Math.pow(characterModel1.getRow()+characterModel2.getRow(),2)    );
+    }
+    
     
     public boolean checkTunnel(CharacterModel characterModel) {
         Orientation orientation = characterModel.getOrientation();
@@ -336,6 +329,47 @@ class Controller{
         }
         return true;
     }
+    public boolean checkCollisionNextUP(CharacterModel characterModel) {
+        Orientation orientation = characterModel.getNextOrientation();
+        int row = characterModel.getRow();
+        int col = characterModel.getCol();
+
+                if( col%CharacterModel.FATOR != 0 ||
+                    mapModel.getCell(row/CharacterModel.FATOR-1, col/CharacterModel.FATOR) instanceof ObstacleCellModel) return false;
+            
+            return true;
+    }
+    
+    public boolean checkCollisionNextDOWN(CharacterModel characterModel) {
+        Orientation orientation = characterModel.getNextOrientation();
+        int row = characterModel.getRow();
+        int col = characterModel.getCol();
+
+                if( col%CharacterModel.FATOR != 0 ||
+                    mapModel.getCell(row/CharacterModel.FATOR+1, col/CharacterModel.FATOR) instanceof ObstacleCellModel) return false;
+                
+            return true;
+    }
+    public boolean checkCollisionNextLEFT(CharacterModel characterModel) {
+        Orientation orientation = characterModel.getNextOrientation();
+        int row = characterModel.getRow();
+        int col = characterModel.getCol();
+
+                if( row%CharacterModel.FATOR != 0 ||
+                    mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR-1) instanceof ObstacleCellModel) return false;
+             return true;
+    }
+    public boolean checkCollisionNextRIGHT(CharacterModel characterModel) {
+        Orientation orientation = characterModel.getNextOrientation();
+        int row = characterModel.getRow();
+        int col = characterModel.getCol();
+
+               if (row%CharacterModel.FATOR != 0 ||
+                    mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR+1) instanceof ObstacleCellModel) return false;
+        
+            return true;
+    }
+    
     
     public boolean checkCollisionNext(CharacterModel characterModel) {
         Orientation orientation = characterModel.getNextOrientation();
