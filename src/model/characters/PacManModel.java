@@ -8,7 +8,6 @@ public class PacManModel extends CharacterModel{
     int score;
     int lives;
     ArrayList<FruitModel> fruits;
-
     public PacManModel(double row, double col) {
         super(row, col);
         nextOrientation = orientation;
@@ -30,6 +29,7 @@ public class PacManModel extends CharacterModel{
     public int getLive (){
         return lives;
     }
+    
 
     
 }

@@ -48,7 +48,9 @@ class Controller{
     CyanGhostModel cyanGhostModel;
     
     Random rand = new Random();
-    int num;
+    private final int maxrand = 10000;
+    private final int maxdist = 800;
+    private int num;
     
     public void run(Stage primaryStage){
         //generate the layout
@@ -67,11 +69,11 @@ class Controller{
         view.drawMap();
 
         //create a PacManModel setting his position as (0,0)
-        pacManModel = new PacManModel(2,2);
-        redGhostModel = new RedGhostModel (3,2);
-        pinkGhostModel = new PinkGhostModel (4,2);
-        orangeGhostModel = new OrangeGhostModel (5,2);
-        cyanGhostModel = new CyanGhostModel (6,2);
+        pacManModel = new PacManModel(1,1);
+        redGhostModel = new RedGhostModel (25,20);
+        pinkGhostModel = new PinkGhostModel (20,2);
+        orangeGhostModel = new OrangeGhostModel (2,20);
+        cyanGhostModel = new CyanGhostModel (20,20);
 
         //add a controller to the PacManModel
         addPacManModelController(view.getScene());
@@ -217,7 +219,7 @@ class Controller{
         view.getRedGhostView().UpgradeImg();
         
         if (checkCollision(redGhostModel)){
-            num = rand.nextInt(1001)+1;
+            num = rand.nextInt(maxrand)+1;
             if (num%2 == 1){
             redGhostModel.setNextOrientation(pacManModel.getOrientation());
             }else{
@@ -231,14 +233,14 @@ class Controller{
         view.getPinkGhostView().setPosition(view.getGrid().getCellPosition(pinkGhostModel.getRealRow(), pinkGhostModel.getRealCol()));
         view.getPinkGhostView().UpgradeImg();
         
-        if(checkCollisionNext(pinkGhostModel)){
-            num = rand.nextInt(1000)+1;
-            if (num%2 == 1){
+        if(checkCollision(pinkGhostModel)){
+            num = rand.nextInt(maxrand)+1;
+            RandomWalk(pinkGhostModel, num);
+        }else{
             pinkGhostModel.setNextOrientation(pacManModel.getOrientation());
-            }else{
-                RandomWalk(pinkGhostModel, num);
-            }
-        }
+        } 
+            
+        
         
     // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
     }
@@ -249,10 +251,10 @@ class Controller{
         
         if(checkCollisionNext(cyanGhostModel)){
             
-            if (DistanceBetweenCharacters(cyanGhostModel,pacManModel) <= 10){
+            if (DistanceBetweenCharacters(cyanGhostModel,redGhostModel) <= maxdist){
             cyanGhostModel.setNextOrientation(redGhostModel.getOrientation());
             }else{
-                num = rand.nextInt(1000)+1;
+                num = rand.nextInt(maxrand)+1;
                 RandomWalk(cyanGhostModel, num);
             }
         }
@@ -265,20 +267,26 @@ class Controller{
         
         
         if(checkCollisionNext(orangeGhostModel)){
-            num = rand.nextInt(1000)+1;
-            RandomWalk(orangeGhostModel, num);
+            if(DistanceBetweenCharacters(orangeGhostModel,pacManModel) >= maxdist){
+                orangeGhostModel.setNextOrientation(redGhostModel.getOrientation());
+                if(checkCollisionNext(orangeGhostModel)){
+                    num = rand.nextInt(maxrand)+1;
+                    RandomWalk(orangeGhostModel, num);
+                }
+            }else{
+                num = rand.nextInt(maxrand)+1;
+                RandomWalk(orangeGhostModel, num);
+            }
         }
     // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
     }
     
     public void RandomWalk (CharacterModel characterModel,int num){
-        
-       
-                if(num > 750){
+                if  (num > 0.75*maxrand){
                     characterModel.setNextOrientation(Orientation.DOWN);
-                }else if (num > 500 && num <= 750){
+                }else if (num > maxrand*0.5 && num <= maxrand*0.75){
                     characterModel.setNextOrientation(Orientation.UP);
-                }else if (num > 250 && num <= 500){
+                }else if (num > maxrand*0.25 && num <= maxrand*0.5){
                     characterModel.setNextOrientation(Orientation.RIGHT);
                 }else{
                     characterModel.setNextOrientation(Orientation.LEFT);
@@ -286,8 +294,8 @@ class Controller{
             
     }
     public int DistanceBetweenCharacters (CharacterModel characterModel1, CharacterModel characterModel2){
-        return (int)Math.sqrt(Math.pow(characterModel1.getCol()+characterModel2.getCol(),2)    +
-                              Math.pow(characterModel1.getRow()+characterModel2.getRow(),2)    );
+        return (int)Math.sqrt(Math.pow(characterModel1.getCol()-characterModel2.getCol(),2)    +
+                              Math.pow(characterModel1.getRow()-characterModel2.getRow(),2)    );
     }
     
     
