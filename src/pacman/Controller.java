@@ -153,8 +153,6 @@ class Controller{
     
     public boolean checkTunnel(CharacterModel characterModel) {
         Orientation orientation = characterModel.getOrientation();
-        int row = characterModel.getRow();
-        int col = characterModel.getCol();
         switch (orientation) {
             case RIGHT:
                 if (characterModel.getRealCol() > mapModel.getCols())
@@ -175,17 +173,17 @@ class Controller{
         int col = characterModel.getCol();
         switch (orientation) {
             case UP:
-                return col%CharacterModel.FATOR == 0 &&
-                  mapModel.getCell((row-1)/CharacterModel.FATOR, col/CharacterModel.FATOR) instanceof ObstacleCellModel;
+                return col%CharacterModel.FACTOR == 0 &&
+                  mapModel.getCell((row-1)/CharacterModel.FACTOR, col/CharacterModel.FACTOR) instanceof ObstacleCellModel;
             case DOWN:
-                return col%CharacterModel.FATOR == 0 &&
-                  mapModel.getCell((row+1)/CharacterModel.FATOR+1,col/CharacterModel.FATOR) instanceof ObstacleCellModel;
+                return col%CharacterModel.FACTOR == 0 &&
+                  mapModel.getCell((row+1)/CharacterModel.FACTOR+1,col/CharacterModel.FACTOR) instanceof ObstacleCellModel;
             case LEFT:
-                return row%CharacterModel.FATOR == 0 &&
-                  mapModel.getCell(row/CharacterModel.FATOR, (col-1)/CharacterModel.FATOR) instanceof ObstacleCellModel;
+                return row%CharacterModel.FACTOR == 0 &&
+                  mapModel.getCell(row/CharacterModel.FACTOR, (col-1)/CharacterModel.FACTOR) instanceof ObstacleCellModel;
             case RIGHT:
-                return row%CharacterModel.FATOR == 0 &&
-                  mapModel.getCell(row/CharacterModel.FATOR,(col+1)/CharacterModel.FATOR+1) instanceof ObstacleCellModel;
+                return row%CharacterModel.FACTOR == 0 &&
+                  mapModel.getCell(row/CharacterModel.FACTOR,(col+1)/CharacterModel.FACTOR+1) instanceof ObstacleCellModel;
         }
         return true;
     }
@@ -196,17 +194,17 @@ class Controller{
         int col = characterModel.getCol();
         switch (orientation) {
             case UP:
-                return col%CharacterModel.FATOR != 0 ||
-                    mapModel.getCell(row/CharacterModel.FATOR-1, col/CharacterModel.FATOR) instanceof ObstacleCellModel;
+                return col%CharacterModel.FACTOR != 0 ||
+                    mapModel.getCell(row/CharacterModel.FACTOR-1, col/CharacterModel.FACTOR) instanceof ObstacleCellModel;
             case DOWN:
-                return col%CharacterModel.FATOR != 0 ||
-                    mapModel.getCell(row/CharacterModel.FATOR+1, col/CharacterModel.FATOR) instanceof ObstacleCellModel;
+                return col%CharacterModel.FACTOR != 0 ||
+                    mapModel.getCell(row/CharacterModel.FACTOR+1, col/CharacterModel.FACTOR) instanceof ObstacleCellModel;
             case LEFT:
-                return row%CharacterModel.FATOR != 0 ||
-                    mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR-1) instanceof ObstacleCellModel;
+                return row%CharacterModel.FACTOR != 0 ||
+                    mapModel.getCell(row/CharacterModel.FACTOR, col/CharacterModel.FACTOR-1) instanceof ObstacleCellModel;
             case RIGHT:
-                return row%CharacterModel.FATOR != 0 ||
-                    mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR+1) instanceof ObstacleCellModel;
+                return row%CharacterModel.FACTOR != 0 ||
+                    mapModel.getCell(row/CharacterModel.FACTOR, col/CharacterModel.FACTOR+1) instanceof ObstacleCellModel;
         }
         return true;
     }

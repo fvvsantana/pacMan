@@ -4,8 +4,8 @@ import utils.Orientation;
 
 public abstract class CharacterModel {
     
-    // valores serao multiplicados pelo fator para manter inteiros
-    public static final int FATOR = 100;
+    // the values will be multiplied by the FACTOR to keep them integers
+    public static final int FACTOR = 100;
     
     int row;
     int col;
@@ -18,13 +18,13 @@ public abstract class CharacterModel {
     }
 
     public CharacterModel(double realRow, double realCol, double realSpeed, Orientation orientation) {
-        this.row = (int) (FATOR * realRow);
-        this.col = (int) (FATOR * realCol);
-        this.speed = (int) (FATOR * realSpeed);
+        this.row = (int) (FACTOR * realRow);
+        this.col = (int) (FACTOR * realCol);
+        this.speed = (int) (FACTOR * realSpeed);
         this.orientation = orientation;
-        System.out.printf("Criou.\nrow:%d\ncol:%d\nspeed:%d\n", row, col, speed);
     }
     
+    // move to the defined orientation
     public void move() {
         switch(orientation) {
             case UP:
@@ -61,25 +61,26 @@ public abstract class CharacterModel {
     public int getRow() {
         return row;
     }
-    
-    public double getRealRow() {
-        return (double) row/FATOR;
-    }
 
     public int getCol() {
         return col;
-    }
-
-    public double getRealCol() {
-        return (double) col/FATOR;
     }
     
     public int getSpeed() {
         return speed;
     }
     
+    // return the values without the factor
+    public double getRealRow() {
+        return (double) row/FACTOR;
+    }
+
+    public double getRealCol() {
+        return (double) col/FACTOR;
+    }
+    
     public double getRealSpeed() {
-        return (double) speed/FATOR;
+        return (double) speed/FACTOR;
     }
     
     public void setRow(int row) {
@@ -87,7 +88,7 @@ public abstract class CharacterModel {
     }
 
     public void setRealRow(double row) {
-        this.row = (int) (FATOR * row);
+        this.row = (int) (FACTOR * row);
     }
     
     public void setCol(int col) {
@@ -95,7 +96,7 @@ public abstract class CharacterModel {
     }
 
     public void setRealCol(double col) {
-        this.col = (int) (FATOR * col);
+        this.col = (int) (FACTOR * col);
     }
 
     public void setSpeed(int speed) {
@@ -103,7 +104,7 @@ public abstract class CharacterModel {
     }
 
     public void setRealSpeed(double speed) {
-        this.speed = (int) (FATOR * speed);
+        this.speed = (int) (FACTOR * speed);
     }
 
     public Orientation getOrientation() {
