@@ -188,6 +188,10 @@ class Controller{
    
     //move the pacManModel to the specified orientation 
     private void updateModels(CharacterModel characterModel){
+        if (characterModel instanceof RedGhostModel){
+            chasePoint(characterModel, pacManModel.getRealRow(), pacManModel.getRealCol());
+        }
+
         // verifica se esta num tunel
         if (characterModel.getOrientation() == characterModel.getNextOrientation() && checkTunnel(characterModel)){
             characterModel.move();
@@ -218,14 +222,14 @@ class Controller{
         view.getRedGhostView().setPosition(view.getGrid().getCellPosition(redGhostModel.getRealRow(), redGhostModel.getRealCol()));
         view.getRedGhostView().UpgradeImg();
         
-        if (checkCollision(redGhostModel)){
-            num = rand.nextInt(maxrand)+1;
-            if (num%2 == 1){
-            redGhostModel.setNextOrientation(pacManModel.getOrientation());
-            }else{
-                RandomWalk(redGhostModel, num);
-            }
-        }
+//        if (checkCollision(redGhostModel)){
+//            num = rand.nextInt(maxrand)+1;
+//            if (num%2 == 1){
+//            redGhostModel.setNextOrientation(pacManModel.getOrientation());
+//            }else{
+//                RandomWalk(redGhostModel, num);
+//            }
+//        }
     // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
     }
     
@@ -342,8 +346,8 @@ class Controller{
         int row = characterModel.getRow();
         int col = characterModel.getCol();
 
-                if( col%CharacterModel.FATOR != 0 ||
-                    mapModel.getCell(row/CharacterModel.FATOR-1, col/CharacterModel.FATOR) instanceof ObstacleCellModel) return false;
+                if(col%CharacterModel.FATOR != 0 ||
+                        mapModel.getCell(row/CharacterModel.FATOR-1, col/CharacterModel.FATOR) instanceof ObstacleCellModel) return false;
             
             return true;
     }
@@ -353,9 +357,8 @@ class Controller{
         int row = characterModel.getRow();
         int col = characterModel.getCol();
 
-                if( col%CharacterModel.FATOR != 0 ||
-                    mapModel.getCell(row/CharacterModel.FATOR+1, col/CharacterModel.FATOR) instanceof ObstacleCellModel) return false;
-                
+            if( col%CharacterModel.FATOR != 0 ||
+                mapModel.getCell(row/CharacterModel.FATOR+1, col/CharacterModel.FATOR) instanceof ObstacleCellModel) return false;
             return true;
     }
     public boolean checkCollisionNextLEFT(CharacterModel characterModel) {
@@ -363,21 +366,109 @@ class Controller{
         int row = characterModel.getRow();
         int col = characterModel.getCol();
 
-                if( row%CharacterModel.FATOR != 0 ||
-                    mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR-1) instanceof ObstacleCellModel) return false;
-             return true;
+            if( row%CharacterModel.FATOR != 0 ||
+                mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR-1) instanceof ObstacleCellModel) return false;
+            return true;
     }
     public boolean checkCollisionNextRIGHT(CharacterModel characterModel) {
         Orientation orientation = characterModel.getNextOrientation();
         int row = characterModel.getRow();
         int col = characterModel.getCol();
 
-               if (row%CharacterModel.FATOR != 0 ||
-                    mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR+1) instanceof ObstacleCellModel) return false;
-        
+            if( row%CharacterModel.FATOR != 0 ||
+                mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR+1) instanceof ObstacleCellModel) return false;
             return true;
     }
     
+    public boolean checkCollisionOrientation(CharacterModel characterModel, Orientation orientation){
+        int row = characterModel.getRow();
+        int col = characterModel.getCol();
+        switch (orientation){
+            case UP:
+                return (col%CharacterModel.FATOR != 0 ||
+                        mapModel.getCell(row/CharacterModel.FATOR-1, col/CharacterModel.FATOR) instanceof ObstacleCellModel);
+            case DOWN:
+                return (col%CharacterModel.FATOR != 0 ||
+                        mapModel.getCell(row/CharacterModel.FATOR+1, col/CharacterModel.FATOR) instanceof ObstacleCellModel);
+            case LEFT:
+                return (row%CharacterModel.FATOR != 0 ||
+                        mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR-1) instanceof ObstacleCellModel);
+            case RIGHT:
+                return (row%CharacterModel.FATOR != 0 ||
+                        mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR+1) instanceof ObstacleCellModel);
+        }
+        return false;
+    }
+    
+    public void chasePoint(CharacterModel characterModel, double xPoint, double yPoint){
+        double x = characterModel.getRow() - xPoint * CharacterModel.FATOR;
+        double y = characterModel.getCol() - yPoint * CharacterModel.FATOR;
+        switch (characterModel.getOrientation()){
+            case UP:
+                if (!characterModel.isMoving()){
+                    if (!checkCollisionOrientation(characterModel, Orientation.LEFT))
+                        characterModel.setNextOrientation(Orientation.LEFT);
+                    else
+                        characterModel.setNextOrientation(Orientation.RIGHT);
+                }else{
+                    if (y > 0)
+                        characterModel.setNextOrientation(Orientation.LEFT);
+                    else if (y < 0)
+                        characterModel.setNextOrientation(Orientation.RIGHT);
+                    else
+                        characterModel.setNextOrientation(Orientation.UP);
+                }
+                break;
+                
+            case DOWN:
+                if (!characterModel.isMoving()){
+                    if (!checkCollisionOrientation(characterModel, Orientation.LEFT))
+                        characterModel.setNextOrientation(Orientation.LEFT);
+                    else
+                        characterModel.setNextOrientation(Orientation.RIGHT);
+                }else{
+                    if (y > 0)
+                        characterModel.setNextOrientation(Orientation.LEFT);
+                    else if (y < 0)
+                        characterModel.setNextOrientation(Orientation.RIGHT);
+                    else
+                        characterModel.setNextOrientation(Orientation.DOWN);
+                }
+                break;
+                
+            case LEFT:
+                if (!characterModel.isMoving()){
+                    if (!checkCollisionOrientation(characterModel, Orientation.UP))
+                        characterModel.setNextOrientation(Orientation.UP);
+                    else
+                        characterModel.setNextOrientation(Orientation.DOWN);
+                }else{
+                    if (x > 0)
+                        characterModel.setNextOrientation(Orientation.UP);
+                    else if (x < 0)
+                        characterModel.setNextOrientation(Orientation.DOWN);
+                    else
+                        characterModel.setNextOrientation(Orientation.LEFT);
+                }
+                break;
+                
+            case RIGHT:
+                if (!characterModel.isMoving()){
+                    if (!checkCollisionOrientation(characterModel, Orientation.UP))
+                        characterModel.setNextOrientation(Orientation.UP);
+                    else
+                        characterModel.setNextOrientation(Orientation.DOWN);
+                }else{
+                    if (x > 0)
+                        characterModel.setNextOrientation(Orientation.UP);
+                    else if (x < 0)
+                        characterModel.setNextOrientation(Orientation.DOWN);
+                    else
+                        characterModel.setNextOrientation(Orientation.RIGHT);
+                }
+                break;
+        }
+    }
     
     public boolean checkCollisionNext(CharacterModel characterModel) {
         Orientation orientation = characterModel.getNextOrientation();
