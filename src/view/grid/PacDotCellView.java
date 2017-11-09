@@ -40,7 +40,7 @@ public class PacDotCellView extends CellView {
 
     @Override
     public void setPosition(Position position) {
-        this.cellPosition = position;
+        cellPosition = position;
         updateRectangle();
     }
 
