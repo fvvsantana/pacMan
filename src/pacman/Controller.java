@@ -20,6 +20,7 @@ import model.grid.ObstacleCellModel;
 import model.grid.PacDotCellModel;
 import model.grid.PowerPelletCellModel;
 import model.characters.PacManModel;
+import model.grid.EmptyCellModel;
 
 import utils.Orientation;
 import view.characters.PacManView;
@@ -140,6 +141,20 @@ class Controller{
             pacManModel.move();
         } else {
             pacManModel.setMoving(false);
+        }
+        
+        // verifica se está pegando um item
+        double row = pacManModel.getRealRow();
+        double col = pacManModel.getRealCol();
+        if (row%1 == 0 && col%1 == 0) {
+            if (mapModel.getCell((int)row, (int)col) instanceof PacDotCellModel) {
+                mapModel.addCell(new EmptyCellModel(), (int)row, (int)col);
+                view.removeCellView((int)row, (int)col);
+            } else if (mapModel.getCell((int)row, (int)col) instanceof PowerPelletCellModel) {
+                /// TODO: definir fantasmas como comiveis
+                mapModel.addCell(new EmptyCellModel(), (int)row, (int)col);
+                view.removeCellView((int)row, (int)col);
+            }
         }
     } 
 

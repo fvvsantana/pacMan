@@ -70,6 +70,11 @@ public class View{
     public void show(){
         stage.show();
     }
+    
+    // remove one cell
+    public void removeCellView (int row, int col) {
+        mapContainer.getChildren().remove(grid.getCell(row, col).getNode());
+    }
 
     //setters and getters
     //-------------------------------------
