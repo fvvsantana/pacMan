@@ -5,7 +5,7 @@ import utils.Orientation;
 public abstract class CharacterModel {
     
     // the values will be multiplied by the FACTOR to keep them integers
-    public static final int FACTOR = 100;
+    public static final int FACTOR = 80;
     
     int row;
     int col;
@@ -14,7 +14,7 @@ public abstract class CharacterModel {
 
     // multiple constructors
     public CharacterModel(double realRow, double realCol) {
-        this(realRow, realCol, 0.05, Orientation.RIGHT);
+        this(realRow, realCol, 0.0625, Orientation.RIGHT);
     }
 
     public CharacterModel(double realRow, double realCol, double realSpeed, Orientation orientation) {

@@ -46,8 +46,8 @@ class Controller{
         //add the nodes of the cells from the grid to the map container
         view.drawMap();
 
-        //create a PacManModel setting his position as (0,0)
-        pacManModel = new PacManModel(1, 1);
+        //create a PacManModel setting his position as (23, 13)
+        pacManModel = new PacManModel(23, 13);
 
         //add a controller to the PacManModel
         addPacManModelController(view.getScene());
@@ -199,8 +199,9 @@ class Controller{
             case RIGHT:
                 return row%CharacterModel.FACTOR == 0 &&
                   mapModel.getCell(row/CharacterModel.FACTOR,(col+1)/CharacterModel.FACTOR+1) instanceof ObstacleCellModel;
+            default:
+                return true;
         }
-        return true;
     }
     
     public boolean checkCollisionNext(PacManModel characterModel) {
