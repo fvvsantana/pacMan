@@ -126,8 +126,8 @@ class Controller{
     //move the pacManModel to the specified orientation 
     private void updatePacManModel(){
         // verifica se esta num tunel
-        if (pacManModel.getOrientation() == pacManModel.getNextOrientation() && checkTunnel(pacManModel)){
-            pacManModel.move();
+        if (checkTunnel(pacManModel)){
+            applyTunnel(pacManModel);
             return;
         }
         
@@ -167,19 +167,34 @@ class Controller{
     }
     
     public boolean checkTunnel(CharacterModel characterModel) {
-        Orientation orientation = characterModel.getOrientation();
-        switch (orientation) {
-            case RIGHT:
-                if (characterModel.getRealCol() > mapModel.getCols())
-                    characterModel.setRealCol(-1);
-                return characterModel.getRealCol()+1 >= mapModel.getCols();
-            case LEFT:
-                if (characterModel.getRealCol() <= -1)
-                    characterModel.setRealCol(mapModel.getCols());
-                return characterModel.getRealCol() < 1;
-            default:
-                return false;
+        double row = characterModel.getRealRow();
+        double col = characterModel.getRealCol();
+        return row < 1 || row+1 >= mapModel.getRows() || col < 1 || col+1 >= mapModel.getCols();
+    }
+    
+    public void applyTunnel (PacManModel pacManModel) {
+        Orientation orientation = pacManModel.getOrientation();
+        Orientation nextOrientation = pacManModel.getNextOrientation();
+         
+        // verifica se está mudando a direção dentro do tunel
+        if (orientation != nextOrientation) {
+            if ((orientation==Orientation.LEFT && nextOrientation==Orientation.RIGHT)||
+                    (orientation==Orientation.RIGHT && nextOrientation==Orientation.LEFT)||
+                    (orientation==Orientation.UP && nextOrientation==Orientation.DOWN)||
+                    (orientation==Orientation.DOWN && nextOrientation==Orientation.UP)){
+                pacManModel.setOrientation(nextOrientation);
+            }
         }
+        pacManModel.move();
+        // verifica se está terminando o tunel
+        if (pacManModel.getRealCol() < -1)
+            pacManModel.setRealCol(mapModel.getCols());
+        else if (pacManModel.getRealCol() > mapModel.getCols())
+            pacManModel.setRealCol(-1);
+        else if (pacManModel.getRealRow() < -1)
+            pacManModel.setRealRow(mapModel.getRows());
+        else if (pacManModel.getRealRow() > mapModel.getRows())
+            pacManModel.setRealRow(-1);
     }
     
     public boolean checkCollision(CharacterModel characterModel) {
