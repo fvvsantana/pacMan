@@ -3,17 +3,21 @@ package view.grid;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import utils.Position;
+import utils.Updatable;
 
-public class PowerPelletCellView extends CellView{
+public class PowerPelletCellView extends CellView implements Updatable {
     
     private final Ellipse ellipse;
     
     // proporcao do tamanho da celula que o raio devera ocupar
     private static final int PROPORCAO_MIN = 6;
-    private static final int PROPORCAO_MAX = 4;
+    private static final int PROPORCAO_MAX = 3;
     
-    // pixels variados por atualizacao do raio
-    private static final double VAR = 0.01;
+    // pixels variados para cada atualizacao do raio
+    private static final double VAR = 0.2;
+    
+    // guarda se esta aumentando ou diminuindo
+    private boolean aumentando = false;
     
     // valores absolutos da celula:
     private Position cellPosition;
@@ -49,5 +53,22 @@ public class PowerPelletCellView extends CellView{
         this.cellWidth = cellWidth;
         this.cellHeight = cellHeight;
         updateCenter();
+    }
+
+    @Override
+    public void update() {
+//        System.out.println("atualizou");
+        if (ellipse.getRadiusX() > cellWidth/PROPORCAO_MAX)
+            aumentando = false;
+        else if (ellipse.getRadiusX() < cellWidth/PROPORCAO_MIN)
+            aumentando = true;
+        
+        if (aumentando) {
+            ellipse.setRadiusX(ellipse.getRadiusX()+VAR);
+            ellipse.setRadiusY(ellipse.getRadiusY()+VAR);
+        } else {
+            ellipse.setRadiusX(ellipse.getRadiusX()-VAR);
+            ellipse.setRadiusY(ellipse.getRadiusY()-VAR);
+        }
     }
 }

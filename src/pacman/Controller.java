@@ -1,5 +1,6 @@
 package pacman;
 
+import java.util.ArrayList;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyEvent;
@@ -24,6 +25,7 @@ import model.grid.EmptyCellModel;
 import utils.AudioManager;
 
 import utils.Orientation;
+import utils.Updatable;
 import view.characters.PacManView;
 
 class Controller{
@@ -31,11 +33,16 @@ class Controller{
     GridModel mapModel;
     PacManModel pacManModel;
     AudioManager audioManager;
+    ArrayList<Updatable> updates;
     
     public void run(Stage primaryStage){
         
         //initialize the audio manager
         audioManager = new AudioManager();
+        
+        //initialize the updates array
+        updates = new ArrayList<>();
+        
         //generate the layout
         view = new View(primaryStage);
 
@@ -68,6 +75,9 @@ class Controller{
                 //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
                 updatePacManModel();
                 updatePacManView(pacManModel);
+                updates.forEach((updatable) -> {
+                    updatable.update();
+                });
             }
 
         }.start();
@@ -95,6 +105,7 @@ class Controller{
                     cellView = new PacDotCellView();
                 }else if(cellModel instanceof PowerPelletCellModel){
                     cellView = new PowerPelletCellView();
+                    updates.add((PowerPelletCellView)cellView);
                 }else{
                     cellView = null;
                 }
