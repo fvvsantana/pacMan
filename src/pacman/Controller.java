@@ -21,6 +21,7 @@ import model.grid.PacDotCellModel;
 import model.grid.PowerPelletCellModel;
 import model.characters.PacManModel;
 import model.grid.EmptyCellModel;
+import utils.AudioManager;
 
 import utils.Orientation;
 import view.characters.PacManView;
@@ -29,8 +30,12 @@ class Controller{
     View view;
     GridModel mapModel;
     PacManModel pacManModel;
+    AudioManager audioManager;
     
     public void run(Stage primaryStage){
+        
+        //initialize the audio manager
+        audioManager = new AudioManager();
         //generate the layout
         view = new View(primaryStage);
 
