@@ -46,8 +46,8 @@ public class PacManView {
     
     // define a posicao considerando o centro
     public void setPosition (Position position) {
-        arc.setCenterX(position.getX() + arc.getRadiusX());
-        arc.setCenterY(position.getY() + arc.getRadiusY());
+        arc.setCenterX(position.getX() + radiusX);
+        arc.setCenterY(position.getY() + radiusY);
     }
 
     //set image orientation

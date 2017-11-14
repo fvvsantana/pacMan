@@ -26,7 +26,7 @@ public class PacDotCellView extends CellView {
     private void updateRectangle() {
         // deve ocupar uma proporcao da tela
         rec.setWidth(cellWidth / PROPORCAO);
-        rec.setHeight(cellWidth / PROPORCAO);
+        rec.setHeight(cellHeight / PROPORCAO);
         
         // deve estar centralizado na celula
         rec.setX(cellPosition.getX() + cellWidth/2 - cellWidth/(PROPORCAO*2));
