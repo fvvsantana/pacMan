@@ -57,7 +57,6 @@ public class PowerPelletCellView extends CellView implements Updatable {
 
     @Override
     public void update() {
-//        System.out.println("atualizou");
         if (ellipse.getRadiusX() > cellWidth/PROPORCAO_MAX)
             aumentando = false;
         else if (ellipse.getRadiusX() < cellWidth/PROPORCAO_MIN)
