@@ -23,13 +23,15 @@ public abstract class GhostView implements Updatable {
     private static final int INTERVAL = 5;
     private static int TEMPORARYINTERVAL;
     
-    public GhostView (String imagePath1, String imagePath2){
+    public GhostView (String imagePath1, String imagePath2, double width, double height){
         image1 = new Image (imagePath1);
         image2 = new Image (imagePath2);
         image3 = new Image ("/images/ghosthollow1.png");
         image4 = new Image ("/images/ghosthollow2.png");
         image5 = new Image ("/images/ghosthollow3.png");
         img = new ImageView(imagePath1);
+        img.setFitWidth(width);
+        img.setFitHeight(height);
         
         running = false;
         runningAway = false;

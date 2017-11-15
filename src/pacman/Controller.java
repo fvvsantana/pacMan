@@ -96,19 +96,19 @@ class Controller{
         view.addPacManToTheMapContainer();
         
         // create the ghosts views and add their updates
-        view.setRedGhostView(new RedGhostView());
+        view.setRedGhostView(new RedGhostView(view.getGrid().getCellWidth(), view.getGrid().getCellHeight()));
         view.addRedGhostToTheMapContainer();
         updates.add(view.getRedGhostView());
         
-        view.setPinkGhostView(new PinkGhostView());
+        view.setPinkGhostView(new PinkGhostView(view.getGrid().getCellWidth(), view.getGrid().getCellHeight()));
         view.addPinkGhostToTheMapContainer();
         updates.add(view.getPinkGhostView());
         
-        view.setOrangeGhostView(new OrangeGhostView());
+        view.setOrangeGhostView(new OrangeGhostView(view.getGrid().getCellWidth(), view.getGrid().getCellHeight()));
         view.addOrangeGhostToTheMapContainer();
         updates.add(view.getOrangeGhostView());
         
-        view.setCyanGhostView(new CyanGhostView());
+        view.setCyanGhostView(new CyanGhostView(view.getGrid().getCellWidth(), view.getGrid().getCellHeight()));
         view.addCyanGhostToTheMapContainer();
         updates.add(view.getCyanGhostView());
         
