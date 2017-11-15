@@ -56,7 +56,7 @@ class Controller{
     
     Random rand = new Random();
     private final int maxrand = 10000;
-    private final int maxdist = 8 * CharacterModel.FATOR;
+    private final int maxdist = 8 * CharacterModel.FACTOR;
     
     public void run(Stage primaryStage){
         
@@ -115,8 +115,6 @@ class Controller{
         view.setCyanGhostView(new CyanGhostView());
         
         view.addCyanGhostToTheMapContainer();
-        
-        
         
         new AnimationTimer() {
             @Override
@@ -205,8 +203,8 @@ class Controller{
     private void updateModels(CharacterModel characterModel){
 
         // verifica se esta num tunel
-        if (checkTunnel(pacManModel)){
-            applyTunnel(pacManModel);
+        if (checkTunnel(characterModel)){
+            applyTunnel(characterModel);
             return;
         }
         
@@ -237,9 +235,35 @@ class Controller{
             }
         }
     } 
-
-    } 
     
+    public boolean checkTunnel(CharacterModel characterModel) {
+        double row = characterModel.getRealRow();
+        double col = characterModel.getRealCol();
+        return row < 1 || row+1 >= mapModel.getRows() || col < 1 || col+1 >= mapModel.getCols();
+    }
+    
+    public void applyTunnel (CharacterModel characterModel) {
+        Orientation orientation = characterModel.getOrientation();
+        Orientation nextOrientation = characterModel.getNextOrientation();
+         
+        // verifica se está mudando a direção dentro do tunel
+        if (orientation != nextOrientation) {
+            if (orientation == nextOrientation.getOpposite()){
+                characterModel.setOrientation(nextOrientation);
+            }
+        }
+        characterModel.move();
+        
+        // verifica se está terminando o tunel
+        if (characterModel.getRealCol() < -1)
+            characterModel.setRealCol(mapModel.getCols());
+        else if (characterModel.getRealCol() > mapModel.getCols())
+            characterModel.setRealCol(-1);
+        else if (characterModel.getRealRow() < -1)
+            characterModel.setRealRow(mapModel.getRows());
+        else if (characterModel.getRealRow() > mapModel.getRows())
+            characterModel.setRealRow(-1);
+    }
     
     private void updateRedGhostModel(){
         int num = rand.nextInt(4);
@@ -283,25 +307,12 @@ class Controller{
         if (pacManModel.isMoving())
             view.getPacManView().updateArc();
     }
+            
+    public void updateRedGhostView(RedGhostModel redGhostModel){
+        view.getRedGhostView().setPosition(view.getGrid().getCellPosition(redGhostModel.getRealRow(), redGhostModel.getRealCol()));
+        view.getRedGhostView().UpgradeImg();
+    }        
     
-    public boolean checkTunnel(CharacterModel characterModel) {
-        double row = characterModel.getRealRow();
-        double col = characterModel.getRealCol();
-        return row < 1 || row+1 >= mapModel.getRows() || col < 1 || col+1 >= mapModel.getCols();
-    }
-    
-    public void applyTunnel (PacManModel pacManModel) {
-        Orientation orientation = pacManModel.getOrientation();
-        Orientation nextOrientation = pacManModel.getNextOrientation();
-         
-        // verifica se está mudando a direção dentro do tunel
-        if (orientation != nextOrientation) {
-            if ((orientation==Orientation.LEFT && nextOrientation==Orientation.RIGHT)||
-                    (orientation==Orientation.RIGHT && nextOrientation==Orientation.LEFT)||
-                    (orientation==Orientation.UP && nextOrientation==Orientation.DOWN)||
-                    (orientation==Orientation.DOWN && nextOrientation==Orientation.UP)){
-                pacManModel.setOrientation(nextOrientation);
-            }
     public void updatePinkGhostView(PinkGhostModel pinkGhostModel){
         view.getPinkGhostView().setPosition(view.getGrid().getCellPosition(pinkGhostModel.getRealRow(), pinkGhostModel.getRealCol()));
         view.getPinkGhostView().UpgradeImg();
@@ -324,6 +335,10 @@ class Controller{
 
     public void randomWalk(CharacterModel characterModel){
         
+        // se estiver num tunel nao deve alterar a orientacao
+        if (checkTunnel(characterModel))
+            return;
+        
         ArrayList<Orientation> orientations = new ArrayList(4);
         orientations.add(Orientation.UP);
         orientations.add(Orientation.DOWN);
@@ -345,8 +360,8 @@ class Controller{
     
     public void chasePoint(CharacterModel characterModel, double xPoint, double yPoint){
         
-        double x = characterModel.getCol()- xPoint * CharacterModel.FATOR;
-        double y = characterModel.getRow() - yPoint * CharacterModel.FATOR;
+        double x = characterModel.getCol()- xPoint * CharacterModel.FACTOR;
+        double y = characterModel.getRow() - yPoint * CharacterModel.FACTOR;
         
         switch (characterModel.getOrientation()){
             case UP:
@@ -415,20 +430,6 @@ class Controller{
         }
     }
     
-
-        }
-        pacManModel.move();
-        // verifica se está terminando o tunel
-        if (pacManModel.getRealCol() < -1)
-            pacManModel.setRealCol(mapModel.getCols());
-        else if (pacManModel.getRealCol() > mapModel.getCols())
-            pacManModel.setRealCol(-1);
-        else if (pacManModel.getRealRow() < -1)
-            pacManModel.setRealRow(mapModel.getRows());
-        else if (pacManModel.getRealRow() > mapModel.getRows())
-            pacManModel.setRealRow(-1);
-    }
-    
     public boolean checkCollision(CharacterModel characterModel) {
         Orientation orientation = characterModel.getOrientation();
         int row = characterModel.getRow();
@@ -457,17 +458,17 @@ class Controller{
         int col = characterModel.getCol();
         switch (orientation){
             case UP:
-                return (col%CharacterModel.FATOR != 0 ||
-                        mapModel.getCell((row-1)/CharacterModel.FATOR, col/CharacterModel.FATOR) instanceof ObstacleCellModel);
+                return (col%CharacterModel.FACTOR != 0 ||
+                        mapModel.getCell((row-1)/CharacterModel.FACTOR, col/CharacterModel.FACTOR) instanceof ObstacleCellModel);
             case DOWN:
-                return (col%CharacterModel.FATOR != 0 ||
-                        mapModel.getCell((row+1)/CharacterModel.FATOR+1, col/CharacterModel.FATOR) instanceof ObstacleCellModel);
+                return (col%CharacterModel.FACTOR != 0 ||
+                        mapModel.getCell((row+1)/CharacterModel.FACTOR+1, col/CharacterModel.FACTOR) instanceof ObstacleCellModel);
             case LEFT:
-                return (row%CharacterModel.FATOR != 0 ||
-                        mapModel.getCell(row/CharacterModel.FATOR, (col-1)/CharacterModel.FATOR) instanceof ObstacleCellModel);
+                return (row%CharacterModel.FACTOR != 0 ||
+                        mapModel.getCell(row/CharacterModel.FACTOR, (col-1)/CharacterModel.FACTOR) instanceof ObstacleCellModel);
             case RIGHT:
-                return (row%CharacterModel.FATOR != 0 ||
-                        mapModel.getCell(row/CharacterModel.FATOR, (col+1)/CharacterModel.FATOR + 1) instanceof ObstacleCellModel);
+                return (row%CharacterModel.FACTOR != 0 ||
+                        mapModel.getCell(row/CharacterModel.FACTOR, (col+1)/CharacterModel.FACTOR + 1) instanceof ObstacleCellModel);
         }
         return false;
     }

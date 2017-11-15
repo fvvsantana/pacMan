@@ -7,10 +7,12 @@ public abstract class CharacterModel {
     // the values will be multiplied by the FACTOR to keep them integers
     public static final int FACTOR = 80;
     
-    int row;
-    int col;
-    int speed;
-    Orientation orientation;
+    private Orientation orientation;
+    private Orientation nextOrientation;
+    private int row;
+    private int col;
+    private int speed;
+    private boolean moving;
 
     // multiple constructors
     public CharacterModel(double realRow, double realCol) {
@@ -23,6 +25,7 @@ public abstract class CharacterModel {
         this.speed = (int) (FACTOR * realSpeed);
         this.orientation = orientation;
         nextOrientation = orientation;
+        moving = true;
     }
     
     // move to the defined orientation
@@ -114,5 +117,22 @@ public abstract class CharacterModel {
 
     public void setOrientation(Orientation orientation) {
         this.orientation = orientation;
+    }
+
+    public Orientation getNextOrientation() {
+        return nextOrientation;
+    }
+    
+
+    public void setNextOrientation(Orientation nextOrientation) {
+        this.nextOrientation = nextOrientation;
+    }
+
+    public boolean isMoving() {
+        return moving;
+    }
+
+    public void setMoving(boolean moving) {
+        this.moving = moving;
     }
 }
