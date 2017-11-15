@@ -22,6 +22,7 @@ public abstract class CharacterModel {
         this.col = (int) (FACTOR * realCol);
         this.speed = (int) (FACTOR * realSpeed);
         this.orientation = orientation;
+        nextOrientation = orientation;
     }
     
     // move to the defined orientation
