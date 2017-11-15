@@ -44,17 +44,17 @@ import view.characters.OrangeGhostView;
 import view.characters.CyanGhostView;
 
 class Controller{
-    View view;
-    GridModel mapModel;
-    PacManModel pacManModel;
-    RedGhostModel redGhostModel;
-    PinkGhostModel pinkGhostModel;
-    OrangeGhostModel orangeGhostModel;
-    CyanGhostModel cyanGhostModel;
-    AudioManager audioManager;
-    ArrayList<Updatable> updates;
+    private View view;
+    private GridModel mapModel;
+    private PacManModel pacManModel;
+    private RedGhostModel redGhostModel;
+    private PinkGhostModel pinkGhostModel;
+    private OrangeGhostModel orangeGhostModel;
+    private CyanGhostModel cyanGhostModel;
+    private AudioManager audioManager;
+    private ArrayList<Updatable> updates;
     
-    Random rand = new Random();
+    private final Random rand = new Random();
     private final int maxrand = 10000;
     private final int maxdist = 8 * CharacterModel.FACTOR;
     
@@ -93,28 +93,24 @@ class Controller{
 
         //set PacManView in the View
         view.setPacManView(new PacManView(view.getGrid().getCellWidth()/2, view.getGrid().getCellHeight()/2));
-
         view.addPacManToTheMapContainer();
         
-        
+        // create the ghosts views and add their updates
         view.setRedGhostView(new RedGhostView());
-        
         view.addRedGhostToTheMapContainer();
-        
+        updates.add(view.getRedGhostView());
         
         view.setPinkGhostView(new PinkGhostView());
-        
         view.addPinkGhostToTheMapContainer();
-        
+        updates.add(view.getPinkGhostView());
         
         view.setOrangeGhostView(new OrangeGhostView());
-        
         view.addOrangeGhostToTheMapContainer();
-        
+        updates.add(view.getOrangeGhostView());
         
         view.setCyanGhostView(new CyanGhostView());
-        
         view.addCyanGhostToTheMapContainer();
+        updates.add(view.getCyanGhostView());
         
         new AnimationTimer() {
             @Override
@@ -310,22 +306,18 @@ class Controller{
             
     public void updateRedGhostView(RedGhostModel redGhostModel){
         view.getRedGhostView().setPosition(view.getGrid().getCellPosition(redGhostModel.getRealRow(), redGhostModel.getRealCol()));
-        view.getRedGhostView().UpgradeImg();
     }        
     
     public void updatePinkGhostView(PinkGhostModel pinkGhostModel){
         view.getPinkGhostView().setPosition(view.getGrid().getCellPosition(pinkGhostModel.getRealRow(), pinkGhostModel.getRealCol()));
-        view.getPinkGhostView().UpgradeImg();
     }
     
     public void updateCyanGhostView(CyanGhostModel cyanGhostModel){
         view.getCyanGhostView().setPosition(view.getGrid().getCellPosition(cyanGhostModel.getRealRow(), cyanGhostModel.getRealCol()));
-        view.getCyanGhostView().UpgradeImg();
     }
     
     public void updateOrangeGhostView(OrangeGhostModel orangeGhostModel){
         view.getOrangeGhostView().setPosition(view.getGrid().getCellPosition(orangeGhostModel.getRealRow(), orangeGhostModel.getRealCol()));
-        view.getOrangeGhostView().UpgradeImg();
     }
 
     public int DistanceBetweenCharacters (CharacterModel characterModel1, CharacterModel characterModel2){
