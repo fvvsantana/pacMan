@@ -1,5 +1,7 @@
 package pacman;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 import javafx.scene.Scene;
@@ -49,8 +51,7 @@ class Controller{
     
     Random rand = new Random();
     private final int maxrand = 10000;
-    private final int maxdist = 800;
-    private int num;
+    private final int maxdist = 8 * CharacterModel.FATOR;
     
     public void run(Stage primaryStage){
         //generate the layout
@@ -114,17 +115,17 @@ class Controller{
                 updateModels(pacManModel);
                 updatePacManView(pacManModel);
                 
-                updateModels(redGhostModel);
-                updateRedGhost(redGhostModel);
+                updateRedGhostModel();
+                updateRedGhostView(redGhostModel);
                 
-                updatePinkGhost(pinkGhostModel);
-                updateModels(pinkGhostModel);
+                updatePinkGhostModel();
+                updatePinkGhostView(pinkGhostModel);
                 
-                updateCyanGhost(cyanGhostModel);
-                updateModels(cyanGhostModel);
+                updateCyanGhostModel();
+                updateCyanGhostView(cyanGhostModel);
                 
-                updateOrangeGhost(orangeGhostModel);
-                updateModels(orangeGhostModel);
+                updateOrangeGhostModel();
+                updateOrangeGhostView(orangeGhostModel);
                 
             }
 
@@ -188,9 +189,6 @@ class Controller{
    
     //move the pacManModel to the specified orientation 
     private void updateModels(CharacterModel characterModel){
-        if (characterModel instanceof RedGhostModel){
-            chasePoint(characterModel, pacManModel.getRealRow(), pacManModel.getRealCol());
-        }
 
         // verifica se esta num tunel
         if (characterModel.getOrientation() == characterModel.getNextOrientation() && checkTunnel(characterModel)){
@@ -199,9 +197,10 @@ class Controller{
         }
         
         // verifica se deve atualizar a orientacao atual
-        if (!checkCollisionNext(characterModel))
+        if (!checkCollisionNext(characterModel)){
             characterModel.setOrientation(characterModel.getNextOrientation());
-        
+        }
+            
         // depois atualiza a posicao atual
         if (!checkCollision(characterModel)) {
             characterModel.setMoving(true);
@@ -210,6 +209,43 @@ class Controller{
             characterModel.setMoving(false);
         }
     } 
+    
+    
+    private void updateRedGhostModel(){
+        int num = rand.nextInt(4);
+        if (num == 3)
+            randomWalk(redGhostModel);
+        else
+            chasePoint(redGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
+        updateModels(redGhostModel);
+    }
+    
+    private void updatePinkGhostModel(){
+        if (pinkGhostModel.getRealCol() % 1 == 0 && pinkGhostModel.getRealRow() % 1 == 0){
+            System.out.println();
+            randomWalk(pinkGhostModel);
+        }
+        updateModels(pinkGhostModel);
+    }
+    
+    private void updateCyanGhostModel(){
+        int num = rand.nextInt(4);
+        if (DistanceBetweenCharacters(cyanGhostModel, redGhostModel) < maxdist && num != 3)
+            chasePoint(cyanGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
+        else
+            randomWalk(cyanGhostModel);
+        updateModels(cyanGhostModel);
+    }
+    
+    private void updateOrangeGhostModel(){
+        int num = rand.nextInt(4);
+        if (DistanceBetweenCharacters(orangeGhostModel, pacManModel) > maxdist && num != 3)
+            chasePoint(orangeGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
+        else
+            randomWalk(orangeGhostModel);
+        updateModels(orangeGhostModel);
+    }
+    
     //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
     public void updatePacManView(PacManModel pacManModel){
         view.getPacManView().setPosition(view.getGrid().getCellPosition(pacManModel.getRealRow(), pacManModel.getRealCol()));
@@ -218,191 +254,57 @@ class Controller{
             view.getPacManView().updateArc();
     }
     
-    public void updateRedGhost(RedGhostModel redGhostModel){
+    public void updateRedGhostView(RedGhostModel redGhostModel){
         view.getRedGhostView().setPosition(view.getGrid().getCellPosition(redGhostModel.getRealRow(), redGhostModel.getRealCol()));
         view.getRedGhostView().UpgradeImg();
-        
-//        if (checkCollision(redGhostModel)){
-//            num = rand.nextInt(maxrand)+1;
-//            if (num%2 == 1){
-//            redGhostModel.setNextOrientation(pacManModel.getOrientation());
-//            }else{
-//                RandomWalk(redGhostModel, num);
-//            }
-//        }
-    // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
     }
     
-    public void updatePinkGhost(PinkGhostModel pinkGhostModel){
+    public void updatePinkGhostView(PinkGhostModel pinkGhostModel){
         view.getPinkGhostView().setPosition(view.getGrid().getCellPosition(pinkGhostModel.getRealRow(), pinkGhostModel.getRealCol()));
         view.getPinkGhostView().UpgradeImg();
-        
-        if(checkCollision(pinkGhostModel)){
-            num = rand.nextInt(maxrand)+1;
-            RandomWalk(pinkGhostModel, num);
-        }else{
-            pinkGhostModel.setNextOrientation(pacManModel.getOrientation());
-        } 
-            
-        
-        
-    // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
     }
     
-    public void updateCyanGhost(CyanGhostModel cyanGhostModel){
+    public void updateCyanGhostView(CyanGhostModel cyanGhostModel){
         view.getCyanGhostView().setPosition(view.getGrid().getCellPosition(cyanGhostModel.getRealRow(), cyanGhostModel.getRealCol()));
         view.getCyanGhostView().UpgradeImg();
-        
-        if(checkCollisionNext(cyanGhostModel)){
-            
-            if (DistanceBetweenCharacters(cyanGhostModel,redGhostModel) <= maxdist){
-            cyanGhostModel.setNextOrientation(redGhostModel.getOrientation());
-            }else{
-                num = rand.nextInt(maxrand)+1;
-                RandomWalk(cyanGhostModel, num);
-            }
-        }
-    // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
     }
     
-    public void updateOrangeGhost(OrangeGhostModel orangeGhostModel){
+    public void updateOrangeGhostView(OrangeGhostModel orangeGhostModel){
         view.getOrangeGhostView().setPosition(view.getGrid().getCellPosition(orangeGhostModel.getRealRow(), orangeGhostModel.getRealCol()));
         view.getOrangeGhostView().UpgradeImg();
-        
-        
-        if(checkCollisionNext(orangeGhostModel)){
-            if(DistanceBetweenCharacters(orangeGhostModel,pacManModel) >= maxdist){
-                orangeGhostModel.setNextOrientation(redGhostModel.getOrientation());
-                if(checkCollisionNext(orangeGhostModel)){
-                    num = rand.nextInt(maxrand)+1;
-                    RandomWalk(orangeGhostModel, num);
-                }
-            }else{
-                num = rand.nextInt(maxrand)+1;
-                RandomWalk(orangeGhostModel, num);
-            }
-        }
-    // view.getRedGhostView().setOrientation(redGhostModel.getOrientation());
     }
-    
-    public void RandomWalk (CharacterModel characterModel,int num){
-                if  (num > 0.75*maxrand){
-                    characterModel.setNextOrientation(Orientation.DOWN);
-                }else if (num > maxrand*0.5 && num <= maxrand*0.75){
-                    characterModel.setNextOrientation(Orientation.UP);
-                }else if (num > maxrand*0.25 && num <= maxrand*0.5){
-                    characterModel.setNextOrientation(Orientation.RIGHT);
-                }else{
-                    characterModel.setNextOrientation(Orientation.LEFT);
-                }
-            
-    }
+
     public int DistanceBetweenCharacters (CharacterModel characterModel1, CharacterModel characterModel2){
-        return (int)Math.sqrt(Math.pow(characterModel1.getCol()-characterModel2.getCol(),2)    +
-                              Math.pow(characterModel1.getRow()-characterModel2.getRow(),2)    );
+        return (int)Math.sqrt(Math.pow(characterModel1.getCol()-characterModel2.getCol(),2) +
+                              Math.pow(characterModel1.getRow()-characterModel2.getRow(),2));
     }
-    
-    
-    public boolean checkTunnel(CharacterModel characterModel) {
-        Orientation orientation = characterModel.getOrientation();
-        int row = characterModel.getRow();
-        int col = characterModel.getCol();
-        switch (orientation) {
-            case RIGHT:
-                if (characterModel.getRealCol() > mapModel.getCols())
-                    characterModel.setRealCol(-1);
-                return characterModel.getRealCol()+1 >= mapModel.getCols();
-            case LEFT:
-                if (characterModel.getRealCol() <= -1)
-                    characterModel.setRealCol(mapModel.getCols());
-                return characterModel.getRealCol() < 1;
-            default:
-                return false;
+
+    public void randomWalk(CharacterModel characterModel){
+        
+        ArrayList<Orientation> orientations = new ArrayList(4);
+        orientations.add(Orientation.UP);
+        orientations.add(Orientation.DOWN);
+        orientations.add(Orientation.LEFT);
+        orientations.add(Orientation.RIGHT);
+        
+        orientations.remove(characterModel.getOrientation().getOpposite());
+        
+        Iterator<Orientation> it = orientations.iterator();
+        while (it.hasNext()) {
+            if (checkCollisionOrientation(characterModel, it.next()))
+                it.remove();
         }
-    }
-    
-    public boolean checkCollision(CharacterModel characterModel) {
-        Orientation orientation = characterModel.getOrientation();
-        int row = characterModel.getRow();
-        int col = characterModel.getCol();
-        switch (orientation) {
-            case UP:
-                return col%CharacterModel.FATOR == 0 &&
-                  mapModel.getCell((row-1)/CharacterModel.FATOR, col/CharacterModel.FATOR) instanceof ObstacleCellModel;
-            case DOWN:
-                return col%CharacterModel.FATOR == 0 &&
-                  mapModel.getCell((row+1)/CharacterModel.FATOR+1,col/CharacterModel.FATOR) instanceof ObstacleCellModel;
-            case LEFT:
-                return row%CharacterModel.FATOR == 0 &&
-                  mapModel.getCell(row/CharacterModel.FATOR, (col-1)/CharacterModel.FATOR) instanceof ObstacleCellModel;
-            case RIGHT:
-                return row%CharacterModel.FATOR == 0 &&
-                  mapModel.getCell(row/CharacterModel.FATOR,(col+1)/CharacterModel.FATOR+1) instanceof ObstacleCellModel;
-        }
-        return true;
-    }
-    public boolean checkCollisionNextUP(CharacterModel characterModel) {
-        Orientation orientation = characterModel.getNextOrientation();
-        int row = characterModel.getRow();
-        int col = characterModel.getCol();
-
-                if(col%CharacterModel.FATOR != 0 ||
-                        mapModel.getCell(row/CharacterModel.FATOR-1, col/CharacterModel.FATOR) instanceof ObstacleCellModel) return false;
-            
-            return true;
-    }
-    
-    public boolean checkCollisionNextDOWN(CharacterModel characterModel) {
-        Orientation orientation = characterModel.getNextOrientation();
-        int row = characterModel.getRow();
-        int col = characterModel.getCol();
-
-            if( col%CharacterModel.FATOR != 0 ||
-                mapModel.getCell(row/CharacterModel.FATOR+1, col/CharacterModel.FATOR) instanceof ObstacleCellModel) return false;
-            return true;
-    }
-    public boolean checkCollisionNextLEFT(CharacterModel characterModel) {
-        Orientation orientation = characterModel.getNextOrientation();
-        int row = characterModel.getRow();
-        int col = characterModel.getCol();
-
-            if( row%CharacterModel.FATOR != 0 ||
-                mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR-1) instanceof ObstacleCellModel) return false;
-            return true;
-    }
-    public boolean checkCollisionNextRIGHT(CharacterModel characterModel) {
-        Orientation orientation = characterModel.getNextOrientation();
-        int row = characterModel.getRow();
-        int col = characterModel.getCol();
-
-            if( row%CharacterModel.FATOR != 0 ||
-                mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR+1) instanceof ObstacleCellModel) return false;
-            return true;
-    }
-    
-    public boolean checkCollisionOrientation(CharacterModel characterModel, Orientation orientation){
-        int row = characterModel.getRow();
-        int col = characterModel.getCol();
-        switch (orientation){
-            case UP:
-                return (col%CharacterModel.FATOR != 0 ||
-                        mapModel.getCell(row/CharacterModel.FATOR-1, col/CharacterModel.FATOR) instanceof ObstacleCellModel);
-            case DOWN:
-                return (col%CharacterModel.FATOR != 0 ||
-                        mapModel.getCell(row/CharacterModel.FATOR+1, col/CharacterModel.FATOR) instanceof ObstacleCellModel);
-            case LEFT:
-                return (row%CharacterModel.FATOR != 0 ||
-                        mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR-1) instanceof ObstacleCellModel);
-            case RIGHT:
-                return (row%CharacterModel.FATOR != 0 ||
-                        mapModel.getCell(row/CharacterModel.FATOR, col/CharacterModel.FATOR+1) instanceof ObstacleCellModel);
-        }
-        return false;
+        
+        int num = rand.nextInt(orientations.size());
+        characterModel.setNextOrientation(orientations.get(num));
+        
     }
     
     public void chasePoint(CharacterModel characterModel, double xPoint, double yPoint){
-        double x = characterModel.getRow() - xPoint * CharacterModel.FATOR;
-        double y = characterModel.getCol() - yPoint * CharacterModel.FATOR;
+        
+        double x = characterModel.getCol()- xPoint * CharacterModel.FATOR;
+        double y = characterModel.getRow() - yPoint * CharacterModel.FATOR;
+        
         switch (characterModel.getOrientation()){
             case UP:
                 if (!characterModel.isMoving()){
@@ -468,6 +370,67 @@ class Controller{
                 }
                 break;
         }
+    }
+    
+
+    public boolean checkTunnel(CharacterModel characterModel) {
+        Orientation orientation = characterModel.getOrientation();
+        int row = characterModel.getRow();
+        int col = characterModel.getCol();
+        switch (orientation) {
+            case RIGHT:
+                if (characterModel.getRealCol() > mapModel.getCols())
+                    characterModel.setRealCol(-1);
+                return characterModel.getRealCol()+1 >= mapModel.getCols();
+            case LEFT:
+                if (characterModel.getRealCol() <= -1)
+                    characterModel.setRealCol(mapModel.getCols());
+                return characterModel.getRealCol() < 1;
+            default:
+                return false;
+        }
+    }
+    
+    public boolean checkCollision(CharacterModel characterModel) {
+        Orientation orientation = characterModel.getOrientation();
+        int row = characterModel.getRow();
+        int col = characterModel.getCol();
+        switch (orientation) {
+            case UP:
+                return col%CharacterModel.FATOR == 0 &&
+                  mapModel.getCell((row-1)/CharacterModel.FATOR, col/CharacterModel.FATOR) instanceof ObstacleCellModel;
+            case DOWN:
+                return col%CharacterModel.FATOR == 0 &&
+                  mapModel.getCell((row+1)/CharacterModel.FATOR+1,col/CharacterModel.FATOR) instanceof ObstacleCellModel;
+            case LEFT:
+                return row%CharacterModel.FATOR == 0 &&
+                  mapModel.getCell(row/CharacterModel.FATOR, (col-1)/CharacterModel.FATOR) instanceof ObstacleCellModel;
+            case RIGHT:
+                return row%CharacterModel.FATOR == 0 &&
+                  mapModel.getCell(row/CharacterModel.FATOR,(col+1)/CharacterModel.FATOR+1) instanceof ObstacleCellModel;
+        }
+        return true;
+    }
+    
+
+    public boolean checkCollisionOrientation(CharacterModel characterModel, Orientation orientation){
+        int row = characterModel.getRow();
+        int col = characterModel.getCol();
+        switch (orientation){
+            case UP:
+                return (col%CharacterModel.FATOR != 0 ||
+                        mapModel.getCell((row-1)/CharacterModel.FATOR, col/CharacterModel.FATOR) instanceof ObstacleCellModel);
+            case DOWN:
+                return (col%CharacterModel.FATOR != 0 ||
+                        mapModel.getCell((row+1)/CharacterModel.FATOR+1, col/CharacterModel.FATOR) instanceof ObstacleCellModel);
+            case LEFT:
+                return (row%CharacterModel.FATOR != 0 ||
+                        mapModel.getCell(row/CharacterModel.FATOR, (col-1)/CharacterModel.FATOR) instanceof ObstacleCellModel);
+            case RIGHT:
+                return (row%CharacterModel.FATOR != 0 ||
+                        mapModel.getCell(row/CharacterModel.FATOR, (col+1)/CharacterModel.FATOR + 1) instanceof ObstacleCellModel);
+        }
+        return false;
     }
     
     public boolean checkCollisionNext(CharacterModel characterModel) {
