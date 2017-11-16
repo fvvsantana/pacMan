@@ -44,12 +44,10 @@ public class PacManModel extends CharacterModel implements Updatable{
     @Override
     public void update() {
         
-        if(powerful && counter == 720){
+        if(powerful && counter == 600){
             setPowerful(false);
             counter = 0;
-            setRealSpeed(0.0625);
-            
-        }else if(powerful && counter != 720){
+        } else if(powerful && counter != 600){
             counter++;
         }
     }

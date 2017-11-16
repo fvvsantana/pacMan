@@ -5,7 +5,9 @@ import utils.Orientation;
 public abstract class CharacterModel {
     
     // the values will be multiplied by the FACTOR to keep them integers
-    public static final int FACTOR = 80;
+    public static final int FACTOR = 150;
+    
+    public static final int STANDARD_SPEED = 10;
     
     private Orientation orientation;
     private Orientation nextOrientation;
@@ -17,7 +19,12 @@ public abstract class CharacterModel {
 
     // multiple constructors
     public CharacterModel(double realRow, double realCol) {
-        this(realRow, realCol, 0.0625, Orientation.RIGHT);
+        this.row = (int) (FACTOR * realRow);
+        this.col = (int) (FACTOR * realCol);
+        this.speed = STANDARD_SPEED;
+        this.orientation = Orientation.RIGHT;
+        nextOrientation = orientation;
+        moving = true;
     }
 
     public CharacterModel(double realRow, double realCol, double realSpeed, Orientation orientation) {
@@ -106,10 +113,13 @@ public abstract class CharacterModel {
 
     public void setSpeed(int speed) {
         this.speed = speed;
+        // ajusta a posicao para a nova velocidade
+        row = row - (row%speed);
+        col = col - (col%speed);
     }
 
     public void setRealSpeed(double speed) {
-        this.speed = (int) (FACTOR * speed);
+        setSpeed((int)(FACTOR * speed));
     }
 
     public Orientation getOrientation() {

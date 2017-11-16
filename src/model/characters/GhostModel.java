@@ -22,11 +22,15 @@ public class GhostModel extends CharacterModel implements Updatable {
 
     public void setState(GhostState state) {
         this.state = state;
+        if (state == GhostState.RUNNING || state == GhostState.RUNNING_END)
+            setSpeed(STANDARD_SPEED/2);
+        else
+            setSpeed(STANDARD_SPEED);
     }
     
     public void startRunning() {
         if (state != GhostState.DEAD) {
-            state = GhostState.RUNNING;
+            setState(GhostState.RUNNING);
             counter = 0;
         }
     }
@@ -42,9 +46,9 @@ public class GhostModel extends CharacterModel implements Updatable {
             counter++;
         
         if (state == GhostState.RUNNING && counter == RUNNING_TIME*0.8)
-            state = GhostState.RUNNING_END;
+            setState(GhostState.RUNNING_END);
         else if (state == GhostState.RUNNING_END && counter == RUNNING_TIME)
-            state = GhostState.NORMAL;
+            setState(GhostState.NORMAL);
     }
     
 }
