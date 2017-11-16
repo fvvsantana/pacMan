@@ -12,7 +12,11 @@ public abstract class CharacterModel {
     private int row;
     private int col;
     private int speed;
+    private boolean eatable;
+    private boolean running;
     private boolean moving;
+    private boolean meio;
+    
 
     // multiple constructors
     public CharacterModel(double realRow, double realCol) {
@@ -26,6 +30,7 @@ public abstract class CharacterModel {
         this.orientation = orientation;
         nextOrientation = orientation;
         moving = true;
+        meio = false;
     }
     
     // move to the defined orientation
@@ -45,7 +50,19 @@ public abstract class CharacterModel {
                 break;
         }
     }
+    public void setEatable (boolean eatable){
+        this.eatable = eatable;
+    }
+    public boolean getEatable (){
+        return eatable;
+    }
     
+    public void setRunning (boolean running){
+        this.running = running;
+    }
+    public boolean getRunning (){
+        return running;
+    }
     public void moveUp() {
         row -= speed;
     }
@@ -73,6 +90,7 @@ public abstract class CharacterModel {
     public int getSpeed() {
         return speed;
     }
+    
     
     // return the values without the factor
     public double getRealRow() {
@@ -134,5 +152,13 @@ public abstract class CharacterModel {
 
     public void setMoving(boolean moving) {
         this.moving = moving;
+    }
+    
+    public void setMeio (boolean meio){
+        this.meio = meio;
+    }
+    
+    public boolean getMeio (){
+        return meio;
     }
 }
