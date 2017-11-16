@@ -2,94 +2,77 @@ package view.characters;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
+import utils.GhostState;
 
 import utils.Position;
 import utils.Updatable;
 
 public abstract class GhostView implements Updatable {
     private final ImageView img;
-    private final Image image1;
-    private final Image image2;
-    private final Image image3;
-    private final Image image4;
-    private final Image image5;
-    private boolean running;
-    private boolean runningAway;
+    private final Image imageAlive1;
+    private final Image imageAlive2;
+    private final Image imageRunning1;
+    private final Image imageRunning2;
+    private final Image imageRunning3;
     
     private int temporaryCounter = 0;
+    
+    private GhostState state;
+    
     // contador para atualizar a imagem
     private int counter = 0;
     // numero de atualizações que deve esperar para trocar a imagem
     private static final int INTERVAL = 5;
-    private static int TEMPORARYINTERVAL;
     
     public GhostView (String imagePath1, String imagePath2, double width, double height){
-        image1 = new Image (imagePath1);
-        image2 = new Image (imagePath2);
-        image3 = new Image ("/images/ghosthollow1.png");
-        image4 = new Image ("/images/ghosthollow2.png");
-        image5 = new Image ("/images/ghosthollow3.png");
-        img = new ImageView(imagePath1);
+        imageAlive1 = new Image (imagePath1);
+        imageAlive2 = new Image (imagePath2);
+        imageRunning1 = new Image ("/images/ghosthollow1.png");
+        imageRunning2 = new Image ("/images/ghosthollow2.png");
+        imageRunning3 = new Image ("/images/ghosthollow3.png");
+        img = new ImageView(imageAlive1);
         img.setFitWidth(width);
         img.setFitHeight(height);
         
-        running = false;
-        runningAway = false;
+        state = GhostState.NORMAL;
     }
     
-    public void setRunning(boolean running){
-        this.running = running;
+    public GhostState getState() {
+        return state;
     }
-    
-    public boolean getRunning (){
-        return running;
+
+    public void setState(GhostState state) {
+        this.state = state;
     }
-    public void setRunningAway(boolean runningAway){
-        this.runningAway = runningAway;
-    }
-    
-    public boolean getRunningAway (){
-        return runningAway;
-    }
-    
-    
     
     @Override
     public void update() {
-        if (!runningAway && !running){
-            
-            if (counter == INTERVAL) {
-                img.setImage((image2));
-            } else if (counter == INTERVAL*2) {
-                img.setImage(image1);
-                counter = 0;
-            }
-            temporaryCounter = 0;
-            
-        }else if (runningAway && !running){
-            if (temporaryCounter <= 360){
-                if (counter == INTERVAL) {
-                    img.setImage(image4);
-                } else if (counter == INTERVAL*2) {
-                    img.setImage(image5);
-                    counter = 0;
-                }
-            }else if ((temporaryCounter > 360) && (temporaryCounter <= 720)) {
-                if (counter == INTERVAL) {
-                    img.setImage(image3);
-                } else if (counter == INTERVAL*2) {
-                    img.setImage(image5);
-                    counter = 0;
-                }
-            }else if (temporaryCounter > 720){
-                runningAway = false;
-                running = false;
-                temporaryCounter = 0;
-            }
-        }else if(!runningAway && running)  img.setImage(image3);
-        
-        temporaryCounter++;
-        
+        // alterna entre duas imagens de acordo com o estado atual
+        Image image1, image2;
+        switch (state) {
+            case RUNNING:
+                image1 = imageRunning2;
+                image2 = imageRunning3;
+                break;
+            case RUNNING_END:
+                image1 = imageRunning1;
+                image2 = imageRunning2;
+                break;
+            case DEAD:
+                image1 = imageRunning1;
+                image2 = imageRunning1;
+                break;
+            default:
+                image1 = imageAlive1;
+                image2 = imageAlive2;
+                break;
+        }
+        if (counter == INTERVAL) {
+            img.setImage((image2));
+        } else if (counter == INTERVAL * 2) {
+            img.setImage(image1);
+            counter = 0;
+        }
         counter++;
     }
      
