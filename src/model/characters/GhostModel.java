@@ -1,24 +1,22 @@
 package model.characters;
 
+import utils.GhostState;
+
 public class GhostModel extends CharacterModel {
     
-    public enum State {
-        NORMAL, RUNNING, DEAD;
-    }
-    
-    private State state;
+    private GhostState state;
     
     public GhostModel(double realRow, double realCol) {
         super(realRow, realCol);
         
-        state = State.NORMAL;
+        state = GhostState.NORMAL;
     }
 
-    public State getState() {
+    public GhostState getState() {
         return state;
     }
 
-    public void setState(State state) {
+    public void setState(GhostState state) {
         this.state = state;
     }
     
