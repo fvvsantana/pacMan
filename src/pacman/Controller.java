@@ -112,6 +112,8 @@ class Controller{
         view.addCyanGhostToTheMapContainer();
         updates.add(view.getCyanGhostView());
         
+        updates.add(pacManModel);
+        
         new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -130,6 +132,8 @@ class Controller{
                 
                 updateOrangeGhostModel();
                 updateOrangeGhostView(orangeGhostModel);
+                
+                
                 
                 updates.forEach((updatable) -> {
                     updatable.update();
@@ -226,6 +230,8 @@ class Controller{
                 view.removeCellView((int)row, (int)col);
             } else if (mapModel.getCell((int)row, (int)col) instanceof PowerPelletCellModel) {
                 /// TODO: definir fantasmas como comiveis
+                pacManModel.setPowerful(true);
+                pacManModel.setRealSpeed(2*0.0625);
                 mapModel.addCell(new EmptyCellModel(), (int)row, (int)col);
                 view.removeCellView((int)row, (int)col);
             }
@@ -261,38 +267,79 @@ class Controller{
             characterModel.setRealRow(-1);
     }
     
-    private void updateRedGhostModel(){
-        int num = rand.nextInt(4);
-        if (num == 3)
-            randomWalk(redGhostModel);
-        else
-            chasePoint(redGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
+   private void updateRedGhostModel(){
+       
+       if(!view.getRunningRedGhost() && !view.getRunningAwayRedGhost()){
+           redGhostModel.setRealSpeed(0.0625);
+           chasePoint(redGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+           
+       }else if(!view.getRunningPinkGhost() && view.getRunningAwayPinkGhost()){
+           runAwayPoint(redGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+           
+       }else if (view.getRunningRedGhost() && !view.getRunningAwayRedGhost()){
+           redGhostModel.setRealSpeed(2*0.0625);
+           chasePoint(redGhostModel, 13, 11);
+       }
+       
         updateModels(redGhostModel);
     }
     
     private void updatePinkGhostModel(){
-        if (pinkGhostModel.getRealCol() % 1 == 0 && pinkGhostModel.getRealRow() % 1 == 0){
-            System.out.println();
-            randomWalk(pinkGhostModel);
+        if(!view.getRunningPinkGhost() && !view.getRunningAwayPinkGhost()){
+            pinkGhostModel.setRealSpeed(0.0625);
+            chasePoint(pinkGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+            
+        }else if(!view.getRunningPinkGhost() && view.getRunningAwayPinkGhost()){
+            runAwayPoint(pinkGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+            
+        }else if (view.getRunningPinkGhost() && pinkGhostModel.getRealCol() == 13 && pinkGhostModel.getRealRow() == 11){
+            view.setRunningPinkGhost(false);
+            view.setRunningAwayPinkGhost(false);
+            
+        }else if (view.getRunningPinkGhost()){
+            chasePoint(pinkGhostModel, 13, 11);
+            pinkGhostModel.setRealSpeed(2*0.0625);
         }
         updateModels(pinkGhostModel);
     }
     
     private void updateCyanGhostModel(){
-        int num = rand.nextInt(4);
-        if (DistanceBetweenCharacters(cyanGhostModel, redGhostModel) < maxdist && num != 3)
-            chasePoint(cyanGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
-        else
-            randomWalk(cyanGhostModel);
+        if(!view.getRunningCyanGhost()){
+           cyanGhostModel.setRealSpeed(0.0625);
+           chasePoint(cyanGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+           
+       }else if(!view.getRunningCyanGhost() && view.getRunningAwayCyanGhost()){
+           runAwayPoint(cyanGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+           
+       }else if (view.getRunningCyanGhost() && cyanGhostModel.getRealCol()== 13  && cyanGhostModel.getRealRow() == 11){
+           view.setRunningCyanGhost(false);
+           view.setRunningAwayCyanGhost(false);
+           
+       }else if (view.getRunningCyanGhost()){
+           cyanGhostModel.setRealSpeed(2*0.0625);
+           chasePoint(cyanGhostModel, 13, 11);
+       }
+      
         updateModels(cyanGhostModel);
     }
     
     private void updateOrangeGhostModel(){
-        int num = rand.nextInt(4);
-        if (DistanceBetweenCharacters(orangeGhostModel, pacManModel) > maxdist && num != 3)
-            chasePoint(orangeGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
-        else
-            randomWalk(orangeGhostModel);
+        if(!view.getRunningOrangeGhost()){
+           orangeGhostModel.setRealSpeed(0.0625);
+           chasePoint(orangeGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+           
+       }else if(!view.getRunningOrangeGhost() && view.getRunningAwayOrangeGhost()){
+           runAwayPoint(orangeGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+           
+       }else if (view.getRunningOrangeGhost() && orangeGhostModel.getRealCol()== 13  && orangeGhostModel.getRealRow() == 11){
+           view.setRunningOrangeGhost(false);
+           view.setRunningAwayOrangeGhost(false);
+           
+       }else if (view.getRunningOrangeGhost()){
+           orangeGhostModel.setRealSpeed(2*0.0625);
+           chasePoint(orangeGhostModel, 13, 11);
+       }
+      
         updateModels(orangeGhostModel);
     }
     
@@ -300,29 +347,61 @@ class Controller{
     public void updatePacManView(PacManModel pacManModel){
         view.getPacManView().setPosition(view.getGrid().getCellPosition(pacManModel.getRealRow(), pacManModel.getRealCol()));
         view.getPacManView().setOrientation(pacManModel.getOrientation());
+        
         if (pacManModel.isMoving())
             view.getPacManView().updateArc();
     }
             
     public void updateRedGhostView(RedGhostModel redGhostModel){
+        
         view.getRedGhostView().setPosition(view.getGrid().getCellPosition(redGhostModel.getRealRow(), redGhostModel.getRealCol()));
+        
+        
+        if (pacManModel.getPowerful() && !view.getRunningRedGhost() && !view.getRunningAwayRedGhost()){
+            view.setRunningRedGhost(false);
+            view.setRunningAwayRedGhost(true);
+        }
+        else if ((DistanceBetweenCharacters(pacManModel,redGhostModel) <= 90) && pacManModel.getPowerful() && !view.getRunningRedGhost()) {
+            view.setRunningRedGhost(true);
+            view.setRunningAwayRedGhost(false);
+        }
+        else if ( (!pacManModel.getPowerful()) || 
+                  (view.getRunningRedGhost() && redGhostModel.getRealCol()== 13  && redGhostModel.getRealRow() == 11)){
+           view.setRunningRedGhost(false);
+           view.setRunningAwayRedGhost(false);
+       }
+        
     }        
     
     public void updatePinkGhostView(PinkGhostModel pinkGhostModel){
         view.getPinkGhostView().setPosition(view.getGrid().getCellPosition(pinkGhostModel.getRealRow(), pinkGhostModel.getRealCol()));
+        
+        if ((DistanceBetweenCharacters(pacManModel, pinkGhostModel) <= 90) && pacManModel.getPowerful() ) view.setRunningPinkGhost(true);
+        else if (pacManModel.getPowerful()) view.setRunningAwayPinkGhost(true);
+        else if (!pacManModel.getPowerful()) view.setRunningAwayPinkGhost(false);
     }
     
     public void updateCyanGhostView(CyanGhostModel cyanGhostModel){
         view.getCyanGhostView().setPosition(view.getGrid().getCellPosition(cyanGhostModel.getRealRow(), cyanGhostModel.getRealCol()));
+                
+        if ((DistanceBetweenCharacters(pacManModel,cyanGhostModel) <= 90) && pacManModel.getPowerful() ) view.setRunningCyanGhost(true);
+        else if (pacManModel.getPowerful()) view.setRunningAwayCyanGhost(true);
+        else if (!pacManModel.getPowerful()) view.setRunningAwayCyanGhost(false);
     }
     
     public void updateOrangeGhostView(OrangeGhostModel orangeGhostModel){
+        
         view.getOrangeGhostView().setPosition(view.getGrid().getCellPosition(orangeGhostModel.getRealRow(), orangeGhostModel.getRealCol()));
+        
+        if ((DistanceBetweenCharacters(pacManModel,orangeGhostModel) <= 90) && pacManModel.getPowerful() ) view.setRunningOrangeGhost(true);
+        else if (pacManModel.getPowerful()) view.setRunningAwayOrangeGhost(true);
+        else if (!pacManModel.getPowerful()) view.setRunningAwayOrangeGhost(false);
+       
     }
 
     public int DistanceBetweenCharacters (CharacterModel characterModel1, CharacterModel characterModel2){
-        return (int)Math.sqrt(Math.pow(characterModel1.getCol()-characterModel2.getCol(),2) +
-                              Math.pow(characterModel1.getRow()-characterModel2.getRow(),2));
+        return ((int)Math.sqrt(Math.pow(characterModel1.getCol()-characterModel2.getCol(),2) +
+                              Math.pow(characterModel1.getRow()-characterModel2.getRow(),2))  );
     }
 
     public void randomWalk(CharacterModel characterModel){
@@ -349,11 +428,11 @@ class Controller{
         characterModel.setNextOrientation(orientations.get(num));
         
     }
-    
-    public void chasePoint(CharacterModel characterModel, double xPoint, double yPoint){
         
-        double x = characterModel.getCol()- xPoint * CharacterModel.FACTOR;
-        double y = characterModel.getRow() - yPoint * CharacterModel.FACTOR;
+    public void runAwayPoint(CharacterModel characterModel, double xPoint, double yPoint){
+        
+        double x = - characterModel.getCol() + xPoint * CharacterModel.FACTOR;
+        double y = - characterModel.getRow() + yPoint * CharacterModel.FACTOR;
         
         switch (characterModel.getOrientation()){
             case UP:
@@ -363,15 +442,14 @@ class Controller{
                     else
                         characterModel.setNextOrientation(Orientation.RIGHT);
                 }else{
-                    if (y > 0)
+                    if (x > 0)
                         characterModel.setNextOrientation(Orientation.LEFT);
-                    else if (y < 0)
+                    else if (x < 0)
                         characterModel.setNextOrientation(Orientation.RIGHT);
                     else
                         characterModel.setNextOrientation(Orientation.UP);
                 }
-                break;
-                
+                break;     
             case DOWN:
                 if (!characterModel.isMoving()){
                     if (!checkCollisionOrientation(characterModel, Orientation.LEFT))
@@ -379,14 +457,15 @@ class Controller{
                     else
                         characterModel.setNextOrientation(Orientation.RIGHT);
                 }else{
-                    if (y > 0)
+                    if (x > 0)
                         characterModel.setNextOrientation(Orientation.LEFT);
-                    else if (y < 0)
+                    else if (x < 0)
                         characterModel.setNextOrientation(Orientation.RIGHT);
                     else
                         characterModel.setNextOrientation(Orientation.DOWN);
                 }
                 break;
+                
                 
             case LEFT:
                 if (!characterModel.isMoving()){
@@ -395,9 +474,9 @@ class Controller{
                     else
                         characterModel.setNextOrientation(Orientation.DOWN);
                 }else{
-                    if (x > 0)
+                    if (y > 0)
                         characterModel.setNextOrientation(Orientation.UP);
-                    else if (x < 0)
+                    else if (y < 0)
                         characterModel.setNextOrientation(Orientation.DOWN);
                     else
                         characterModel.setNextOrientation(Orientation.LEFT);
@@ -411,9 +490,81 @@ class Controller{
                     else
                         characterModel.setNextOrientation(Orientation.DOWN);
                 }else{
-                    if (x > 0)
+                    if (y > 0)
                         characterModel.setNextOrientation(Orientation.UP);
+                    else if (y < 0)
+                        characterModel.setNextOrientation(Orientation.DOWN);
+                    else
+                        characterModel.setNextOrientation(Orientation.RIGHT);
+                }
+                break;
+        }
+    }
+    
+    public void chasePoint(CharacterModel characterModel, double xPoint, double yPoint){
+        
+        double x = characterModel.getCol() - xPoint * CharacterModel.FACTOR;
+        double y = characterModel.getRow() - yPoint * CharacterModel.FACTOR;
+        
+        switch (characterModel.getOrientation()){
+            case UP:
+                if (!characterModel.isMoving()){
+                    if (!checkCollisionOrientation(characterModel, Orientation.LEFT))
+                        characterModel.setNextOrientation(Orientation.LEFT);
+                    else
+                        characterModel.setNextOrientation(Orientation.RIGHT);
+                }else{
+                    if (x > 0)
+                        characterModel.setNextOrientation(Orientation.LEFT);
                     else if (x < 0)
+                        characterModel.setNextOrientation(Orientation.RIGHT);
+                    else
+                        characterModel.setNextOrientation(Orientation.UP);
+                }
+                break;     
+            case DOWN:
+                if (!characterModel.isMoving()){
+                    if (!checkCollisionOrientation(characterModel, Orientation.LEFT))
+                        characterModel.setNextOrientation(Orientation.LEFT);
+                    else
+                        characterModel.setNextOrientation(Orientation.RIGHT);
+                }else{
+                    if (x > 0)
+                        characterModel.setNextOrientation(Orientation.LEFT);
+                    else if (x < 0)
+                        characterModel.setNextOrientation(Orientation.RIGHT);
+                    else
+                        characterModel.setNextOrientation(Orientation.DOWN);
+                }
+                break;
+                
+                
+            case LEFT:
+                if (!characterModel.isMoving()){
+                    if (!checkCollisionOrientation(characterModel, Orientation.UP))
+                        characterModel.setNextOrientation(Orientation.UP);
+                    else
+                        characterModel.setNextOrientation(Orientation.DOWN);
+                }else{
+                    if (y > 0)
+                        characterModel.setNextOrientation(Orientation.UP);
+                    else if (y < 0)
+                        characterModel.setNextOrientation(Orientation.DOWN);
+                    else
+                        characterModel.setNextOrientation(Orientation.LEFT);
+                }
+                break;
+                
+            case RIGHT:
+                if (!characterModel.isMoving()){
+                    if (!checkCollisionOrientation(characterModel, Orientation.UP))
+                        characterModel.setNextOrientation(Orientation.UP);
+                    else
+                        characterModel.setNextOrientation(Orientation.DOWN);
+                }else{
+                    if (y > 0)
+                        characterModel.setNextOrientation(Orientation.UP);
+                    else if (y < 0)
                         characterModel.setNextOrientation(Orientation.DOWN);
                     else
                         characterModel.setNextOrientation(Orientation.RIGHT);
