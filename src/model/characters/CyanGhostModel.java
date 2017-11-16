@@ -1,15 +1,14 @@
 package model.characters;
 
 public class CyanGhostModel extends CharacterModel{
-      boolean eatable;
+      
     
     public CyanGhostModel(double row, double col) {
         super(row, col);
-        eatable = false;
+        setEatable(false);
+        setRunning(false);
     }
 
-    public void setEatable (boolean eatable){
-        this.eatable = eatable;
-    }
+    
     
 }
