@@ -116,7 +116,7 @@ class Controller{
             @Override
             public void handle(long now) {
                 //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
-                updateModels(pacManModel);
+                updatePacManModel();
                 updatePacManView(pacManModel);
                 
                 updateRedGhostModel();
@@ -196,7 +196,7 @@ class Controller{
     }
    
     //move the pacManModel to the specified orientation 
-    private void updateModels(CharacterModel characterModel){
+    private void updateCharacterModel(CharacterModel characterModel){
 
         // verifica se esta num tunel
         if (checkTunnel(characterModel)){
@@ -215,20 +215,6 @@ class Controller{
             characterModel.move();
         } else {
             characterModel.setMoving(false);
-        }
-        
-        // verifica se está pegando um item
-        double row = pacManModel.getRealRow();
-        double col = pacManModel.getRealCol();
-        if (row%1 == 0 && col%1 == 0) {
-            if (mapModel.getCell((int)row, (int)col) instanceof PacDotCellModel) {
-                mapModel.addCell(new EmptyCellModel(), (int)row, (int)col);
-                view.removeCellView((int)row, (int)col);
-            } else if (mapModel.getCell((int)row, (int)col) instanceof PowerPelletCellModel) {
-                /// TODO: definir fantasmas como comiveis
-                mapModel.addCell(new EmptyCellModel(), (int)row, (int)col);
-                view.removeCellView((int)row, (int)col);
-            }
         }
     } 
     
@@ -261,13 +247,33 @@ class Controller{
             characterModel.setRealRow(-1);
     }
     
+    public void updatePacManModel(){
+        updateCharacterModel(pacManModel);
+        
+        if (!checkTunnel(pacManModel)){
+            // verifica se está pegando um item
+            double row = pacManModel.getRealRow();
+            double col = pacManModel.getRealCol();
+            if (row%1 == 0 && col%1 == 0) {
+                if (mapModel.getCell((int)row, (int)col) instanceof PacDotCellModel) {
+                    mapModel.addCell(new EmptyCellModel(), (int)row, (int)col);
+                    view.removeCellView((int)row, (int)col);
+                } else if (mapModel.getCell((int)row, (int)col) instanceof PowerPelletCellModel) {
+                    /// TODO: definir fantasmas como comiveis
+                    mapModel.addCell(new EmptyCellModel(), (int)row, (int)col);
+                    view.removeCellView((int)row, (int)col);
+                }
+            }
+        }
+    }
+    
     private void updateRedGhostModel(){
         int num = rand.nextInt(4);
         if (num == 3)
             randomWalk(redGhostModel);
         else
             chasePoint(redGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
-        updateModels(redGhostModel);
+        updateCharacterModel(redGhostModel);
     }
     
     private void updatePinkGhostModel(){
@@ -275,7 +281,7 @@ class Controller{
             System.out.println();
             randomWalk(pinkGhostModel);
         }
-        updateModels(pinkGhostModel);
+        updateCharacterModel(pinkGhostModel);
     }
     
     private void updateCyanGhostModel(){
@@ -284,7 +290,7 @@ class Controller{
             chasePoint(cyanGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
         else
             randomWalk(cyanGhostModel);
-        updateModels(cyanGhostModel);
+        updateCharacterModel(cyanGhostModel);
     }
     
     private void updateOrangeGhostModel(){
@@ -293,7 +299,7 @@ class Controller{
             chasePoint(orangeGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
         else
             randomWalk(orangeGhostModel);
-        updateModels(orangeGhostModel);
+        updateCharacterModel(orangeGhostModel);
     }
     
     //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
