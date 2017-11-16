@@ -333,7 +333,7 @@ class Controller{
                 runAwayPoint(redGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
                 break;
             case DEAD:
-                redGhostModel.setRealSpeed(2 * 0.0625);
+                redGhostModel.setRealSpeed(0.0625);
                 chasePoint(redGhostModel, 11, 13);
                 if (redGhostModel.getRealRow() == 11 && redGhostModel.getRealCol() == 13)
                     redGhostModel.setState(GhostState.NORMAL);
@@ -354,7 +354,7 @@ class Controller{
                 runAwayPoint(pinkGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
                 break;
             case DEAD:
-                pinkGhostModel.setRealSpeed(2 * 0.0625);
+                pinkGhostModel.setRealSpeed(0.0625);
                 chasePoint(pinkGhostModel, 11, 13);
                 if (pinkGhostModel.getRealRow() == 11 && pinkGhostModel.getRealCol() == 13)
                     pinkGhostModel.setState(GhostState.NORMAL);
@@ -375,7 +375,7 @@ class Controller{
                 runAwayPoint(cyanGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
                 break;
             case DEAD:
-                cyanGhostModel.setRealSpeed(2 * 0.0625);
+                cyanGhostModel.setRealSpeed(0.0625);
                 chasePoint(cyanGhostModel, 11, 13);
                 if (cyanGhostModel.getRealRow() == 11 && cyanGhostModel.getRealCol() == 13)
                     cyanGhostModel.setState(GhostState.NORMAL);
@@ -396,7 +396,7 @@ class Controller{
                 runAwayPoint(orangeGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
                 break;
             case DEAD:
-                orangeGhostModel.setRealSpeed(2 * 0.0625);
+                orangeGhostModel.setRealSpeed(0.0625);
                 chasePoint(orangeGhostModel, 11, 13);
                 if (orangeGhostModel.getRealRow() == 11 && orangeGhostModel.getRealCol() == 13)
                     orangeGhostModel.setState(GhostState.NORMAL);
