@@ -30,6 +30,7 @@ import model.characters.PacManModel;
 import model.characters.GhostModel;
 import model.grid.EmptyCellModel;
 import utils.AudioManager;
+import utils.GhostState;
 
 import utils.Orientation;
 import utils.Updatable;
@@ -39,6 +40,7 @@ import view.characters.RedGhostView;
 import view.characters.PinkGhostView;
 import view.characters.OrangeGhostView;
 import view.characters.CyanGhostView;
+import view.characters.GhostView;
 
 class Controller{
     private View view;
@@ -78,10 +80,19 @@ class Controller{
 
         //create a PacManModel setting his position as (23, 13)
         pacManModel = new PacManModel(23, 13);
+        
+        //create the ghosts models and add their updates
         redGhostModel = new GhostModel(25,20);
+        updates.add(redGhostModel);
+        
         pinkGhostModel = new GhostModel(20,2);
+        updates.add(pinkGhostModel);
+        
         orangeGhostModel = new GhostModel(2,20);
+        updates.add(orangeGhostModel);
+        
         cyanGhostModel = new GhostModel(20,20);
+        updates.add(cyanGhostModel);
 
         //add a controller to the PacManModel
         addPacManModelController(view.getScene());
@@ -113,20 +124,20 @@ class Controller{
             @Override
             public void handle(long now) {
                 //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
-                updateModels(pacManModel);
+                updatePacmanModel(pacManModel);
                 updatePacManView(pacManModel);
                 
                 updateRedGhostModel();
-                updateRedGhostView(redGhostModel);
+                updateGhostView(redGhostModel, view.getRedGhostView());
                 
                 updatePinkGhostModel();
-                updatePinkGhostView(pinkGhostModel);
+                updateGhostView(pinkGhostModel, view.getPinkGhostView());
                 
                 updateCyanGhostModel();
-                updateCyanGhostView(cyanGhostModel);
+                updateGhostView(cyanGhostModel, view.getCyanGhostView());
                 
                 updateOrangeGhostModel();
-                updateOrangeGhostView(orangeGhostModel);
+                updateGhostView(orangeGhostModel, view.getOrangeGhostView());
                 
                 
                 
@@ -195,7 +206,7 @@ class Controller{
     }
    
     //move the pacManModel to the specified orientation 
-    private void updateModels(CharacterModel characterModel){
+    private void updateChracterModel(CharacterModel characterModel){
 
         // verifica se esta num tunel
         if (checkTunnel(characterModel)){
@@ -215,23 +226,62 @@ class Controller{
         } else {
             characterModel.setMoving(false);
         }
+    } 
+    
+    private void updatePacmanModel (PacManModel pacManModel) {
+        
+        updateChracterModel(pacManModel);
         
         // verifica se está pegando um item
-        double row = pacManModel.getRealRow();
-        double col = pacManModel.getRealCol();
-        if (row%1 == 0 && col%1 == 0) {
-            if (mapModel.getCell((int)row, (int)col) instanceof PacDotCellModel) {
-                mapModel.addCell(new EmptyCellModel(), (int)row, (int)col);
-                view.removeCellView((int)row, (int)col);
-            } else if (mapModel.getCell((int)row, (int)col) instanceof PowerPelletCellModel) {
-                /// TODO: definir fantasmas como comiveis
-                pacManModel.setPowerful(true);
-                pacManModel.setRealSpeed(2*0.0625);
-                mapModel.addCell(new EmptyCellModel(), (int)row, (int)col);
-                view.removeCellView((int)row, (int)col);
+        if (!checkTunnel(pacManModel)) {
+            double row = pacManModel.getRealRow();
+            double col = pacManModel.getRealCol();
+            if (row % 1 == 0 && col % 1 == 0) {
+                // caso seja uma pacdot normal
+                if (mapModel.getCell((int) row, (int) col) instanceof PacDotCellModel) {
+                    mapModel.addCell(new EmptyCellModel(), (int) row, (int) col);
+                    view.removeCellView((int) row, (int) col);
+                } // caso seja uma power pellet
+                else if (mapModel.getCell((int) row, (int) col) instanceof PowerPelletCellModel) {
+
+                    // marca o pacman como poderoso
+                    pacManModel.setPowerful(true);
+                    pacManModel.setRealSpeed(2 * 0.0625);
+
+                    // muda o estado dos fantasmas para fugindo
+                    redGhostModel.startRunning();
+                    pinkGhostModel.startRunning();
+                    cyanGhostModel.startRunning();
+                    orangeGhostModel.startRunning();
+
+                    mapModel.addCell(new EmptyCellModel(), (int) row, (int) col);
+                    view.removeCellView((int) row, (int) col);
+                }
             }
         }
-    } 
+        
+        // verifica se está colidindo com um fantasma
+        if (checkCollisionCharacters(pacManModel, redGhostModel)) {
+            if (redGhostModel.isEatable()) {
+                redGhostModel.setState(GhostState.DEAD);
+            }
+        }
+        if (checkCollisionCharacters(pacManModel, pinkGhostModel)) {
+            if (pinkGhostModel.isEatable()) {
+                pinkGhostModel.setState(GhostState.DEAD);
+            }
+        }
+        if (checkCollisionCharacters(pacManModel, cyanGhostModel)) {
+            if (cyanGhostModel.isEatable()) {
+                cyanGhostModel.setState(GhostState.DEAD);
+            }
+        }
+        if (checkCollisionCharacters(pacManModel, orangeGhostModel)) {
+            if (orangeGhostModel.isEatable()) {
+                orangeGhostModel.setState(GhostState.DEAD);
+            }
+        }
+    }
     
     public boolean checkTunnel(CharacterModel characterModel) {
         double row = characterModel.getRealRow();
@@ -261,81 +311,98 @@ class Controller{
         else if (characterModel.getRealRow() > mapModel.getRows())
             characterModel.setRealRow(-1);
     }
+
+    public double distanceBetweenCharacters (CharacterModel characterModel1, CharacterModel characterModel2){
+        return (Math.sqrt(Math.pow(characterModel1.getRealCol()-characterModel2.getRealCol(),2) +
+                              Math.pow(characterModel1.getRealRow()-characterModel2.getRealRow(),2)));
+    }
     
-   private void updateRedGhostModel(){
-       
-       if(!view.getRunningRedGhost() && !view.getRunningAwayRedGhost()){
-           redGhostModel.setRealSpeed(0.0625);
-           chasePoint(redGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
-           
-       }else if(!view.getRunningPinkGhost() && view.getRunningAwayPinkGhost()){
-           runAwayPoint(redGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
-           
-       }else if (view.getRunningRedGhost() && !view.getRunningAwayRedGhost()){
-           redGhostModel.setRealSpeed(2*0.0625);
-           chasePoint(redGhostModel, 13, 11);
-       }
-       
-        updateModels(redGhostModel);
+    public boolean checkCollisionCharacters (CharacterModel characterModel1, CharacterModel characterModel2){
+        return distanceBetweenCharacters(characterModel1, characterModel2) < 1;
+    }
+    
+    private void updateRedGhostModel(){
+        // atualiza a posicao de acordo com o estado atual
+        switch (redGhostModel.getState()) {
+            case NORMAL:
+                redGhostModel.setRealSpeed(0.0625);
+                chasePoint(redGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+                break;
+            case RUNNING:
+            case RUNNING_END:
+                runAwayPoint(redGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+                break;
+            case DEAD:
+                redGhostModel.setRealSpeed(2 * 0.0625);
+                chasePoint(redGhostModel, 11, 13);
+                if (redGhostModel.getRealRow() == 11 && redGhostModel.getRealCol() == 13)
+                    redGhostModel.setState(GhostState.NORMAL);
+                break;
+        }
+        updateChracterModel(redGhostModel);
     }
     
     private void updatePinkGhostModel(){
-        if(!view.getRunningPinkGhost() && !view.getRunningAwayPinkGhost()){
-            pinkGhostModel.setRealSpeed(0.0625);
-            chasePoint(pinkGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
-            
-        }else if(!view.getRunningPinkGhost() && view.getRunningAwayPinkGhost()){
-            runAwayPoint(pinkGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
-            
-        }else if (view.getRunningPinkGhost() && pinkGhostModel.getRealCol() == 13 && pinkGhostModel.getRealRow() == 11){
-            view.setRunningPinkGhost(false);
-            view.setRunningAwayPinkGhost(false);
-            
-        }else if (view.getRunningPinkGhost()){
-            chasePoint(pinkGhostModel, 13, 11);
-            pinkGhostModel.setRealSpeed(2*0.0625);
+        // atualiza a posicao de acordo com o estado atual
+        switch (pinkGhostModel.getState()) {
+            case NORMAL:
+                pinkGhostModel.setRealSpeed(0.0625);
+                chasePoint(pinkGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+                break;
+            case RUNNING:
+            case RUNNING_END:
+                runAwayPoint(pinkGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+                break;
+            case DEAD:
+                pinkGhostModel.setRealSpeed(2 * 0.0625);
+                chasePoint(pinkGhostModel, 11, 13);
+                if (pinkGhostModel.getRealRow() == 11 && pinkGhostModel.getRealCol() == 13)
+                    pinkGhostModel.setState(GhostState.NORMAL);
+                break;
         }
-        updateModels(pinkGhostModel);
+        updateChracterModel(pinkGhostModel);
     }
     
     private void updateCyanGhostModel(){
-        if(!view.getRunningCyanGhost()){
-           cyanGhostModel.setRealSpeed(0.0625);
-           chasePoint(cyanGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
-           
-       }else if(!view.getRunningCyanGhost() && view.getRunningAwayCyanGhost()){
-           runAwayPoint(cyanGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
-           
-       }else if (view.getRunningCyanGhost() && cyanGhostModel.getRealCol()== 13  && cyanGhostModel.getRealRow() == 11){
-           view.setRunningCyanGhost(false);
-           view.setRunningAwayCyanGhost(false);
-           
-       }else if (view.getRunningCyanGhost()){
-           cyanGhostModel.setRealSpeed(2*0.0625);
-           chasePoint(cyanGhostModel, 13, 11);
-       }
-      
-        updateModels(cyanGhostModel);
+        // atualiza a posicao de acordo com o estado atual
+        switch (cyanGhostModel.getState()) {
+            case NORMAL:
+                cyanGhostModel.setRealSpeed(0.0625);
+                chasePoint(cyanGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+                break;
+            case RUNNING:
+            case RUNNING_END:
+                runAwayPoint(cyanGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+                break;
+            case DEAD:
+                cyanGhostModel.setRealSpeed(2 * 0.0625);
+                chasePoint(cyanGhostModel, 11, 13);
+                if (cyanGhostModel.getRealRow() == 11 && cyanGhostModel.getRealCol() == 13)
+                    cyanGhostModel.setState(GhostState.NORMAL);
+                break;
+        }
+        updateChracterModel(cyanGhostModel);
     }
     
     private void updateOrangeGhostModel(){
-        if(!view.getRunningOrangeGhost()){
-           orangeGhostModel.setRealSpeed(0.0625);
-           chasePoint(orangeGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
-           
-       }else if(!view.getRunningOrangeGhost() && view.getRunningAwayOrangeGhost()){
-           runAwayPoint(orangeGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
-           
-       }else if (view.getRunningOrangeGhost() && orangeGhostModel.getRealCol()== 13  && orangeGhostModel.getRealRow() == 11){
-           view.setRunningOrangeGhost(false);
-           view.setRunningAwayOrangeGhost(false);
-           
-       }else if (view.getRunningOrangeGhost()){
-           orangeGhostModel.setRealSpeed(2*0.0625);
-           chasePoint(orangeGhostModel, 13, 11);
-       }
-      
-        updateModels(orangeGhostModel);
+        // atualiza a posicao de acordo com o estado atual
+        switch (orangeGhostModel.getState()) {
+            case NORMAL:
+                orangeGhostModel.setRealSpeed(0.0625);
+                chasePoint(orangeGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+                break;
+            case RUNNING:
+            case RUNNING_END:
+                runAwayPoint(orangeGhostModel, pacManModel.getRealCol(), pacManModel.getRealRow());
+                break;
+            case DEAD:
+                orangeGhostModel.setRealSpeed(2 * 0.0625);
+                chasePoint(orangeGhostModel, 11, 13);
+                if (orangeGhostModel.getRealRow() == 11 && orangeGhostModel.getRealCol() == 13)
+                    orangeGhostModel.setState(GhostState.NORMAL);
+                break;
+        }
+        updateChracterModel(orangeGhostModel);
     }
     
     //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
@@ -347,56 +414,11 @@ class Controller{
             view.getPacManView().updateArc();
     }
             
-    public void updateRedGhostView(GhostModel redGhostModel){
+    public void updateGhostView(GhostModel ghostModel, GhostView ghostView){
         
-        view.getRedGhostView().setPosition(view.getGrid().getCellPosition(redGhostModel.getRealRow(), redGhostModel.getRealCol()));
+        ghostView.setPosition(view.getGrid().getCellPosition(ghostModel.getRealRow(), ghostModel.getRealCol()));
         
-        
-        if (pacManModel.getPowerful() && !view.getRunningRedGhost() && !view.getRunningAwayRedGhost()){
-            view.setRunningRedGhost(false);
-            view.setRunningAwayRedGhost(true);
-        }
-        else if ((DistanceBetweenCharacters(pacManModel,redGhostModel) <= 90) && pacManModel.getPowerful() && !view.getRunningRedGhost()) {
-            view.setRunningRedGhost(true);
-            view.setRunningAwayRedGhost(false);
-        }
-        else if ( (!pacManModel.getPowerful()) || 
-                  (view.getRunningRedGhost() && redGhostModel.getRealCol()== 13  && redGhostModel.getRealRow() == 11)){
-           view.setRunningRedGhost(false);
-           view.setRunningAwayRedGhost(false);
-       }
-        
-    }        
-    
-    public void updatePinkGhostView(GhostModel pinkGhostModel){
-        view.getPinkGhostView().setPosition(view.getGrid().getCellPosition(pinkGhostModel.getRealRow(), pinkGhostModel.getRealCol()));
-        
-        if ((DistanceBetweenCharacters(pacManModel, pinkGhostModel) <= 90) && pacManModel.getPowerful() ) view.setRunningPinkGhost(true);
-        else if (pacManModel.getPowerful()) view.setRunningAwayPinkGhost(true);
-        else if (!pacManModel.getPowerful()) view.setRunningAwayPinkGhost(false);
-    }
-    
-    public void updateCyanGhostView(GhostModel cyanGhostModel){
-        view.getCyanGhostView().setPosition(view.getGrid().getCellPosition(cyanGhostModel.getRealRow(), cyanGhostModel.getRealCol()));
-                
-        if ((DistanceBetweenCharacters(pacManModel,cyanGhostModel) <= 90) && pacManModel.getPowerful() ) view.setRunningCyanGhost(true);
-        else if (pacManModel.getPowerful()) view.setRunningAwayCyanGhost(true);
-        else if (!pacManModel.getPowerful()) view.setRunningAwayCyanGhost(false);
-    }
-    
-    public void updateOrangeGhostView(GhostModel orangeGhostModel){
-        
-        view.getOrangeGhostView().setPosition(view.getGrid().getCellPosition(orangeGhostModel.getRealRow(), orangeGhostModel.getRealCol()));
-        
-        if ((DistanceBetweenCharacters(pacManModel,orangeGhostModel) <= 90) && pacManModel.getPowerful() ) view.setRunningOrangeGhost(true);
-        else if (pacManModel.getPowerful()) view.setRunningAwayOrangeGhost(true);
-        else if (!pacManModel.getPowerful()) view.setRunningAwayOrangeGhost(false);
-       
-    }
-
-    public int DistanceBetweenCharacters (CharacterModel characterModel1, CharacterModel characterModel2){
-        return ((int)Math.sqrt(Math.pow(characterModel1.getCol()-characterModel2.getCol(),2) +
-                              Math.pow(characterModel1.getRow()-characterModel2.getRow(),2))  );
+        ghostView.setState(ghostModel.getState());
     }
 
     public void randomWalk(CharacterModel characterModel){
