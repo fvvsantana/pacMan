@@ -91,6 +91,60 @@ public class View{
         mapContainer.getChildren().add(pinkGhostView.getImg());
     }  
     
+    
+    public void setRunningOrangeGhost(boolean running){
+        orangeGhostView.setRunning(running);
+    }
+    public void setRunningRedGhost(boolean running){
+        redGhostView.setRunning(running);
+    }
+    public void setRunningCyanGhost(boolean running){
+        cyanGhostView.setRunning (running);
+    }
+    public void setRunningPinkGhost(boolean running){
+        pinkGhostView.setRunning(running);
+    }
+    
+    public void setRunningAwayOrangeGhost(boolean running){
+        orangeGhostView.setRunningAway(running);
+    }
+    public void setRunningAwayRedGhost(boolean running){
+        redGhostView.setRunningAway(running);
+    }
+    public void setRunningAwayCyanGhost(boolean running){
+        cyanGhostView.setRunningAway(running);
+    }
+    public void setRunningAwayPinkGhost(boolean running){
+        pinkGhostView.setRunningAway(running);
+    }
+    
+    public boolean getRunningOrangeGhost (){
+        return orangeGhostView.getRunning();
+    }
+    public boolean getRunningPinkGhost (){
+        return pinkGhostView.getRunning();
+    }
+    public boolean getRunningCyanGhost (){
+        return cyanGhostView.getRunning();
+    }
+    public boolean getRunningRedGhost (){
+        return redGhostView.getRunning();
+    }
+    
+    public boolean getRunningAwayOrangeGhost (){
+        return orangeGhostView.getRunningAway();
+    }
+    public boolean getRunningAwayPinkGhost (){
+        return pinkGhostView.getRunningAway();
+    }
+    public boolean getRunningAwayCyanGhost (){
+        return cyanGhostView.getRunningAway();
+    }
+    public boolean getRunningAwayRedGhost (){
+        return redGhostView.getRunningAway();
+    }
+    
+    
 
     //update the screen
     public void show(){
