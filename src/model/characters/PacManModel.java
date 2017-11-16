@@ -5,25 +5,20 @@ import java.util.ArrayList;
 import utils.Updatable;
 
 public class PacManModel extends CharacterModel implements Updatable{
+    
     private int score;
     private int lives;
     private int counter = 0;
     private boolean powerful;
-
-    
-        
-        
     private ArrayList<FruitModel> fruits;
     
     public PacManModel(double row, double col) {
         super(row, col);
         score = 0;
         lives = 3;
+        powerful = false;
         fruits = new ArrayList<>();
-        setEatable(false);
-        setRunning(false);
     }
-    
     
     public void setPowerful(boolean powerful){
         this.powerful = powerful;
@@ -58,8 +53,8 @@ public class PacManModel extends CharacterModel implements Updatable{
             counter++;
         }
     }
-        
-    }
+    
+}
     
     
     

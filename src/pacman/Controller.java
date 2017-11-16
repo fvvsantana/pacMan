@@ -27,10 +27,7 @@ import model.grid.PacDotCellModel;
 import model.grid.PowerPelletCellModel;
 
 import model.characters.PacManModel;
-import model.characters.RedGhostModel;
-import model.characters.PinkGhostModel;
-import model.characters.OrangeGhostModel;
-import model.characters.CyanGhostModel;
+import model.characters.GhostModel;
 import model.grid.EmptyCellModel;
 import utils.AudioManager;
 
@@ -47,16 +44,14 @@ class Controller{
     private View view;
     private GridModel mapModel;
     private PacManModel pacManModel;
-    private RedGhostModel redGhostModel;
-    private PinkGhostModel pinkGhostModel;
-    private OrangeGhostModel orangeGhostModel;
-    private CyanGhostModel cyanGhostModel;
+    private GhostModel redGhostModel;
+    private GhostModel pinkGhostModel;
+    private GhostModel orangeGhostModel;
+    private GhostModel cyanGhostModel;
     private AudioManager audioManager;
     private ArrayList<Updatable> updates;
     
     private final Random rand = new Random();
-    private final int maxrand = 10000;
-    private final int maxdist = 8 * CharacterModel.FACTOR;
     
     public void run(Stage primaryStage){
         
@@ -83,10 +78,10 @@ class Controller{
 
         //create a PacManModel setting his position as (23, 13)
         pacManModel = new PacManModel(23, 13);
-        redGhostModel = new RedGhostModel (25,20);
-        pinkGhostModel = new PinkGhostModel (20,2);
-        orangeGhostModel = new OrangeGhostModel (2,20);
-        cyanGhostModel = new CyanGhostModel (20,20);
+        redGhostModel = new GhostModel(25,20);
+        pinkGhostModel = new GhostModel(20,2);
+        orangeGhostModel = new GhostModel(2,20);
+        cyanGhostModel = new GhostModel(20,20);
 
         //add a controller to the PacManModel
         addPacManModelController(view.getScene());
@@ -352,7 +347,7 @@ class Controller{
             view.getPacManView().updateArc();
     }
             
-    public void updateRedGhostView(RedGhostModel redGhostModel){
+    public void updateRedGhostView(GhostModel redGhostModel){
         
         view.getRedGhostView().setPosition(view.getGrid().getCellPosition(redGhostModel.getRealRow(), redGhostModel.getRealCol()));
         
@@ -373,7 +368,7 @@ class Controller{
         
     }        
     
-    public void updatePinkGhostView(PinkGhostModel pinkGhostModel){
+    public void updatePinkGhostView(GhostModel pinkGhostModel){
         view.getPinkGhostView().setPosition(view.getGrid().getCellPosition(pinkGhostModel.getRealRow(), pinkGhostModel.getRealCol()));
         
         if ((DistanceBetweenCharacters(pacManModel, pinkGhostModel) <= 90) && pacManModel.getPowerful() ) view.setRunningPinkGhost(true);
@@ -381,7 +376,7 @@ class Controller{
         else if (!pacManModel.getPowerful()) view.setRunningAwayPinkGhost(false);
     }
     
-    public void updateCyanGhostView(CyanGhostModel cyanGhostModel){
+    public void updateCyanGhostView(GhostModel cyanGhostModel){
         view.getCyanGhostView().setPosition(view.getGrid().getCellPosition(cyanGhostModel.getRealRow(), cyanGhostModel.getRealCol()));
                 
         if ((DistanceBetweenCharacters(pacManModel,cyanGhostModel) <= 90) && pacManModel.getPowerful() ) view.setRunningCyanGhost(true);
@@ -389,7 +384,7 @@ class Controller{
         else if (!pacManModel.getPowerful()) view.setRunningAwayCyanGhost(false);
     }
     
-    public void updateOrangeGhostView(OrangeGhostModel orangeGhostModel){
+    public void updateOrangeGhostView(GhostModel orangeGhostModel){
         
         view.getOrangeGhostView().setPosition(view.getGrid().getCellPosition(orangeGhostModel.getRealRow(), orangeGhostModel.getRealCol()));
         
