@@ -104,6 +104,7 @@ class Controller{
         //set PacManView in the View
         view.setPacManView(new PacManView(view.getGrid().getCellWidth()/2, view.getGrid().getCellHeight()/2));
         view.addPacManToTheMapContainer();
+        updates.add(view.getPacManView());
         
         // create the ghosts views and add their updates
         view.setRedGhostView(new RedGhostView(view.getGrid().getCellWidth(), view.getGrid().getCellHeight()));
@@ -127,7 +128,7 @@ class Controller{
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
+                //update the position and orientation on characters' models and passing to views
                 updatePacmanModel(pacManModel);
                 updatePacManView(pacManModel);
                 
@@ -420,8 +421,7 @@ class Controller{
         view.getPacManView().setPosition(view.getGrid().getCellPosition(pacManModel.getRealRow(), pacManModel.getRealCol()));
         view.getPacManView().setOrientation(pacManModel.getOrientation());
         
-        if (pacManModel.isMoving())
-            view.getPacManView().updateArc();
+        view.getPacManView().setMoving(pacManModel.isMoving());
     }
             
     public void updateGhostView(GhostModel ghostModel, GhostView ghostView){

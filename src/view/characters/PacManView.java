@@ -5,14 +5,16 @@ import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 import utils.Orientation;
 import utils.Position;
+import utils.Updatable;
 
-public class PacManView {
+public class PacManView implements Updatable {
     
     // arco que representa o pacman
     private final Arc arc;
     private final double radiusX;
     private final double radiusY;
     private boolean opening;
+    private boolean moving;
 
     public PacManView(double radiusX, double radiusY) {
         // inicia o arco
@@ -24,24 +26,7 @@ public class PacManView {
         
         this.radiusX = radiusX;
         this.radiusY = radiusY;
-    }
-    
-    // atualiza a abertura da boca do pacman
-    public void updateArc() {
-        // verifica se deve estar abrindo ou fechando
-        if (arc.getStartAngle() <= 0)
-            opening = true;
-        else if (arc.getStartAngle() >= 40)
-            opening = false;
-        
-        // realiza o movimento
-        if (opening) {
-            arc.setStartAngle(arc.getStartAngle()+2);
-            arc.setLength(arc.getLength()-4);
-        } else {
-            arc.setStartAngle(arc.getStartAngle()-2);
-            arc.setLength(arc.getLength()+4);
-        }
+        moving = false;
     }
     
     // define a posicao considerando o centro
@@ -76,11 +61,35 @@ public class PacManView {
                 arc.setRadiusX(radiusX);
                 arc.setRadiusY(radiusY);
                 break;
-
         }
     }
 
     public Arc getArc() {
         return arc;
+    }
+
+    public void setMoving(boolean moving) {
+        this.moving = moving;
+    }
+
+    // atualiza a abertura da boca do pacman
+    @Override
+    public void update() {
+        if (moving) {
+            // verifica se deve estar abrindo ou fechando
+            if (arc.getStartAngle() <= 0)
+                opening = true;
+            else if (arc.getStartAngle() >= 40)
+                opening = false;
+
+            // realiza o movimento
+            if (opening) {
+                arc.setStartAngle(arc.getStartAngle()+2);
+                arc.setLength(arc.getLength()-4);
+            } else {
+                arc.setStartAngle(arc.getStartAngle()-2);
+                arc.setLength(arc.getLength()+4);
+            }
+       }
     }
 }
