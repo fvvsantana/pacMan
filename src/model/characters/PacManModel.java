@@ -6,6 +6,9 @@ import utils.Updatable;
 
 public class PacManModel extends CharacterModel implements Updatable{
     
+    // tempo de duração do poder = 7 segundos * 60 frames por segundo
+    public static final int POWER_TIME = 420;
+    
     private int score;
     private int lives;
     private int counter = 0;
@@ -44,10 +47,10 @@ public class PacManModel extends CharacterModel implements Updatable{
     @Override
     public void update() {
         
-        if(powerful && counter == 600){
+        if(powerful && counter == POWER_TIME){
             setPowerful(false);
             counter = 0;
-        } else if(powerful && counter != 600){
+        } else if(powerful && counter != POWER_TIME){
             counter++;
         }
     }

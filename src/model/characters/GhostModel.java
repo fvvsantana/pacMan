@@ -4,9 +4,7 @@ import utils.GhostState;
 import utils.Updatable;
 
 public class GhostModel extends CharacterModel implements Updatable {
-    
-    private static final int RUNNING_TIME = 600;
-    
+        
     private GhostState state;
     private int counter = 0;
     
@@ -45,9 +43,9 @@ public class GhostModel extends CharacterModel implements Updatable {
         if (isEatable())
             counter++;
         
-        if (state == GhostState.RUNNING && counter == RUNNING_TIME*0.8)
+        if (state == GhostState.RUNNING && counter == PacManModel.POWER_TIME*0.8)
             setState(GhostState.RUNNING_END);
-        else if (state == GhostState.RUNNING_END && counter == RUNNING_TIME)
+        else if (state == GhostState.RUNNING_END && counter == PacManModel.POWER_TIME)
             setState(GhostState.NORMAL);
     }
     
