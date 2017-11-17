@@ -95,11 +95,11 @@ class Controller{
         
         cyanGhostModel = new GhostModel(20,20);
         updates.add(cyanGhostModel);
+        
+        resetCharacters();
 
         //add a controller to the PacManModel
         addPacManModelController(view.getScene());
-        
-        pacManModel.setSpeed(CharacterModel.STANDARD_SPEED);
 
         //set PacManView in the View
         view.setPacManView(new PacManView(view.getGrid().getCellWidth()/2, view.getGrid().getCellHeight()/2));
@@ -151,6 +151,15 @@ class Controller{
 
         //update the screen
         view.show();
+    }
+    
+    // define as posições e estados iniciais dos personagens
+    public void resetCharacters() {
+        pacManModel.setRealRow(mapModel.getPacmanRow());
+        pacManModel.setRealCol(mapModel.getPacmanCol());
+        
+//        redGhostModel.setRealRow(mapModel.getSpawnRow()-1);
+//        redGhostModel
     }
 
     //generate a GridView based on the passing argument GridModel

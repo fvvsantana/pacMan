@@ -1,7 +1,5 @@
 package model.grid;
 
-import utils.Position;
-
 public class GridModel{
     private final CellModel[][] grid;
     private final int rows;
@@ -12,6 +10,9 @@ public class GridModel{
     
     private double fruitRow;
     private double fruitCol;
+    
+    private double pacmanRow;
+    private double pacmanCol;
     
     //set the dimensions and the position of the grid
     public GridModel(int rows, int cols) {
@@ -71,5 +72,21 @@ public class GridModel{
 
     public void setFruitCol(double fruitCol) {
         this.fruitCol = fruitCol;
+    }
+
+    public double getPacmanRow() {
+        return pacmanRow;
+    }
+
+    public void setPacmanRow(double pacmanRow) {
+        this.pacmanRow = pacmanRow;
+    }
+
+    public double getPacmanCol() {
+        return pacmanCol;
+    }
+
+    public void setPacmanCol(double pacmanCol) {
+        this.pacmanCol = pacmanCol;
     }
 }

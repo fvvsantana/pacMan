@@ -2,6 +2,7 @@ package model;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Locale;
 import java.util.Scanner;
 import model.grid.DoorCellModel;
 import model.grid.ObstacleCellModel;
@@ -39,7 +40,7 @@ public abstract class Maps{
     public static GridModel fileMap(String filePath) {
         try {
             // cria scanner para o arquivo recebido
-            Scanner arquivo = new Scanner(new File(filePath));
+            Scanner arquivo = new Scanner(new File(filePath)).useLocale(Locale.US);
             
             // le o numero de linhas e colunas
             int rows = arquivo.nextInt();
@@ -55,6 +56,10 @@ public abstract class Maps{
             // le a posicao da fruta
             grid.setFruitRow(arquivo.nextDouble());
             grid.setFruitCol(arquivo.nextDouble());
+            
+            // le a posicao inicial do pacman
+            grid.setPacmanRow(arquivo.nextDouble());
+            grid.setPacmanCol(arquivo.nextDouble());
             
             // adiciona os elementos no grid
             for (int i = 0; i < rows; i++) {
