@@ -28,6 +28,7 @@ import model.grid.PowerPelletCellModel;
 
 import model.characters.PacManModel;
 import model.characters.GhostModel;
+import model.grid.DoorCellModel;
 import model.grid.EmptyCellModel;
 import utils.AudioManager;
 import utils.GhostState;
@@ -41,6 +42,7 @@ import view.characters.PinkGhostView;
 import view.characters.OrangeGhostView;
 import view.characters.CyanGhostView;
 import view.characters.GhostView;
+import view.grid.DoorCellView;
 
 class Controller{
     private View view;
@@ -88,7 +90,7 @@ class Controller{
         pinkGhostModel = new GhostModel(20,2);
         updates.add(pinkGhostModel);
         
-        orangeGhostModel = new GhostModel(2,20);
+        orangeGhostModel = new GhostModel(1,20);
         updates.add(orangeGhostModel);
         
         cyanGhostModel = new GhostModel(20,20);
@@ -141,9 +143,8 @@ class Controller{
                 updateOrangeGhostModel();
                 updateGhostView(orangeGhostModel, view.getOrangeGhostView());
                 
-                updates.forEach((updatable) -> {
-                    updatable.update();
-                });
+                // using the Double Colon Operator to update every element on the array
+                updates.forEach(Updatable::update);
             }
 
         }.start();
@@ -165,7 +166,9 @@ class Controller{
 
                 cellModel = mapModel.getCell(i, j);
 
-                if(cellModel instanceof ObstacleCellModel){
+                if (cellModel instanceof DoorCellModel) {
+                    cellView = new DoorCellView();
+                }else if(cellModel instanceof ObstacleCellModel){
                     cellView = new ObstacleCellView();
                 }else if(cellModel instanceof PacDotCellModel){
                     cellView = new PacDotCellView();
@@ -262,22 +265,22 @@ class Controller{
         // verifica se está colidindo com um fantasma
         if (checkCollisionCharacters(pacManModel, redGhostModel)) {
             if (redGhostModel.isEatable()) {
-                redGhostModel.setState(GhostState.DEAD);
+                redGhostModel.setState(GhostState.DEAD1);
             }
         }
         if (checkCollisionCharacters(pacManModel, pinkGhostModel)) {
             if (pinkGhostModel.isEatable()) {
-                pinkGhostModel.setState(GhostState.DEAD);
+                pinkGhostModel.setState(GhostState.DEAD1);
             }
         }
         if (checkCollisionCharacters(pacManModel, cyanGhostModel)) {
             if (cyanGhostModel.isEatable()) {
-                cyanGhostModel.setState(GhostState.DEAD);
+                cyanGhostModel.setState(GhostState.DEAD1);
             }
         }
         if (checkCollisionCharacters(pacManModel, orangeGhostModel)) {
             if (orangeGhostModel.isEatable()) {
-                orangeGhostModel.setState(GhostState.DEAD);
+                orangeGhostModel.setState(GhostState.DEAD1);
             }
         }
     }
@@ -333,11 +336,12 @@ class Controller{
             case RUNNING_END:
                 runAwayPoint(redGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
                 break;
-            case DEAD:
-                chasePoint(redGhostModel, 11, 13);
-                if (redGhostModel.getRealRow() == 11 && redGhostModel.getRealCol() == 13)
-                    redGhostModel.setState(GhostState.NORMAL);
+            case DEAD1:
+                returnGhost(redGhostModel);
                 break;
+            default:
+                respawnGhost(redGhostModel);
+                return;
         }
         updateChracterModel(redGhostModel);
     }
@@ -352,11 +356,12 @@ class Controller{
             case RUNNING_END:
                 runAwayPoint(pinkGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
                 break;
-            case DEAD:
-                chasePoint(pinkGhostModel, 11, 13);
-                if (pinkGhostModel.getRealRow() == 11 && pinkGhostModel.getRealCol() == 13)
-                    pinkGhostModel.setState(GhostState.NORMAL);
+            case DEAD1:
+                returnGhost(pinkGhostModel);
                 break;
+            default:
+                respawnGhost(pinkGhostModel);
+                return;
         }
         updateChracterModel(pinkGhostModel);
     }
@@ -371,11 +376,12 @@ class Controller{
             case RUNNING_END:
                 runAwayPoint(cyanGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
                 break;
-            case DEAD:
-                chasePoint(cyanGhostModel, 11, 13);
-                if (cyanGhostModel.getRealRow() == 11 && cyanGhostModel.getRealCol() == 13)
-                    cyanGhostModel.setState(GhostState.NORMAL);
+            case DEAD1:
+                returnGhost(cyanGhostModel);
                 break;
+            default:
+                respawnGhost(cyanGhostModel);
+                return;
         }
         updateChracterModel(cyanGhostModel);
     }
@@ -390,11 +396,12 @@ class Controller{
             case RUNNING_END:
                 runAwayPoint(orangeGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
                 break;
-            case DEAD:
-                chasePoint(orangeGhostModel, 11, 13);
-                if (orangeGhostModel.getRealRow() == 11 && orangeGhostModel.getRealCol() == 13)
-                    orangeGhostModel.setState(GhostState.NORMAL);
+            case DEAD1:
+                returnGhost(orangeGhostModel);
                 break;
+            default:
+                respawnGhost(orangeGhostModel);
+                return;
         }
         updateChracterModel(orangeGhostModel);
     }
@@ -414,7 +421,27 @@ class Controller{
         
         ghostView.setState(ghostModel.getState());
     }
+    
+    // retorna o fantasma para a porta do spawn
+    public void returnGhost (GhostModel ghostModel) {
+        chasePoint(ghostModel, mapModel.getSpawnRow()-1, mapModel.getSpawnCol()+3);
+        if (ghostModel.getRealRow() == mapModel.getSpawnRow()-1 && ghostModel.getRealCol() == mapModel.getSpawnCol()+3)
+            ghostModel.setState(GhostState.DEAD2);
+    }
 
+    // faz o fantasma entrar e sair do spawn
+    public void respawnGhost(GhostModel ghostModel) {
+        if (ghostModel.getState() == GhostState.DEAD2) {
+            ghostModel.moveDown();
+            if (ghostModel.getRealRow() == mapModel.getSpawnRow()+2)
+                ghostModel.setState(GhostState.DEAD3);
+        } else {
+            ghostModel.moveUp();
+            if (ghostModel.getRealRow() == mapModel.getSpawnRow()-1)
+                ghostModel.setState(GhostState.NORMAL);
+        }
+    }
+    
     public void randomWalk(CharacterModel characterModel){
         
         // se estiver no meio de uma celula nao deve alterar a direcao
@@ -483,8 +510,6 @@ class Controller{
         }
         
         // se tem mais de uma opcao, deve escolher o menor caminho
-        row += 0.5;
-        col += 0.5;
         Orientation melhor = null;
         double melhorDist = 100;
         for (int i = 0; i < orientations.size(); i++) {

@@ -1,5 +1,5 @@
 package utils;
 
 public enum GhostState {
-    NORMAL, RUNNING, RUNNING_END, DEAD;
+    START, NORMAL, RUNNING, RUNNING_END, DEAD1, DEAD2, DEAD3;
 }

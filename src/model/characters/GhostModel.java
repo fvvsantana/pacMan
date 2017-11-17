@@ -27,7 +27,7 @@ public class GhostModel extends CharacterModel implements Updatable {
     }
     
     public void startRunning() {
-        if (state != GhostState.DEAD) {
+        if (state != GhostState.DEAD1) {
             setState(GhostState.RUNNING);
             counter = 0;
         }

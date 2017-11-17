@@ -14,8 +14,7 @@ public abstract class GhostView implements Updatable {
     private final Image imageRunning1;
     private final Image imageRunning2;
     private final Image imageRunning3;
-    
-    private int temporaryCounter = 0;
+    private final Image imageEye;
     
     private GhostState state;
     
@@ -30,6 +29,7 @@ public abstract class GhostView implements Updatable {
         imageRunning1 = new Image ("/images/ghosthollow1.png");
         imageRunning2 = new Image ("/images/ghosthollow2.png");
         imageRunning3 = new Image ("/images/ghosthollow3.png");
+        imageEye = new Image ("/images/ghosteye.png");
         img = new ImageView(imageAlive1);
         img.setFitWidth(width);
         img.setFitHeight(height);
@@ -58,9 +58,10 @@ public abstract class GhostView implements Updatable {
                 image1 = imageRunning1;
                 image2 = imageRunning2;
                 break;
-            case DEAD:
-                image1 = imageRunning1;
-                image2 = imageRunning1;
+            case DEAD1:
+            case DEAD2:
+                image1 = imageEye;
+                image2 = imageEye;
                 break;
             default:
                 image1 = imageAlive1;

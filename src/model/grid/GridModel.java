@@ -1,12 +1,19 @@
 package model.grid;
 
+import utils.Position;
+
 public class GridModel{
-    private CellModel[][] grid;
+    private final CellModel[][] grid;
     private final int rows;
     private final int cols;
 
+    private int spawnRow;
+    private int spawnCol;
+    
+    private double fruitRow;
+    private double fruitCol;
+    
     //set the dimensions and the position of the grid
-
     public GridModel(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
@@ -32,5 +39,37 @@ public class GridModel{
 
     public int getCols() {
         return cols;
+    }
+
+    public int getSpawnRow() {
+        return spawnRow;
+    }
+
+    public void setSpawnRow(int spawnRow) {
+        this.spawnRow = spawnRow;
+    }
+
+    public int getSpawnCol() {
+        return spawnCol;
+    }
+
+    public void setSpawnCol(int spawnCol) {
+        this.spawnCol = spawnCol;
+    }
+
+    public double getFruitRow() {
+        return fruitRow;
+    }
+
+    public void setFruitRow(double fruitRow) {
+        this.fruitRow = fruitRow;
+    }
+
+    public double getFruitCol() {
+        return fruitCol;
+    }
+
+    public void setFruitCol(double fruitCol) {
+        this.fruitCol = fruitCol;
     }
 }
