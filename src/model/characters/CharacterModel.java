@@ -21,7 +21,7 @@ public abstract class CharacterModel {
     public CharacterModel(double realRow, double realCol) {
         this.row = (int) (FACTOR * realRow);
         this.col = (int) (FACTOR * realCol);
-        this.speed = STANDARD_SPEED;
+        setSpeed(STANDARD_SPEED);
         this.orientation = Orientation.RIGHT;
         nextOrientation = orientation;
         moving = true;
@@ -30,7 +30,7 @@ public abstract class CharacterModel {
     public CharacterModel(double realRow, double realCol, double realSpeed, Orientation orientation) {
         this.row = (int) (FACTOR * realRow);
         this.col = (int) (FACTOR * realCol);
-        this.speed = (int) (FACTOR * realSpeed);
+        setRealSpeed(realSpeed);
         this.orientation = orientation;
         nextOrientation = orientation;
         moving = true;
@@ -97,29 +97,35 @@ public abstract class CharacterModel {
     
     public void setRow(int row) {
         this.row = row;
+        adjustPosition();
     }
 
     public void setRealRow(double row) {
-        this.row = (int) (FACTOR * row);
+        setRow((int) (FACTOR * row));
     }
     
     public void setCol(int col) {
         this.col = col;
+        adjustPosition();
     }
 
     public void setRealCol(double col) {
-        this.col = (int) (FACTOR * col);
+        setCol((int)(FACTOR*col));
     }
 
     public void setSpeed(int speed) {
         this.speed = speed;
-        // ajusta a posicao para a nova velocidade
-        row = row - (row%speed);
-        col = col - (col%speed);
+        adjustPosition();
     }
 
     public void setRealSpeed(double speed) {
         setSpeed((int)(FACTOR * speed));
+    }
+    
+    // ajusta a posicao para a velocidade atual
+    private void adjustPosition() {
+        row = row - (row%speed);
+        col = col - (col%speed);
     }
 
     public Orientation getOrientation() {
