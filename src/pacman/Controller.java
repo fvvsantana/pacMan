@@ -56,6 +56,7 @@ class Controller{
     private ArrayList<Updatable> updates;
     
     private final Random rand = new Random();
+    private final int DISTANCE = 15;
     
     public void run(Stage primaryStage){
         
@@ -81,16 +82,16 @@ class Controller{
         view.drawMap();
 
         //create a PacManModel setting his position as (23, 13)
-        pacManModel = new PacManModel(23, 13);
+        pacManModel = new PacManModel(36, 13);
         
         //create the ghosts models and add their updates
-        redGhostModel = new GhostModel(25,21);
+        redGhostModel = new GhostModel(1,20);
         updates.add(redGhostModel);
         
-        pinkGhostModel = new GhostModel(20,2);
+        pinkGhostModel = new GhostModel(1,2);
         updates.add(pinkGhostModel);
         
-        orangeGhostModel = new GhostModel(1,20);
+        orangeGhostModel = new GhostModel(20,2);
         updates.add(orangeGhostModel);
         
         cyanGhostModel = new GhostModel(20,20);
@@ -293,6 +294,7 @@ class Controller{
                 orangeGhostModel.setState(GhostState.DEAD1);
             }
         }
+        System.out.println("distancia entre pac e red: "+ distanceBetweenCharacters(pacManModel,redGhostModel)+"");
     }
     
     public boolean checkTunnel(CharacterModel characterModel) {
@@ -340,7 +342,7 @@ class Controller{
         // atualiza a posicao de acordo com o estado atual
         switch (redGhostModel.getState()) {
             case NORMAL:
-                chasePoint(redGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
+                blinkyMovements(redGhostModel);
                 break;
             case RUNNING:
             case RUNNING_END:
@@ -360,8 +362,8 @@ class Controller{
         // atualiza a posicao de acordo com o estado atual
         switch (pinkGhostModel.getState()) {
             case NORMAL:
-                chasePoint(pinkGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
-                break;
+                 pinkyMovements(pinkGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
+                 break;
             case RUNNING:
             case RUNNING_END:
                 runAwayPoint(pinkGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
@@ -380,7 +382,8 @@ class Controller{
         // atualiza a posicao de acordo com o estado atual
         switch (cyanGhostModel.getState()) {
             case NORMAL:
-                chasePoint(cyanGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
+                if (distanceBetweenCharacters(cyanGhostModel,redGhostModel) >= DISTANCE ) randomWalk(cyanGhostModel);
+                else blinkyMovements(cyanGhostModel);
                 break;
             case RUNNING:
             case RUNNING_END:
@@ -395,12 +398,13 @@ class Controller{
         }
         updateChracterModel(cyanGhostModel);
     }
-    
+   
     private void updateOrangeGhostModel(){
         // atualiza a posicao de acordo com o estado atual
         switch (orangeGhostModel.getState()) {
             case NORMAL:
-                chasePoint(orangeGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
+                if (distanceBetweenCharacters(pacManModel,orangeGhostModel) >= DISTANCE) blinkyMovements(orangeGhostModel);
+                else randomWalk(orangeGhostModel);
                 break;
             case RUNNING:
             case RUNNING_END:
@@ -414,6 +418,59 @@ class Controller{
                 return;
         }
         updateChracterModel(orangeGhostModel);
+    }
+     
+    private void pinkyMovements (CharacterModel characterModel, double row, double col ){
+        
+            
+            // se estiver no meio de uma celula nao deve alterar a direcao
+        if (characterModel.getRealRow()%1 != 0 || characterModel.getRealCol()%1 != 0) 
+            return;
+        
+        // se estiver num tunel nao deve alterar a orientacao
+        if (checkTunnel(characterModel))
+            return;
+        
+        // cria um vetor com todas direcoes possiveis
+        ArrayList<Orientation> orientations = new ArrayList(4);
+        
+        orientations.add(Orientation.UP);
+        orientations.add(Orientation.DOWN);
+        orientations.add(Orientation.LEFT);
+        orientations.add(Orientation.RIGHT);
+        
+        // remove a direcao oposta
+        orientations.remove(characterModel.getOrientation().getOpposite());
+        
+        // remove as direcoes com colisao
+        Iterator<Orientation> it = orientations.iterator();
+        while (it.hasNext()) {
+            if (checkCollisionOrientation(characterModel, it.next()))
+                it.remove();
+        }
+        
+        // se sobrou soh uma possibilidade, basta definir ela
+        if (orientations.size() == 1) {
+            characterModel.setNextOrientation(orientations.get(0));
+            return;
+        }
+        
+        //verifica se alguma orientacao que sobrou eh paralela a orientacao do pacman se for atualiza
+        for (int i = 0; i < orientations.size(); i++) {
+            Orientation o = orientations.get(i);
+            if (pacManModel.getOrientation().getOpposite() == o || characterModel.getOrientation() == o){
+                characterModel.setNextOrientation(o);
+                return;
+            }
+        }
+        //caso nenhuma orientacao que sobrou em o for paralela ele anda randomicamente
+        randomWalk(characterModel);
+    }
+    
+    private void blinkyMovements(CharacterModel characterModel){
+        int num = rand.nextInt(4);
+        if (num == 1) randomWalk(characterModel);
+        else chasePoint(characterModel, pacManModel.getRealRow(), pacManModel.getRealCol());
     }
     
     //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
