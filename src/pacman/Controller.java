@@ -294,7 +294,6 @@ class Controller{
                 orangeGhostModel.setState(GhostState.DEAD1);
             }
         }
-        System.out.println("distancia entre pac e red: "+ distanceBetweenCharacters(pacManModel,redGhostModel)+"");
     }
     
     public boolean checkTunnel(CharacterModel characterModel) {
