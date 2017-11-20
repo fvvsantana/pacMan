@@ -448,6 +448,11 @@ class Controller{
                 it.remove();
         }
         
+        // se nao sobrou orientacoes, voltar para oposta
+        if (orientations.isEmpty()) {
+            characterModel.setNextOrientation(characterModel.getOrientation().getOpposite());
+            return;
+        }
         // se sobrou soh uma possibilidade, basta definir ela
         if (orientations.size() == 1) {
             characterModel.setNextOrientation(orientations.get(0));
@@ -534,6 +539,12 @@ class Controller{
                 it.remove();
         }
         
+        // se nao sobrou orientacoes, voltar para oposta
+        if (orientations.isEmpty()) {
+            characterModel.setNextOrientation(characterModel.getOrientation().getOpposite());
+            return;
+        }
+        
         // sorteia uma direcao aleatoria das remanescentes 
         int num = rand.nextInt(orientations.size());
         characterModel.setNextOrientation(orientations.get(num));
@@ -566,6 +577,12 @@ class Controller{
         while (it.hasNext()) {
             if (checkCollisionOrientation(characterModel, it.next()))
                 it.remove();
+        }
+        
+        // se nao sobrou orientacoes, voltar para oposta
+        if (orientations.isEmpty()) {
+            characterModel.setNextOrientation(characterModel.getOrientation().getOpposite());
+            return;
         }
         
         // se sobrou soh uma possibilidade, basta definir ela
@@ -630,7 +647,11 @@ class Controller{
             if (checkCollisionOrientation(characterModel, it.next()))
                 it.remove();
         }
-        
+        // se nao sobrou orientacoes, voltar para oposta
+        if (orientations.isEmpty()) {
+            characterModel.setNextOrientation(characterModel.getOrientation().getOpposite());
+            return;
+        }
         // se sobrou soh uma possibilidade, basta definir ela
         if (orientations.size() == 1) {
             characterModel.setNextOrientation(orientations.get(0));
