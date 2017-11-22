@@ -10,7 +10,9 @@ public class AudioManager {
     private final AudioClip eatGhost;
     private final AudioClip extraLife;
     private final AudioClip intro;
-    private final AudioClip waka;
+    private final AudioClip siren;
+    
+    private boolean playingSiren;
     
     public AudioManager() {
         death = Applet.newAudioClip(getClass().getResource("/audio/death.wav"));
@@ -18,7 +20,8 @@ public class AudioManager {
         eatGhost = Applet.newAudioClip(getClass().getResource("/audio/eatghost.wav"));
         extraLife = Applet.newAudioClip(getClass().getResource("/audio/extralife.wav"));
         intro = Applet.newAudioClip(getClass().getResource("/audio/intro.wav"));
-        waka = Applet.newAudioClip(getClass().getResource("/audio/waka.wav"));
+        siren = Applet.newAudioClip(getClass().getResource("/audio/siren.wav"));
+        playingSiren = false;
     }
     
     public void playDeath() {
@@ -41,12 +44,16 @@ public class AudioManager {
         intro.play();
     }
     
-    public void startWaka() {
-        waka.loop();
+    public void startSiren() {
+        if (!playingSiren) {
+            siren.loop();
+            playingSiren = true;
+        }
     }
     
-    public void stopWaka() {
-        waka.stop();
+    public void stopSiren() {
+        siren.stop();
+        playingSiren = false;
     }
     
 }

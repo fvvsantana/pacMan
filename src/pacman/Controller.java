@@ -140,6 +140,8 @@ class Controller{
         // set initial states and positions for characters
         resetCharacters();
         
+        // play intro song
+        audioManager.playIntro();
         
         new AnimationTimer() {
             long lastTime = 0;
@@ -153,6 +155,7 @@ class Controller{
                     
                 // start updating models after gameTime larger than zero
                 if (gameTime > 0) {
+                    audioManager.startSiren();
                     // update the position and orientation on characters' models
                     updatePacmanModel(pacManModel);
                     updateRedGhostModel();
