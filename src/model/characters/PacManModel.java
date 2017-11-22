@@ -15,8 +15,8 @@ public class PacManModel extends CharacterModel implements Updatable{
     private boolean powerful;
     private ArrayList<FruitModel> fruits;
     
-    public PacManModel(double row, double col) {
-        super(row, col);
+    public PacManModel() {
+        super(1, 1);
         score = 0;
         lives = 3;
         powerful = false;

@@ -45,18 +45,32 @@ import view.characters.GhostView;
 import view.grid.DoorCellView;
 
 class Controller{
-    private View view;
+    
+    // constants
+    private final int DISTANCE = 15;
+    
+    // models
     private GridModel mapModel;
     private PacManModel pacManModel;
     private GhostModel redGhostModel;
     private GhostModel pinkGhostModel;
     private GhostModel orangeGhostModel;
     private GhostModel cyanGhostModel;
+    
+    // view manager
+    private View view;
+    
+    // audio manager
     private AudioManager audioManager;
+    
+    // array for objects with Updatable interface
     private ArrayList<Updatable> updates;
     
+    // random number generator
     private final Random rand = new Random();
-    private final int DISTANCE = 15;
+    
+    // actual game time (if negative, the characters will wait that time)
+    private long gameTime = -4350_000_000L;
     
     public void run(Stage primaryStage){
         
@@ -81,23 +95,22 @@ class Controller{
         //add the nodes of the cells from the grid to the map container
         view.drawMap();
 
-        //create a PacManModel setting his position as (23, 13)
-        pacManModel = new PacManModel(36, 13);
+        //create a PacManModel and add his update
+        pacManModel = new PacManModel();
+        updates.add(pacManModel);
         
         //create the ghosts models and add their updates
-        redGhostModel = new GhostModel(1,20);
+        redGhostModel = new GhostModel();
         updates.add(redGhostModel);
         
-        pinkGhostModel = new GhostModel(1,2);
+        pinkGhostModel = new GhostModel();
         updates.add(pinkGhostModel);
         
-        orangeGhostModel = new GhostModel(20,2);
+        orangeGhostModel = new GhostModel();
         updates.add(orangeGhostModel);
         
-        cyanGhostModel = new GhostModel(20,20);
+        cyanGhostModel = new GhostModel();
         updates.add(cyanGhostModel);
-        
-        resetCharacters();
 
         //add a controller to the PacManModel
         addPacManModelController(view.getScene());
@@ -124,25 +137,35 @@ class Controller{
         view.addCyanGhostToTheMapContainer();
         updates.add(view.getCyanGhostView());
         
-        updates.add(pacManModel);
+        // set initial states and positions for characters
+        resetCharacters();
+        
         
         new AnimationTimer() {
+            long lastTime = 0;
+            
             @Override
             public void handle(long now) {
-                //update the position and orientation on characters' models and passing to views
-                updatePacmanModel(pacManModel);
+                // update gameTime
+                if (now - lastTime < 1_000000000)
+                    gameTime += now - lastTime;
+                lastTime = now;
+                    
+                // start updating models after gameTime larger than zero
+                if (gameTime > 0) {
+                    // update the position and orientation on characters' models
+                    updatePacmanModel(pacManModel);
+                    updateRedGhostModel();
+                    updatePinkGhostModel();
+                    updateCyanGhostModel();
+                    updateOrangeGhostModel();
+                }
+                
+                // passing models information to views
                 updatePacManView(pacManModel);
-                
-                updateRedGhostModel();
                 updateGhostView(redGhostModel, view.getRedGhostView());
-                
-                updatePinkGhostModel();
                 updateGhostView(pinkGhostModel, view.getPinkGhostView());
-                
-                updateCyanGhostModel();
                 updateGhostView(cyanGhostModel, view.getCyanGhostView());
-                
-                updateOrangeGhostModel();
                 updateGhostView(orangeGhostModel, view.getOrangeGhostView());
                 
                 // using the Double Colon Operator to update every element on the array
@@ -157,11 +180,25 @@ class Controller{
     
     // define as posições e estados iniciais dos personagens
     public void resetCharacters() {
+        
         pacManModel.setRealRow(mapModel.getPacmanRow());
         pacManModel.setRealCol(mapModel.getPacmanCol());
         
-//        redGhostModel.setRealRow(mapModel.getSpawnRow()-1);
-//        redGhostModel
+        redGhostModel.setRealRow(mapModel.getSpawnRow()-1);
+        redGhostModel.setRealCol(mapModel.getSpawnCol()+3.5);
+        redGhostModel.reset();
+        
+        pinkGhostModel.setRealRow(mapModel.getSpawnRow()+2);
+        pinkGhostModel.setRealCol(mapModel.getSpawnCol()+3.5);
+        pinkGhostModel.reset();
+        
+        cyanGhostModel.setRealRow(mapModel.getSpawnRow()+2);
+        cyanGhostModel.setRealCol(mapModel.getSpawnCol()+1);
+        cyanGhostModel.reset();
+        
+        orangeGhostModel.setRealRow(mapModel.getSpawnRow()+2);
+        orangeGhostModel.setRealCol(mapModel.getSpawnCol()+6);
+        orangeGhostModel.reset();
     }
 
     //generate a GridView based on the passing argument GridModel
@@ -340,11 +377,13 @@ class Controller{
     private void updateRedGhostModel(){
         // atualiza a posicao de acordo com o estado atual
         switch (redGhostModel.getState()) {
+            case START:
+                redGhostModel.setState(GhostState.NORMAL);
+                return;
             case NORMAL:
                 blinkyMovements(redGhostModel);
                 break;
             case RUNNING:
-            case RUNNING_END:
                 runAwayPoint(redGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
                 break;
             case DEAD1:
@@ -360,11 +399,13 @@ class Controller{
     private void updatePinkGhostModel(){
         // atualiza a posicao de acordo com o estado atual
         switch (pinkGhostModel.getState()) {
+            case START:
+                pinkGhostModel.setState(GhostState.DEAD3);
+                return;
             case NORMAL:
-                 pinkyMovements(pinkGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
-                 break;
+                pinkyMovements(pinkGhostModel);
+                break;
             case RUNNING:
-            case RUNNING_END:
                 runAwayPoint(pinkGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
                 break;
             case DEAD1:
@@ -380,12 +421,21 @@ class Controller{
     private void updateCyanGhostModel(){
         // atualiza a posicao de acordo com o estado atual
         switch (cyanGhostModel.getState()) {
+            case START:
+                if (gameTime < 3500_000_000L)
+                    waitGhost(cyanGhostModel);
+                else if (cyanGhostModel.getRealCol() < mapModel.getSpawnCol()+ 3.5)
+                    cyanGhostModel.moveRight();
+                else
+                    cyanGhostModel.setState(GhostState.DEAD3);
+                return;
             case NORMAL:
-                if (distanceBetweenCharacters(cyanGhostModel,redGhostModel) >= DISTANCE ) randomWalk(cyanGhostModel);
-                else blinkyMovements(cyanGhostModel);
+                if (distanceBetweenCharacters(cyanGhostModel,redGhostModel) >= DISTANCE )
+                    randomWalk(cyanGhostModel);
+                else
+                    blinkyMovements(cyanGhostModel);
                 break;
             case RUNNING:
-            case RUNNING_END:
                 runAwayPoint(cyanGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
                 break;
             case DEAD1:
@@ -401,12 +451,21 @@ class Controller{
     private void updateOrangeGhostModel(){
         // atualiza a posicao de acordo com o estado atual
         switch (orangeGhostModel.getState()) {
+            case START:
+                if (gameTime < 7000_000_000L)
+                    waitGhost(orangeGhostModel);
+                else if (orangeGhostModel.getRealCol() > mapModel.getSpawnCol()+ 3.5)
+                    orangeGhostModel.moveLeft();
+                else
+                    orangeGhostModel.setState(GhostState.DEAD3);
+                return;
             case NORMAL:
-                if (distanceBetweenCharacters(pacManModel,orangeGhostModel) >= DISTANCE) blinkyMovements(orangeGhostModel);
-                else randomWalk(orangeGhostModel);
+                if (distanceBetweenCharacters(pacManModel,orangeGhostModel) >= DISTANCE)
+                    blinkyMovements(orangeGhostModel);
+                else
+                    randomWalk(orangeGhostModel);
                 break;
             case RUNNING:
-            case RUNNING_END:
                 runAwayPoint(orangeGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
                 break;
             case DEAD1:
@@ -419,10 +478,9 @@ class Controller{
         updateChracterModel(orangeGhostModel);
     }
      
-    private void pinkyMovements (CharacterModel characterModel, double row, double col ){
-        
-            
-            // se estiver no meio de uma celula nao deve alterar a direcao
+    private void pinkyMovements (CharacterModel characterModel ){
+
+        // se estiver no meio de uma celula nao deve alterar a direcao
         if (characterModel.getRealRow()%1 != 0 || characterModel.getRealCol()%1 != 0) 
             return;
         
@@ -473,8 +531,10 @@ class Controller{
     
     private void blinkyMovements(CharacterModel characterModel){
         int num = rand.nextInt(4);
-        if (num == 1) randomWalk(characterModel);
-        else chasePoint(characterModel, pacManModel.getRealRow(), pacManModel.getRealCol());
+        if (num == 1)
+            randomWalk(characterModel);
+        else 
+            chasePoint(characterModel, pacManModel.getRealRow(), pacManModel.getRealCol());
     }
     
     //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
@@ -484,12 +544,13 @@ class Controller{
         
         view.getPacManView().setMoving(pacManModel.isMoving());
     }
-            
+    
+    // atualiza a GhostView recebida com base no GhostModel
     public void updateGhostView(GhostModel ghostModel, GhostView ghostView){
-        
+        // atualiza a posicao
         ghostView.setPosition(view.getGrid().getCellPosition(ghostModel.getRealRow(), ghostModel.getRealCol()));
-        
-        ghostView.setState(ghostModel.getState());
+        // atualiza o estado
+        ghostView.setState(ghostModel.getViewState());
     }
     
     // retorna o fantasma para a porta do spawn
@@ -512,6 +573,19 @@ class Controller{
         }
     }
     
+    // faz a movimentacao de sobe e desce dentro do spawn (antes do fanstama sair)
+    public void waitGhost(GhostModel ghostModel) {
+        if (ghostModel.getOrientation() == Orientation.DOWN) {
+            if (ghostModel.getRealRow() > mapModel.getSpawnRow() + 3)
+                ghostModel.setOrientation(Orientation.UP);
+        } else {
+            if (ghostModel.getRealRow() < mapModel.getSpawnRow() + 1)
+                ghostModel.setOrientation(Orientation.DOWN);
+        }
+        ghostModel.move();
+    }
+    
+    // define uma direcao aleatoria para o character
     public void randomWalk(CharacterModel characterModel){
         
         // se estiver no meio de uma celula nao deve alterar a direcao
