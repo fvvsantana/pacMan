@@ -11,12 +11,16 @@ public class PacManView implements Updatable {
     
     // arco que representa o pacman
     private final Arc arc;
+    
     private final double radiusX;
     private final double radiusY;
     private boolean opening;
     private boolean moving;
+    
+    // multiplicador de tamanho para o pacman ser maior que uma celula
+    private static final double SIZE_MULTIPLIER = 1.2;
 
-    public PacManView(double radiusX, double radiusY) {
+    public PacManView(double cellWidth, double cellHeight) {
         // inicia o arco
         arc = new Arc();
         arc.setType(ArcType.ROUND);   
@@ -24,15 +28,15 @@ public class PacManView implements Updatable {
         arc.setStartAngle(30);
         arc.setLength(300);
         
-        this.radiusX = radiusX;
-        this.radiusY = radiusY;
+        this.radiusX = (cellWidth * SIZE_MULTIPLIER) / 2;
+        this.radiusY = (cellHeight * SIZE_MULTIPLIER) / 2;
         moving = false;
     }
     
-    // define a posicao considerando o centro
-    public void setPosition (Position position) {
-        arc.setCenterX(position.getX() + radiusX);
-        arc.setCenterY(position.getY() + radiusY);
+    // consider the position inside a map cell
+    public void setCellPosition (Position position) {
+        arc.setCenterX(position.getX() + radiusX * (1-(SIZE_MULTIPLIER-1)/2));
+        arc.setCenterY(position.getY() + radiusY * (1-(SIZE_MULTIPLIER-1)/2));
     }
 
     //set image orientation

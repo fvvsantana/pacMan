@@ -116,7 +116,7 @@ class Controller{
         addPacManModelController(view.getScene());
 
         //set PacManView in the View
-        view.setPacManView(new PacManView(view.getGrid().getCellWidth()/2, view.getGrid().getCellHeight()/2));
+        view.setPacManView(new PacManView(view.getGrid().getCellWidth(), view.getGrid().getCellHeight()));
         view.addPacManToTheMapContainer();
         updates.add(view.getPacManView());
         
@@ -542,7 +542,7 @@ class Controller{
     
     //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
     public void updatePacManView(PacManModel pacManModel){
-        view.getPacManView().setPosition(view.getGrid().getCellPosition(pacManModel.getRealRow(), pacManModel.getRealCol()));
+        view.getPacManView().setCellPosition(view.getGrid().getCellPosition(pacManModel.getRealRow(), pacManModel.getRealCol()));
         view.getPacManView().setOrientation(pacManModel.getOrientation());
         
         view.getPacManView().setMoving(pacManModel.isMoving());
@@ -551,7 +551,7 @@ class Controller{
     // atualiza a GhostView recebida com base no GhostModel
     public void updateGhostView(GhostModel ghostModel, GhostView ghostView){
         // atualiza a posicao
-        ghostView.setPosition(view.getGrid().getCellPosition(ghostModel.getRealRow(), ghostModel.getRealCol()));
+        ghostView.setCellPosition(view.getGrid().getCellPosition(ghostModel.getRealRow(), ghostModel.getRealCol()));
         // atualiza o estado
         ghostView.setState(ghostModel.getViewState());
     }
