@@ -151,6 +151,10 @@ class Controller{
                 // update gameTime
                 if (now - lastTime < 1_000000000)
                     gameTime += now - lastTime;
+                
+                // print frames per second:
+                // System.out.println(1.0/(now-lastTime)*1000000000);
+                
                 lastTime = now;
                     
                 // start updating models after gameTime larger than zero

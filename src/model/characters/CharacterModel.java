@@ -5,7 +5,7 @@ import utils.Orientation;
 public abstract class CharacterModel {
     
     // the values will be multiplied by the FACTOR to keep them integers
-    public static final int FACTOR = 140;
+    public static final int FACTOR = 100;
     
     public static final int STANDARD_SPEED = 10;
     
