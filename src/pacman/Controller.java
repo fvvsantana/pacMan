@@ -186,6 +186,7 @@ class Controller{
         
         pacManModel.setRealRow(mapModel.getPacmanRow());
         pacManModel.setRealCol(mapModel.getPacmanCol());
+        pacManModel.reset();
         
         redGhostModel.setRealRow(mapModel.getSpawnRow()-1);
         redGhostModel.setRealCol(mapModel.getSpawnCol()+3.5);
@@ -314,24 +315,20 @@ class Controller{
         }
         
         // verifica se está colidindo com um fantasma
-        if (checkCollisionCharacters(pacManModel, redGhostModel)) {
-            if (redGhostModel.isEatable()) {
-                redGhostModel.setState(GhostState.DEAD1);
-            }
-        }
-        if (checkCollisionCharacters(pacManModel, pinkGhostModel)) {
-            if (pinkGhostModel.isEatable()) {
-                pinkGhostModel.setState(GhostState.DEAD1);
-            }
-        }
-        if (checkCollisionCharacters(pacManModel, cyanGhostModel)) {
-            if (cyanGhostModel.isEatable()) {
-                cyanGhostModel.setState(GhostState.DEAD1);
-            }
-        }
-        if (checkCollisionCharacters(pacManModel, orangeGhostModel)) {
-            if (orangeGhostModel.isEatable()) {
-                orangeGhostModel.setState(GhostState.DEAD1);
+        collisionPacmanGhost(pacManModel, redGhostModel);
+        collisionPacmanGhost(pacManModel, pinkGhostModel);
+        collisionPacmanGhost(pacManModel, cyanGhostModel);
+        collisionPacmanGhost(pacManModel, orangeGhostModel);
+    }
+    
+    private void collisionPacmanGhost(PacManModel pacManModel, GhostModel ghostModel) {
+        if (ghostModel.isAlive() && checkCollisionCharacters(pacManModel, ghostModel)) {
+            System.out.println(ghostModel.getState());
+            if (ghostModel.isEatable())
+                ghostModel.setState(GhostState.DEAD1);
+            else {
+                gameTime = -1_000000000L;
+                resetCharacters();
             }
         }
     }
@@ -374,16 +371,17 @@ class Controller{
     }
     
     public boolean checkCollisionCharacters (CharacterModel characterModel1, CharacterModel characterModel2){
-        return distanceBetweenCharacters(characterModel1, characterModel2) < 1;
+        return distanceBetweenCharacters(characterModel1, characterModel2) < 0.5;
     }
     
     private void updateRedGhostModel(){
         // atualiza a posicao de acordo com o estado atual
         switch (redGhostModel.getState()) {
             case START:
+                redGhostModel.setNextOrientation(Orientation.RIGHT);
                 redGhostModel.setState(GhostState.NORMAL);
                 return;
-            case NORMAL:
+            case NORMAL:    
                 blinkyMovements(redGhostModel);
                 break;
             case RUNNING:
@@ -403,6 +401,7 @@ class Controller{
         // atualiza a posicao de acordo com o estado atual
         switch (pinkGhostModel.getState()) {
             case START:
+                pinkGhostModel.setNextOrientation(Orientation.LEFT);
                 pinkGhostModel.setState(GhostState.DEAD3);
                 return;
             case NORMAL:
@@ -429,8 +428,10 @@ class Controller{
                     waitGhost(cyanGhostModel);
                 else if (cyanGhostModel.getRealCol() < mapModel.getSpawnCol()+ 3.5)
                     cyanGhostModel.moveRight();
-                else
+                else {
+                    cyanGhostModel.setNextOrientation(Orientation.RIGHT);
                     cyanGhostModel.setState(GhostState.DEAD3);
+                }
                 return;
             case NORMAL:
                 if (distanceBetweenCharacters(cyanGhostModel,redGhostModel) >= DISTANCE )
@@ -459,8 +460,10 @@ class Controller{
                     waitGhost(orangeGhostModel);
                 else if (orangeGhostModel.getRealCol() > mapModel.getSpawnCol()+ 3.5)
                     orangeGhostModel.moveLeft();
-                else
+                else {
+                    orangeGhostModel.setNextOrientation(Orientation.LEFT);
                     orangeGhostModel.setState(GhostState.DEAD3);
+                }
                 return;
             case NORMAL:
                 if (distanceBetweenCharacters(pacManModel,orangeGhostModel) >= DISTANCE)

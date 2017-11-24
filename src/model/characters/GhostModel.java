@@ -6,6 +6,7 @@ import utils.Updatable;
 
 public class GhostModel extends CharacterModel implements Updatable {
         
+    // estado atual do fantasma
     private GhostState state;
     
     // tempo (em numero de frames) que deve permanecer comivel
@@ -13,7 +14,6 @@ public class GhostModel extends CharacterModel implements Updatable {
     
     public GhostModel() {
         super(1, 1);
-        state = GhostState.NORMAL;
     }
 
     public GhostState getState() {
@@ -49,6 +49,10 @@ public class GhostModel extends CharacterModel implements Updatable {
     
     public boolean isEatable() {
         return eatableTime > 0;
+    }
+    
+    public boolean isAlive() {
+        return state != GhostState.DEAD1 && state != GhostState.DEAD2;
     }
     
     public void reset() {

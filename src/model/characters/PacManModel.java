@@ -2,6 +2,7 @@ package model.characters;
 
 import model.fruits.FruitModel;
 import java.util.ArrayList;
+import utils.Orientation;
 import utils.Updatable;
 
 public class PacManModel extends CharacterModel implements Updatable{
@@ -42,6 +43,13 @@ public class PacManModel extends CharacterModel implements Updatable{
     }
     public int getScore (){
         return score;
+    }
+    
+    public void reset() {
+        powerful = false;
+        setOrientation(Orientation.RIGHT);
+        setNextOrientation(Orientation.RIGHT);
+        setMoving(false);
     }
 
     @Override
