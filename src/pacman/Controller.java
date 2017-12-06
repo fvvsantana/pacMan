@@ -70,7 +70,7 @@ class Controller{
     private final Random rand = new Random();
     
     // actual game time (if negative, the characters will wait that time)
-    private long gameTime = -4350_000_000L;
+    private long gameTime = -4400_000_000L;
     
     public void run(Stage primaryStage){
         
@@ -191,6 +191,7 @@ class Controller{
         pacManModel.setRealRow(mapModel.getPacmanRow());
         pacManModel.setRealCol(mapModel.getPacmanCol());
         pacManModel.reset();
+        view.getPacManView().reset();
         
         redGhostModel.setRealRow(mapModel.getSpawnRow()-1);
         redGhostModel.setRealCol(mapModel.getSpawnCol()+3.5);
@@ -327,11 +328,12 @@ class Controller{
     
     private void collisionPacmanGhost(PacManModel pacManModel, GhostModel ghostModel) {
         if (ghostModel.isAlive() && checkCollisionCharacters(pacManModel, ghostModel)) {
-            System.out.println(ghostModel.getState());
             if (ghostModel.isEatable())
                 ghostModel.setState(GhostState.DEAD1);
             else {
-                gameTime = -1_000000000L;
+                audioManager.stopSiren();
+                audioManager.playDeath();
+                gameTime = -2_000000000L;
                 resetCharacters();
             }
         }

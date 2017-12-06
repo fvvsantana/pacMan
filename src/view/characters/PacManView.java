@@ -25,12 +25,17 @@ public class PacManView implements Updatable {
         arc = new Arc();
         arc.setType(ArcType.ROUND);   
         arc.setFill(Color.YELLOW);
-        arc.setStartAngle(30);
-        arc.setLength(300);
+        arc.setStartAngle(40);
+        arc.setLength(280);
         
         this.radiusX = (cellWidth * SIZE_MULTIPLIER) / 2;
         this.radiusY = (cellHeight * SIZE_MULTIPLIER) / 2;
         moving = false;
+    }
+    
+    public void reset() {
+        arc.setStartAngle(40);
+        arc.setLength(280);
     }
     
     // consider the position inside a map cell
