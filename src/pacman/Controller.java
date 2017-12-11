@@ -27,12 +27,11 @@ import model.grid.PacDotCellModel;
 import model.grid.PowerPelletCellModel;
 
 import model.characters.PacManModel;
-import model.characters.RedGhostModel;
-import model.characters.PinkGhostModel;
-import model.characters.OrangeGhostModel;
-import model.characters.CyanGhostModel;
+import model.characters.GhostModel;
+import model.grid.DoorCellModel;
 import model.grid.EmptyCellModel;
 import utils.AudioManager;
+import utils.GhostState;
 
 import utils.Orientation;
 import utils.Updatable;
@@ -42,21 +41,36 @@ import view.characters.RedGhostView;
 import view.characters.PinkGhostView;
 import view.characters.OrangeGhostView;
 import view.characters.CyanGhostView;
+import view.characters.GhostView;
+import view.grid.DoorCellView;
 
 class Controller{
-    private View view;
+    
+    // constants
+    private final int DISTANCE = 15;
+    
+    // models
     private GridModel mapModel;
     private PacManModel pacManModel;
-    private RedGhostModel redGhostModel;
-    private PinkGhostModel pinkGhostModel;
-    private OrangeGhostModel orangeGhostModel;
-    private CyanGhostModel cyanGhostModel;
+    private GhostModel redGhostModel;
+    private GhostModel pinkGhostModel;
+    private GhostModel orangeGhostModel;
+    private GhostModel cyanGhostModel;
+    
+    // view manager
+    private View view;
+    
+    // audio manager
     private AudioManager audioManager;
+    
+    // array for objects with Updatable interface
     private ArrayList<Updatable> updates;
     
+    // random number generator
     private final Random rand = new Random();
-    private final int maxrand = 10000;
-    private final int maxdist = 8 * CharacterModel.FACTOR;
+    
+    // actual game time (if negative, the characters will wait that time)
+    private long gameTime = -4400_000_000L;
     
     public void run(Stage primaryStage){
         
@@ -81,65 +95,119 @@ class Controller{
         //add the nodes of the cells from the grid to the map container
         view.drawMap();
 
-        //create a PacManModel setting his position as (23, 13)
-        pacManModel = new PacManModel(23, 13);
-        redGhostModel = new RedGhostModel (25,20);
-        pinkGhostModel = new PinkGhostModel (20,2);
-        orangeGhostModel = new OrangeGhostModel (2,20);
-        cyanGhostModel = new CyanGhostModel (20,20);
+        //create a PacManModel and add his update
+        pacManModel = new PacManModel();
+        updates.add(pacManModel);
+        
+        //create the ghosts models and add their updates
+        redGhostModel = new GhostModel();
+        updates.add(redGhostModel);
+        
+        pinkGhostModel = new GhostModel();
+        updates.add(pinkGhostModel);
+        
+        orangeGhostModel = new GhostModel();
+        updates.add(orangeGhostModel);
+        
+        cyanGhostModel = new GhostModel();
+        updates.add(cyanGhostModel);
 
         //add a controller to the PacManModel
         addPacManModelController(view.getScene());
 
         //set PacManView in the View
-        view.setPacManView(new PacManView(view.getGrid().getCellWidth()/2, view.getGrid().getCellHeight()/2));
+        view.setPacManView(new PacManView(view.getGrid().getCellWidth(), view.getGrid().getCellHeight()));
         view.addPacManToTheMapContainer();
+        updates.add(view.getPacManView());
         
         // create the ghosts views and add their updates
-        view.setRedGhostView(new RedGhostView());
+        view.setRedGhostView(new RedGhostView(view.getGrid().getCellWidth(), view.getGrid().getCellHeight()));
         view.addRedGhostToTheMapContainer();
         updates.add(view.getRedGhostView());
         
-        view.setPinkGhostView(new PinkGhostView());
+        view.setPinkGhostView(new PinkGhostView(view.getGrid().getCellWidth(), view.getGrid().getCellHeight()));
         view.addPinkGhostToTheMapContainer();
         updates.add(view.getPinkGhostView());
         
-        view.setOrangeGhostView(new OrangeGhostView());
+        view.setOrangeGhostView(new OrangeGhostView(view.getGrid().getCellWidth(), view.getGrid().getCellHeight()));
         view.addOrangeGhostToTheMapContainer();
         updates.add(view.getOrangeGhostView());
         
-        view.setCyanGhostView(new CyanGhostView());
+        view.setCyanGhostView(new CyanGhostView(view.getGrid().getCellWidth(), view.getGrid().getCellHeight()));
         view.addCyanGhostToTheMapContainer();
         updates.add(view.getCyanGhostView());
         
+        // set initial states and positions for characters
+        resetCharacters();
+        
+        // play intro song
+        audioManager.playIntro();
+        
         new AnimationTimer() {
+            long lastTime = 0;
+            
             @Override
             public void handle(long now) {
-                //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
-                updateModels(pacManModel);
+                // update gameTime
+                if (now - lastTime < 1_000000000)
+                    gameTime += now - lastTime;
+                
+                // print frames per second:
+                // System.out.println(1.0/(now-lastTime)*1000000000);
+                
+                lastTime = now;
+                    
+                // start updating models after gameTime larger than zero
+                if (gameTime > 0) {
+                    audioManager.startSiren();
+                    // update the position and orientation on characters' models
+                    updatePacmanModel(pacManModel);
+                    updateRedGhostModel();
+                    updatePinkGhostModel();
+                    updateCyanGhostModel();
+                    updateOrangeGhostModel();
+                }
+                
+                // passing models information to views
                 updatePacManView(pacManModel);
+                updateGhostView(redGhostModel, view.getRedGhostView());
+                updateGhostView(pinkGhostModel, view.getPinkGhostView());
+                updateGhostView(cyanGhostModel, view.getCyanGhostView());
+                updateGhostView(orangeGhostModel, view.getOrangeGhostView());
                 
-                updateRedGhostModel();
-                updateRedGhostView(redGhostModel);
-                
-                updatePinkGhostModel();
-                updatePinkGhostView(pinkGhostModel);
-                
-                updateCyanGhostModel();
-                updateCyanGhostView(cyanGhostModel);
-                
-                updateOrangeGhostModel();
-                updateOrangeGhostView(orangeGhostModel);
-                
-                updates.forEach((updatable) -> {
-                    updatable.update();
-                });
+                // using the Double Colon Operator to update every element on the array
+                updates.forEach(Updatable::update);
             }
 
         }.start();
 
         //update the screen
         view.show();
+    }
+    
+    // define as posições e estados iniciais dos personagens
+    public void resetCharacters() {
+        
+        pacManModel.setRealRow(mapModel.getPacmanRow());
+        pacManModel.setRealCol(mapModel.getPacmanCol());
+        pacManModel.reset();
+        view.getPacManView().reset();
+        
+        redGhostModel.setRealRow(mapModel.getSpawnRow()-1);
+        redGhostModel.setRealCol(mapModel.getSpawnCol()+3.5);
+        redGhostModel.reset();
+        
+        pinkGhostModel.setRealRow(mapModel.getSpawnRow()+2);
+        pinkGhostModel.setRealCol(mapModel.getSpawnCol()+3.5);
+        pinkGhostModel.reset();
+        
+        cyanGhostModel.setRealRow(mapModel.getSpawnRow()+2);
+        cyanGhostModel.setRealCol(mapModel.getSpawnCol()+1);
+        cyanGhostModel.reset();
+        
+        orangeGhostModel.setRealRow(mapModel.getSpawnRow()+2);
+        orangeGhostModel.setRealCol(mapModel.getSpawnCol()+6);
+        orangeGhostModel.reset();
     }
 
     //generate a GridView based on the passing argument GridModel
@@ -155,7 +223,9 @@ class Controller{
 
                 cellModel = mapModel.getCell(i, j);
 
-                if(cellModel instanceof ObstacleCellModel){
+                if (cellModel instanceof DoorCellModel) {
+                    cellView = new DoorCellView();
+                }else if(cellModel instanceof ObstacleCellModel){
                     cellView = new ObstacleCellView();
                 }else if(cellModel instanceof PacDotCellModel){
                     cellView = new PacDotCellView();
@@ -196,7 +266,7 @@ class Controller{
     }
    
     //move the pacManModel to the specified orientation 
-    private void updateModels(CharacterModel characterModel){
+    private void updateChracterModel(CharacterModel characterModel){
 
         // verifica se esta num tunel
         if (checkTunnel(characterModel)){
@@ -216,21 +286,58 @@ class Controller{
         } else {
             characterModel.setMoving(false);
         }
+    } 
+    
+    private void updatePacmanModel (PacManModel pacManModel) {
+        
+        updateChracterModel(pacManModel);
         
         // verifica se está pegando um item
-        double row = pacManModel.getRealRow();
-        double col = pacManModel.getRealCol();
-        if (row%1 == 0 && col%1 == 0) {
-            if (mapModel.getCell((int)row, (int)col) instanceof PacDotCellModel) {
-                mapModel.addCell(new EmptyCellModel(), (int)row, (int)col);
-                view.removeCellView((int)row, (int)col);
-            } else if (mapModel.getCell((int)row, (int)col) instanceof PowerPelletCellModel) {
-                /// TODO: definir fantasmas como comiveis
-                mapModel.addCell(new EmptyCellModel(), (int)row, (int)col);
-                view.removeCellView((int)row, (int)col);
+        if (!checkTunnel(pacManModel)) {
+            double row = pacManModel.getRealRow();
+            double col = pacManModel.getRealCol();
+            if (row % 1 == 0 && col % 1 == 0) {
+                // caso seja uma pacdot normal
+                if (mapModel.getCell((int) row, (int) col) instanceof PacDotCellModel) {
+                    mapModel.addCell(new EmptyCellModel(), (int) row, (int) col);
+                    view.removeCellView((int) row, (int) col);
+                } // caso seja uma power pellet
+                else if (mapModel.getCell((int) row, (int) col) instanceof PowerPelletCellModel) {
+
+                    // marca o pacman como poderoso
+                    pacManModel.setPowerful(true);
+
+                    // muda o estado dos fantasmas para fugindo
+                    redGhostModel.startRunning();
+                    pinkGhostModel.startRunning();
+                    cyanGhostModel.startRunning();
+                    orangeGhostModel.startRunning();
+
+                    mapModel.addCell(new EmptyCellModel(), (int) row, (int) col);
+                    view.removeCellView((int) row, (int) col);
+                }
             }
         }
-    } 
+        
+        // verifica se está colidindo com um fantasma
+        collisionPacmanGhost(pacManModel, redGhostModel);
+        collisionPacmanGhost(pacManModel, pinkGhostModel);
+        collisionPacmanGhost(pacManModel, cyanGhostModel);
+        collisionPacmanGhost(pacManModel, orangeGhostModel);
+    }
+    
+    private void collisionPacmanGhost(PacManModel pacManModel, GhostModel ghostModel) {
+        if (ghostModel.isAlive() && checkCollisionCharacters(pacManModel, ghostModel)) {
+            if (ghostModel.isEatable())
+                ghostModel.setState(GhostState.DEAD1);
+            else {
+                audioManager.stopSiren();
+                audioManager.playDeath();
+                gameTime = -2_000000000L;
+                resetCharacters();
+            }
+        }
+    }
     
     public boolean checkTunnel(CharacterModel characterModel) {
         double row = characterModel.getRealRow();
@@ -261,165 +368,411 @@ class Controller{
             characterModel.setRealRow(-1);
     }
     
+    public double distanceCharacterPoint (CharacterModel characterModel, double row, double col) {
+        return Math.sqrt(Math.pow(characterModel.getRealCol()-col,2) + Math.pow(characterModel.getRealRow()-row,2));
+    }
+
+    public double distanceBetweenCharacters (CharacterModel characterModel1, CharacterModel characterModel2){
+        return distanceCharacterPoint(characterModel1, characterModel2.getRealRow(), characterModel2.getRealCol());
+    }
+    
+    public boolean checkCollisionCharacters (CharacterModel characterModel1, CharacterModel characterModel2){
+        return distanceBetweenCharacters(characterModel1, characterModel2) < 0.5;
+    }
+    
     private void updateRedGhostModel(){
-        int num = rand.nextInt(4);
-        if (num == 3)
-            randomWalk(redGhostModel);
-        else
-            chasePoint(redGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
-        updateModels(redGhostModel);
+        // atualiza a posicao de acordo com o estado atual
+        switch (redGhostModel.getState()) {
+            case START:
+                redGhostModel.setNextOrientation(Orientation.RIGHT);
+                redGhostModel.setState(GhostState.NORMAL);
+                return;
+            case NORMAL:    
+                blinkyMovements(redGhostModel);
+                break;
+            case RUNNING:
+                runAwayPoint(redGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
+                break;
+            case DEAD1:
+                returnGhost(redGhostModel);
+                break;
+            default:
+                respawnGhost(redGhostModel);
+                return;
+        }
+        updateChracterModel(redGhostModel);
     }
     
     private void updatePinkGhostModel(){
-        if (pinkGhostModel.getRealCol() % 1 == 0 && pinkGhostModel.getRealRow() % 1 == 0){
-            System.out.println();
-            randomWalk(pinkGhostModel);
+        // atualiza a posicao de acordo com o estado atual
+        switch (pinkGhostModel.getState()) {
+            case START:
+                pinkGhostModel.setNextOrientation(Orientation.LEFT);
+                pinkGhostModel.setState(GhostState.DEAD3);
+                return;
+            case NORMAL:
+                pinkyMovements(pinkGhostModel);
+                break;
+            case RUNNING:
+                runAwayPoint(pinkGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
+                break;
+            case DEAD1:
+                returnGhost(pinkGhostModel);
+                break;
+            default:
+                respawnGhost(pinkGhostModel);
+                return;
         }
-        updateModels(pinkGhostModel);
+        updateChracterModel(pinkGhostModel);
     }
     
     private void updateCyanGhostModel(){
-        int num = rand.nextInt(4);
-        if (DistanceBetweenCharacters(cyanGhostModel, redGhostModel) < maxdist && num != 3)
-            chasePoint(cyanGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
-        else
-            randomWalk(cyanGhostModel);
-        updateModels(cyanGhostModel);
+        // atualiza a posicao de acordo com o estado atual
+        switch (cyanGhostModel.getState()) {
+            case START:
+                if (gameTime < 3500_000_000L)
+                    waitGhost(cyanGhostModel);
+                else if (cyanGhostModel.getRealCol() < mapModel.getSpawnCol()+ 3.5)
+                    cyanGhostModel.moveRight();
+                else {
+                    cyanGhostModel.setNextOrientation(Orientation.RIGHT);
+                    cyanGhostModel.setState(GhostState.DEAD3);
+                }
+                return;
+            case NORMAL:
+                if (distanceBetweenCharacters(cyanGhostModel,redGhostModel) >= DISTANCE )
+                    randomWalk(cyanGhostModel);
+                else
+                    blinkyMovements(cyanGhostModel);
+                break;
+            case RUNNING:
+                runAwayPoint(cyanGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
+                break;
+            case DEAD1:
+                returnGhost(cyanGhostModel);
+                break;
+            default:
+                respawnGhost(cyanGhostModel);
+                return;
+        }
+        updateChracterModel(cyanGhostModel);
     }
-    
+   
     private void updateOrangeGhostModel(){
-        int num = rand.nextInt(4);
-        if (DistanceBetweenCharacters(orangeGhostModel, pacManModel) > maxdist && num != 3)
-            chasePoint(orangeGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
-        else
-            randomWalk(orangeGhostModel);
-        updateModels(orangeGhostModel);
+        // atualiza a posicao de acordo com o estado atual
+        switch (orangeGhostModel.getState()) {
+            case START:
+                if (gameTime < 7000_000_000L)
+                    waitGhost(orangeGhostModel);
+                else if (orangeGhostModel.getRealCol() > mapModel.getSpawnCol()+ 3.5)
+                    orangeGhostModel.moveLeft();
+                else {
+                    orangeGhostModel.setNextOrientation(Orientation.LEFT);
+                    orangeGhostModel.setState(GhostState.DEAD3);
+                }
+                return;
+            case NORMAL:
+                if (distanceBetweenCharacters(pacManModel,orangeGhostModel) >= DISTANCE)
+                    blinkyMovements(orangeGhostModel);
+                else
+                    randomWalk(orangeGhostModel);
+                break;
+            case RUNNING:
+                runAwayPoint(orangeGhostModel, pacManModel.getRealRow(), pacManModel.getRealCol());
+                break;
+            case DEAD1:
+                returnGhost(orangeGhostModel);
+                break;
+            default:
+                respawnGhost(orangeGhostModel);
+                return;
+        }
+        updateChracterModel(orangeGhostModel);
     }
-    
-    //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
-    public void updatePacManView(PacManModel pacManModel){
-        view.getPacManView().setPosition(view.getGrid().getCellPosition(pacManModel.getRealRow(), pacManModel.getRealCol()));
-        view.getPacManView().setOrientation(pacManModel.getOrientation());
-        if (pacManModel.isMoving())
-            view.getPacManView().updateArc();
-    }
-            
-    public void updateRedGhostView(RedGhostModel redGhostModel){
-        view.getRedGhostView().setPosition(view.getGrid().getCellPosition(redGhostModel.getRealRow(), redGhostModel.getRealCol()));
-    }        
-    
-    public void updatePinkGhostView(PinkGhostModel pinkGhostModel){
-        view.getPinkGhostView().setPosition(view.getGrid().getCellPosition(pinkGhostModel.getRealRow(), pinkGhostModel.getRealCol()));
-    }
-    
-    public void updateCyanGhostView(CyanGhostModel cyanGhostModel){
-        view.getCyanGhostView().setPosition(view.getGrid().getCellPosition(cyanGhostModel.getRealRow(), cyanGhostModel.getRealCol()));
-    }
-    
-    public void updateOrangeGhostView(OrangeGhostModel orangeGhostModel){
-        view.getOrangeGhostView().setPosition(view.getGrid().getCellPosition(orangeGhostModel.getRealRow(), orangeGhostModel.getRealCol()));
-    }
+     
+    private void pinkyMovements (CharacterModel characterModel ){
 
-    public int DistanceBetweenCharacters (CharacterModel characterModel1, CharacterModel characterModel2){
-        return (int)Math.sqrt(Math.pow(characterModel1.getCol()-characterModel2.getCol(),2) +
-                              Math.pow(characterModel1.getRow()-characterModel2.getRow(),2));
-    }
-
-    public void randomWalk(CharacterModel characterModel){
+        // se estiver no meio de uma celula nao deve alterar a direcao
+        if (characterModel.getRealRow()%1 != 0 || characterModel.getRealCol()%1 != 0) 
+            return;
         
         // se estiver num tunel nao deve alterar a orientacao
         if (checkTunnel(characterModel))
             return;
         
+        // cria um vetor com todas direcoes possiveis
         ArrayList<Orientation> orientations = new ArrayList(4);
+        
         orientations.add(Orientation.UP);
         orientations.add(Orientation.DOWN);
         orientations.add(Orientation.LEFT);
         orientations.add(Orientation.RIGHT);
         
+        // remove a direcao oposta
         orientations.remove(characterModel.getOrientation().getOpposite());
         
+        // remove as direcoes com colisao
         Iterator<Orientation> it = orientations.iterator();
         while (it.hasNext()) {
             if (checkCollisionOrientation(characterModel, it.next()))
                 it.remove();
         }
         
+        // se nao sobrou orientacoes, voltar para oposta
+        if (orientations.isEmpty()) {
+            characterModel.setNextOrientation(characterModel.getOrientation().getOpposite());
+            return;
+        }
+        // se sobrou soh uma possibilidade, basta definir ela
+        if (orientations.size() == 1) {
+            characterModel.setNextOrientation(orientations.get(0));
+            return;
+        }
+        
+        //verifica se alguma orientacao que sobrou eh paralela a orientacao do pacman se for atualiza
+        for (int i = 0; i < orientations.size(); i++) {
+            Orientation o = orientations.get(i);
+            if (pacManModel.getOrientation().getOpposite() == o || characterModel.getOrientation() == o){
+                characterModel.setNextOrientation(o);
+                return;
+            }
+        }
+        //caso nenhuma orientacao que sobrou em o for paralela ele anda randomicamente
+        randomWalk(characterModel);
+    }
+    
+    private void blinkyMovements(CharacterModel characterModel){
+        int num = rand.nextInt(4);
+        if (num == 1)
+            randomWalk(characterModel);
+        else 
+            chasePoint(characterModel, pacManModel.getRealRow(), pacManModel.getRealCol());
+    }
+    
+    //update the position, width, height and orientation of the pacManView according to the pacManModel and the grid's dimensions
+    public void updatePacManView(PacManModel pacManModel){
+        view.getPacManView().setCellPosition(view.getGrid().getCellPosition(pacManModel.getRealRow(), pacManModel.getRealCol()));
+        view.getPacManView().setOrientation(pacManModel.getOrientation());
+        
+        view.getPacManView().setMoving(pacManModel.isMoving());
+    }
+    
+    // atualiza a GhostView recebida com base no GhostModel
+    public void updateGhostView(GhostModel ghostModel, GhostView ghostView){
+        // atualiza a posicao
+        ghostView.setCellPosition(view.getGrid().getCellPosition(ghostModel.getRealRow(), ghostModel.getRealCol()));
+        // atualiza o estado
+        ghostView.setState(ghostModel.getViewState());
+    }
+    
+    // retorna o fantasma para a porta do spawn
+    public void returnGhost (GhostModel ghostModel) {
+        chasePoint(ghostModel, mapModel.getSpawnRow()-1, mapModel.getSpawnCol()+3);
+        if (ghostModel.getRealRow() == mapModel.getSpawnRow()-1 && ghostModel.getRealCol() == mapModel.getSpawnCol()+3)
+            ghostModel.setState(GhostState.DEAD2);
+    }
+
+    // faz o fantasma entrar e sair do spawn
+    public void respawnGhost(GhostModel ghostModel) {
+        if (ghostModel.getState() == GhostState.DEAD2) {
+            ghostModel.moveDown();
+            if (ghostModel.getRealRow() == mapModel.getSpawnRow()+2)
+                ghostModel.setState(GhostState.DEAD3);
+        } else {
+            ghostModel.moveUp();
+            if (ghostModel.getRealRow() == mapModel.getSpawnRow()-1)
+                ghostModel.setState(GhostState.NORMAL);
+        }
+    }
+    
+    // faz a movimentacao de sobe e desce dentro do spawn (antes do fanstama sair)
+    public void waitGhost(GhostModel ghostModel) {
+        if (ghostModel.getOrientation() == Orientation.DOWN) {
+            if (ghostModel.getRealRow() > mapModel.getSpawnRow() + 3)
+                ghostModel.setOrientation(Orientation.UP);
+        } else {
+            if (ghostModel.getRealRow() < mapModel.getSpawnRow() + 1)
+                ghostModel.setOrientation(Orientation.DOWN);
+        }
+        ghostModel.move();
+    }
+    
+    // define uma direcao aleatoria para o character
+    public void randomWalk(CharacterModel characterModel){
+        
+        // se estiver no meio de uma celula nao deve alterar a direcao
+        if (characterModel.getRealRow()%1 != 0 || characterModel.getRealCol()%1 != 0) 
+            return;
+        
+        // se estiver num tunel nao deve alterar a orientacao
+        if (checkTunnel(characterModel))
+            return;
+        
+        // cria um vetor com todas direcoes possiveis
+        ArrayList<Orientation> orientations = new ArrayList(4);
+        orientations.add(Orientation.UP);
+        orientations.add(Orientation.DOWN);
+        orientations.add(Orientation.LEFT);
+        orientations.add(Orientation.RIGHT);
+        
+        // remove a direcao oposta
+        orientations.remove(characterModel.getOrientation().getOpposite());
+        
+        // remove as direcoes com colisao
+        Iterator<Orientation> it = orientations.iterator();
+        while (it.hasNext()) {
+            if (checkCollisionOrientation(characterModel, it.next()))
+                it.remove();
+        }
+        
+        // se nao sobrou orientacoes, voltar para oposta
+        if (orientations.isEmpty()) {
+            characterModel.setNextOrientation(characterModel.getOrientation().getOpposite());
+            return;
+        }
+        
+        // sorteia uma direcao aleatoria das remanescentes 
         int num = rand.nextInt(orientations.size());
         characterModel.setNextOrientation(orientations.get(num));
         
     }
-    
-    public void chasePoint(CharacterModel characterModel, double xPoint, double yPoint){
         
-        double x = characterModel.getCol()- xPoint * CharacterModel.FACTOR;
-        double y = characterModel.getRow() - yPoint * CharacterModel.FACTOR;
+    // define a proxima orientacao com objetivo de chegar num ponto
+    public void chasePoint(CharacterModel characterModel, double row, double col){
         
-        switch (characterModel.getOrientation()){
-            case UP:
-                if (!characterModel.isMoving()){
-                    if (!checkCollisionOrientation(characterModel, Orientation.LEFT))
-                        characterModel.setNextOrientation(Orientation.LEFT);
-                    else
-                        characterModel.setNextOrientation(Orientation.RIGHT);
-                }else{
-                    if (y > 0)
-                        characterModel.setNextOrientation(Orientation.LEFT);
-                    else if (y < 0)
-                        characterModel.setNextOrientation(Orientation.RIGHT);
-                    else
-                        characterModel.setNextOrientation(Orientation.UP);
-                }
-                break;
-                
-            case DOWN:
-                if (!characterModel.isMoving()){
-                    if (!checkCollisionOrientation(characterModel, Orientation.LEFT))
-                        characterModel.setNextOrientation(Orientation.LEFT);
-                    else
-                        characterModel.setNextOrientation(Orientation.RIGHT);
-                }else{
-                    if (y > 0)
-                        characterModel.setNextOrientation(Orientation.LEFT);
-                    else if (y < 0)
-                        characterModel.setNextOrientation(Orientation.RIGHT);
-                    else
-                        characterModel.setNextOrientation(Orientation.DOWN);
-                }
-                break;
-                
-            case LEFT:
-                if (!characterModel.isMoving()){
-                    if (!checkCollisionOrientation(characterModel, Orientation.UP))
-                        characterModel.setNextOrientation(Orientation.UP);
-                    else
-                        characterModel.setNextOrientation(Orientation.DOWN);
-                }else{
-                    if (x > 0)
-                        characterModel.setNextOrientation(Orientation.UP);
-                    else if (x < 0)
-                        characterModel.setNextOrientation(Orientation.DOWN);
-                    else
-                        characterModel.setNextOrientation(Orientation.LEFT);
-                }
-                break;
-                
-            case RIGHT:
-                if (!characterModel.isMoving()){
-                    if (!checkCollisionOrientation(characterModel, Orientation.UP))
-                        characterModel.setNextOrientation(Orientation.UP);
-                    else
-                        characterModel.setNextOrientation(Orientation.DOWN);
-                }else{
-                    if (x > 0)
-                        characterModel.setNextOrientation(Orientation.UP);
-                    else if (x < 0)
-                        characterModel.setNextOrientation(Orientation.DOWN);
-                    else
-                        characterModel.setNextOrientation(Orientation.RIGHT);
-                }
-                break;
+        // se estiver no meio de uma celula nao deve alterar a direcao
+        if (characterModel.getRealRow()%1 != 0 || characterModel.getRealCol()%1 != 0) 
+            return;
+        
+        // se estiver num tunel nao deve alterar a orientacao
+        if (checkTunnel(characterModel))
+            return;
+        
+        // cria um vetor com todas direcoes possiveis
+        ArrayList<Orientation> orientations = new ArrayList(4);
+        orientations.add(Orientation.UP);
+        orientations.add(Orientation.DOWN);
+        orientations.add(Orientation.LEFT);
+        orientations.add(Orientation.RIGHT);
+        
+        // remove a direcao oposta
+        orientations.remove(characterModel.getOrientation().getOpposite());
+        
+        // remove as direcoes com colisao
+        Iterator<Orientation> it = orientations.iterator();
+        while (it.hasNext()) {
+            if (checkCollisionOrientation(characterModel, it.next()))
+                it.remove();
         }
+        
+        // se nao sobrou orientacoes, voltar para oposta
+        if (orientations.isEmpty()) {
+            characterModel.setNextOrientation(characterModel.getOrientation().getOpposite());
+            return;
+        }
+        
+        // se sobrou soh uma possibilidade, basta definir ela
+        if (orientations.size() == 1) {
+            characterModel.setNextOrientation(orientations.get(0));
+            return;
+        }
+        
+        // se tem mais de uma opcao, deve escolher o menor caminho
+        Orientation melhor = null;
+        double melhorDist = 100;
+        for (int i = 0; i < orientations.size(); i++) {
+            Orientation o = orientations.get(i);
+            double dist = 0;
+            switch (o) {
+                case UP:
+                    dist = distanceCharacterPoint(characterModel, row+1, col);
+                    break;
+                case DOWN:
+                    dist = distanceCharacterPoint(characterModel, row-1, col);
+                    break;
+                case LEFT:
+                    dist = distanceCharacterPoint(characterModel, row, col+1);
+                    break;
+                case RIGHT:
+                    dist = distanceCharacterPoint(characterModel, row, col-1);
+                    break;
+            }
+            if (dist <  melhorDist) {
+                melhor = o;
+                melhorDist = dist;
+            }
+        }
+        characterModel.setNextOrientation(melhor);
+        
+    }
+    
+    // define a proxima orientacao com objetivo de se afastar de um ponto
+    public void runAwayPoint(CharacterModel characterModel, double row, double col){
+        
+        // se estiver no meio de uma celula nao deve alterar a direcao
+        if (characterModel.getRealRow()%1 != 0 || characterModel.getRealCol()%1 != 0) 
+            return;
+        
+        // se estiver num tunel nao deve alterar a orientacao
+        if (checkTunnel(characterModel))
+            return;
+        
+        // cria um vetor com todas direcoes possiveis
+        ArrayList<Orientation> orientations = new ArrayList(4);
+        orientations.add(Orientation.UP);
+        orientations.add(Orientation.DOWN);
+        orientations.add(Orientation.LEFT);
+        orientations.add(Orientation.RIGHT);
+        
+        // remove a direcao oposta
+        orientations.remove(characterModel.getOrientation().getOpposite());
+        
+        // remove as direcoes com colisao
+        Iterator<Orientation> it = orientations.iterator();
+        while (it.hasNext()) {
+            if (checkCollisionOrientation(characterModel, it.next()))
+                it.remove();
+        }
+        // se nao sobrou orientacoes, voltar para oposta
+        if (orientations.isEmpty()) {
+            characterModel.setNextOrientation(characterModel.getOrientation().getOpposite());
+            return;
+        }
+        // se sobrou soh uma possibilidade, basta definir ela
+        if (orientations.size() == 1) {
+            characterModel.setNextOrientation(orientations.get(0));
+            return;
+        }
+        
+        // se tem mais de uma opcao, deve escolher o menor caminho
+        row += 0.5;
+        col += 0.5;
+        Orientation melhor = null;
+        double melhorDist = 0;
+        for (int i = 0; i < orientations.size(); i++) {
+            Orientation o = orientations.get(i);
+            double dist = 0;
+            switch (o) {
+                case UP:
+                    dist = distanceCharacterPoint(characterModel, row+1, col);
+                    break;
+                case DOWN:
+                    dist = distanceCharacterPoint(characterModel, row-1, col);
+                    break;
+                case LEFT:
+                    dist = distanceCharacterPoint(characterModel, row, col+1);
+                    break;
+                case RIGHT:
+                    dist = distanceCharacterPoint(characterModel, row, col-1);
+                    break;
+            }
+            if (dist >  melhorDist) {
+                melhor = o;
+                melhorDist = dist;
+            }
+        }
+        characterModel.setNextOrientation(melhor);
+        
     }
     
     public boolean checkCollision(CharacterModel characterModel) {
@@ -428,17 +781,17 @@ class Controller{
         int col = characterModel.getCol();
         switch (orientation) {
             case UP:
-                return col%CharacterModel.FACTOR == 0 &&
-                  mapModel.getCell((row-1)/CharacterModel.FACTOR, col/CharacterModel.FACTOR) instanceof ObstacleCellModel;
+                return row%CharacterModel.FACTOR == 0 &&
+                  mapModel.getCell(row/CharacterModel.FACTOR-1, col/CharacterModel.FACTOR) instanceof ObstacleCellModel;
             case DOWN:
-                return col%CharacterModel.FACTOR == 0 &&
-                  mapModel.getCell((row+1)/CharacterModel.FACTOR+1,col/CharacterModel.FACTOR) instanceof ObstacleCellModel;
+                return row%CharacterModel.FACTOR == 0 &&
+                  mapModel.getCell(row/CharacterModel.FACTOR+1,col/CharacterModel.FACTOR) instanceof ObstacleCellModel;
             case LEFT:
-                return row%CharacterModel.FACTOR == 0 &&
-                  mapModel.getCell(row/CharacterModel.FACTOR, (col-1)/CharacterModel.FACTOR) instanceof ObstacleCellModel;
+                return col%CharacterModel.FACTOR == 0 &&
+                  mapModel.getCell(row/CharacterModel.FACTOR, col/CharacterModel.FACTOR-1) instanceof ObstacleCellModel;
             case RIGHT:
-                return row%CharacterModel.FACTOR == 0 &&
-                  mapModel.getCell(row/CharacterModel.FACTOR,(col+1)/CharacterModel.FACTOR+1) instanceof ObstacleCellModel;
+                return col%CharacterModel.FACTOR == 0 &&
+                  mapModel.getCell(row/CharacterModel.FACTOR,col/CharacterModel.FACTOR+1) instanceof ObstacleCellModel;
             default:
                 return true;
         }

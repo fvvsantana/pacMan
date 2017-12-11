@@ -89,8 +89,7 @@ public class View{
     }
     public void addPinkGhostToTheMapContainer(){
         mapContainer.getChildren().add(pinkGhostView.getImg());
-    }  
-    
+    }
 
     //update the screen
     public void show(){

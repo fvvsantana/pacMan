@@ -5,7 +5,9 @@ import utils.Orientation;
 public abstract class CharacterModel {
     
     // the values will be multiplied by the FACTOR to keep them integers
-    public static final int FACTOR = 80;
+    public static final int FACTOR = 100;
+    
+    public static final int STANDARD_SPEED = 10;
     
     private Orientation orientation;
     private Orientation nextOrientation;
@@ -13,19 +15,16 @@ public abstract class CharacterModel {
     private int col;
     private int speed;
     private boolean moving;
+    
 
     // multiple constructors
     public CharacterModel(double realRow, double realCol) {
-        this(realRow, realCol, 0.0625, Orientation.RIGHT);
-    }
-
-    public CharacterModel(double realRow, double realCol, double realSpeed, Orientation orientation) {
         this.row = (int) (FACTOR * realRow);
         this.col = (int) (FACTOR * realCol);
-        this.speed = (int) (FACTOR * realSpeed);
-        this.orientation = orientation;
+        setSpeed(STANDARD_SPEED);
+        this.orientation = Orientation.RIGHT;
         nextOrientation = orientation;
-        moving = true;
+        moving = false;
     }
     
     // move to the defined orientation
@@ -89,26 +88,35 @@ public abstract class CharacterModel {
     
     public void setRow(int row) {
         this.row = row;
+        adjustPosition();
     }
 
     public void setRealRow(double row) {
-        this.row = (int) (FACTOR * row);
+        setRow((int) (FACTOR * row));
     }
     
     public void setCol(int col) {
         this.col = col;
+        adjustPosition();
     }
 
     public void setRealCol(double col) {
-        this.col = (int) (FACTOR * col);
+        setCol((int)(FACTOR*col));
     }
 
     public void setSpeed(int speed) {
         this.speed = speed;
+        adjustPosition();
     }
 
     public void setRealSpeed(double speed) {
-        this.speed = (int) (FACTOR * speed);
+        setSpeed((int)(FACTOR * speed));
+    }
+    
+    // ajusta a posicao para a velocidade atual
+    private void adjustPosition() {
+        row = row - (row%speed);
+        col = col - (col%speed);
     }
 
     public Orientation getOrientation() {

@@ -1,0 +1,16 @@
+﻿> 2 inteiros: número de linhas e colunas
+
+> 2 inteiros: linha e coluna do começo do spawn (canto superior esquerdo)
+> Obs: o spawn deve sempre ter o mesmo tamanho e formato do mapa padrão
+
+> 2 doubles: linha e coluna do local onde apareceram frutas
+
+> 2 doubles: linha e coluna iniciais do pacman
+
+> Matriz de inteiros contendo o mapa
+> Legenda de valores:
+> 0 - célula vazia
+> 1 - parede
+> 2 - pacdot
+> 3 - power pellet
+> 4 - porta do spawn
