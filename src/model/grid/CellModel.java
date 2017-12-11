@@ -1,6 +1,8 @@
 package model.grid;
 
-public abstract class CellModel{
+import java.io.Serializable;
+
+public abstract class CellModel implements Serializable {
 
     public CellModel() {
         super();

@@ -1,8 +1,9 @@
 package model.characters;
 
+import java.io.Serializable;
 import utils.Orientation;
 
-public abstract class CharacterModel {
+public abstract class CharacterModel implements Serializable {
     
     // the values will be multiplied by the FACTOR to keep them integers
     public static final int FACTOR = 100;

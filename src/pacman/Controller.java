@@ -1,5 +1,6 @@
 package pacman;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -44,10 +45,11 @@ import view.characters.CyanGhostView;
 import view.characters.GhostView;
 import view.grid.DoorCellView;
 
-class Controller{
+class Controller implements Serializable {
     
     // constants
-    private final int DISTANCE = 15;
+    private static final int DISTANCE = 15;
+    private static final long START_TIME = -4400_000_000L;
     
     // models
     private GridModel mapModel;
@@ -57,22 +59,51 @@ class Controller{
     private GhostModel orangeGhostModel;
     private GhostModel cyanGhostModel;
     
-    // view manager
-    private View view;
+    // actual game time (if negative, the characters will wait that time)
+    private long gameTime;
     
-    // audio manager
-    private AudioManager audioManager;
+    // inform if the controller is already initialized (used for serialization)
+    private boolean initialized = false;
     
     // array for objects with Updatable interface
-    private ArrayList<Updatable> updates;
+    private transient ArrayList<Updatable> updates;
+    
+    // view manager
+    private transient View view;
+    
+    // audio manager
+    private transient AudioManager audioManager;
     
     // random number generator
-    private final Random rand = new Random();
-    
-    // actual game time (if negative, the characters will wait that time)
-    private long gameTime = -4400_000_000L;
+    private transient Random rand;
     
     public void run(Stage primaryStage){
+        
+        if (!initialized) {
+            //get the mapModel from the Maps class
+            mapModel = Maps.mainMap();
+        
+            //create a PacManModel
+            pacManModel = new PacManModel();
+
+            //create the ghosts models
+            redGhostModel = new GhostModel();
+            pinkGhostModel = new GhostModel();
+            orangeGhostModel = new GhostModel();
+            cyanGhostModel = new GhostModel();
+            
+            // set initial states and positions for characters' models
+            resetCharacters();
+            
+            // set initial game time
+            gameTime = START_TIME;
+            
+            // set initialized as true
+            initialized = true;
+        }
+        
+        // initialize the random generator
+        rand = new Random();
         
         //initialize the audio manager
         audioManager = new AudioManager();
@@ -83,9 +114,6 @@ class Controller{
         //generate the layout
         view = new View(primaryStage);
 
-        //get the mapModel from the Maps class
-        mapModel = Maps.mainMap();
-
         //generate the visual grid
         view.setGrid(generateGridView(mapModel));
 
@@ -95,28 +123,19 @@ class Controller{
         //add the nodes of the cells from the grid to the map container
         view.drawMap();
 
-        //create a PacManModel and add his update
-        pacManModel = new PacManModel();
+        // add the models' updates to the list
         updates.add(pacManModel);
-        
-        //create the ghosts models and add their updates
-        redGhostModel = new GhostModel();
-        updates.add(redGhostModel);
-        
-        pinkGhostModel = new GhostModel();
-        updates.add(pinkGhostModel);
-        
-        orangeGhostModel = new GhostModel();
-        updates.add(orangeGhostModel);
-        
-        cyanGhostModel = new GhostModel();
         updates.add(cyanGhostModel);
+        updates.add(redGhostModel);
+        updates.add(pinkGhostModel);
+        updates.add(orangeGhostModel);
 
         //add a controller to the PacManModel
         addPacManModelController(view.getScene());
 
         //set PacManView in the View
         view.setPacManView(new PacManView(view.getGrid().getCellWidth(), view.getGrid().getCellHeight()));
+        view.getPacManView().reset();
         view.addPacManToTheMapContainer();
         updates.add(view.getPacManView());
         
@@ -137,11 +156,9 @@ class Controller{
         view.addCyanGhostToTheMapContainer();
         updates.add(view.getCyanGhostView());
         
-        // set initial states and positions for characters
-        resetCharacters();
-        
-        // play intro song
-        audioManager.playIntro();
+        // play intro song (if game is starting now)
+        if (gameTime == START_TIME)
+            audioManager.playIntro();
         
         new AnimationTimer() {
             long lastTime = 0;
@@ -185,13 +202,12 @@ class Controller{
         view.show();
     }
     
-    // define as posições e estados iniciais dos personagens
+    // define as posições e estados iniciais dos models dos personagens
     public void resetCharacters() {
         
         pacManModel.setRealRow(mapModel.getPacmanRow());
         pacManModel.setRealCol(mapModel.getPacmanCol());
         pacManModel.reset();
-        view.getPacManView().reset();
         
         redGhostModel.setRealRow(mapModel.getSpawnRow()-1);
         redGhostModel.setRealCol(mapModel.getSpawnCol()+3.5);
@@ -335,6 +351,7 @@ class Controller{
                 audioManager.playDeath();
                 gameTime = -2_000000000L;
                 resetCharacters();
+                view.getPacManView().reset();
             }
         }
     }

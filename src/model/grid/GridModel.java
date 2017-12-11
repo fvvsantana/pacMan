@@ -1,6 +1,8 @@
 package model.grid;
 
-public class GridModel{
+import java.io.Serializable;
+
+public class GridModel implements Serializable {
     private final CellModel[][] grid;
     private final int rows;
     private final int cols;

@@ -8,3 +8,5 @@ dist/
 nbproject/
 
 manifest\.mf
+
+pacman\.ser
