@@ -13,6 +13,7 @@ public class PacManModel extends CharacterModel implements Updatable{
     private int score;
     private int lives;
     private int counter = 0;
+    private int ghostCounterEaten = 0;
     private boolean powerful;
     private ArrayList<FruitModel> fruits;
     
@@ -51,13 +52,30 @@ public class PacManModel extends CharacterModel implements Updatable{
         setNextOrientation(Orientation.RIGHT);
         setMoving(false);
     }
-
+    
+    public int sumPacDotScore(){
+        score += 10;
+        return score;
+    }
+    
+    public int sumPowerPalletScore(){
+        score += 50;
+        return score;
+    }
+    
+    public int sumGhostEaten(){
+        score += 200*Math.pow(2, ghostCounterEaten);
+        ghostCounterEaten++;
+        return score;
+    }
+    
     @Override
     public void update() {
         
         if(powerful && counter == POWER_TIME){
             setPowerful(false);
             counter = 0;
+            ghostCounterEaten = 0;
         } else if(powerful && counter != POWER_TIME){
             counter++;
         }

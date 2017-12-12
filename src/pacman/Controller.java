@@ -317,6 +317,7 @@ class Controller implements Serializable {
                 if (mapModel.getCell((int) row, (int) col) instanceof PacDotCellModel) {
                     mapModel.addCell(new EmptyCellModel(), (int) row, (int) col);
                     view.removeCellView((int) row, (int) col);
+                    System.out.println(pacManModel.sumPacDotScore());
                 } // caso seja uma power pellet
                 else if (mapModel.getCell((int) row, (int) col) instanceof PowerPelletCellModel) {
 
@@ -331,6 +332,7 @@ class Controller implements Serializable {
 
                     mapModel.addCell(new EmptyCellModel(), (int) row, (int) col);
                     view.removeCellView((int) row, (int) col);
+                   System.out.println(pacManModel.sumPowerPalletScore());
                 }
             }
         }
@@ -344,8 +346,10 @@ class Controller implements Serializable {
     
     private void collisionPacmanGhost(PacManModel pacManModel, GhostModel ghostModel) {
         if (ghostModel.isAlive() && checkCollisionCharacters(pacManModel, ghostModel)) {
-            if (ghostModel.isEatable())
+            if (ghostModel.isEatable()){
                 ghostModel.setState(GhostState.DEAD1);
+                System.out.println(pacManModel.sumGhostEaten());
+            }
             else {
                 audioManager.stopSiren();
                 audioManager.playDeath();
