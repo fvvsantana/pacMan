@@ -29,6 +29,9 @@ import model.grid.PowerPelletCellModel;
 
 import model.characters.PacManModel;
 import model.characters.GhostModel;
+import model.fruits.CherryModel;
+import model.fruits.FruitModel;
+import model.fruits.StrawberryModel;
 import model.grid.DoorCellModel;
 import model.grid.EmptyCellModel;
 import utils.AudioManager;
@@ -58,6 +61,8 @@ class Controller implements Serializable {
     private GhostModel pinkGhostModel;
     private GhostModel orangeGhostModel;
     private GhostModel cyanGhostModel;
+    private CherryModel cherryModel;
+    private StrawberryModel strawberryModel;
     
     // actual game time (if negative, the characters will wait that time)
     private long gameTime;
@@ -86,11 +91,15 @@ class Controller implements Serializable {
             //create a PacManModel
             pacManModel = new PacManModel();
 
-            //create the ghosts models
+            //create the ghosts' models
             redGhostModel = new GhostModel();
             pinkGhostModel = new GhostModel();
             orangeGhostModel = new GhostModel();
             cyanGhostModel = new GhostModel();
+            
+            // create fruits' models
+            cherryModel = new CherryModel();
+            strawberryModel = new StrawberryModel();
             
             // set initial states and positions for characters' models
             resetCharacters();
@@ -183,6 +192,8 @@ class Controller implements Serializable {
                     updatePinkGhostModel();
                     updateCyanGhostModel();
                     updateOrangeGhostModel();
+                    updateFruitModel(cherryModel);
+                    updateFruitModel(strawberryModel);
                 }
                 
                 // passing models information to views
@@ -191,6 +202,8 @@ class Controller implements Serializable {
                 updateGhostView(pinkGhostModel, view.getPinkGhostView());
                 updateGhostView(cyanGhostModel, view.getCyanGhostView());
                 updateGhostView(orangeGhostModel, view.getOrangeGhostView());
+                updateCherryView(cherryModel);
+                updateStrawberryView(strawberryModel);
                 
                 // using the Double Colon Operator to update every element on the array
                 updates.forEach(Updatable::update);
@@ -580,6 +593,72 @@ class Controller implements Serializable {
         ghostView.setCellPosition(view.getGrid().getCellPosition(ghostModel.getRealRow(), ghostModel.getRealCol()));
         // atualiza o estado
         ghostView.setState(ghostModel.getViewState());
+    }
+    
+    // atualiza o contador de tempo da fruta e muda sua posicao, caso necessario
+    public void updateFruitModel (FruitModel fruitModel) {
+        int counter = fruitModel.getCounter();
+        counter++;
+        if (counter >= fruitModel.getSpawnTime()) {
+            counter = -fruitModel.getLifeTime();
+            
+            // comeca a posicao no local inicial do pacman
+            int row = (int) mapModel.getPacmanRow();
+            int col = (int) mapModel.getPacmanCol();
+            
+            // anda aleatoriamente em qualquer direcao
+            int atual, anterior = -1;
+            for (int i = 0; i < mapModel.getRows()+mapModel.getCols(); i++) {
+                do {
+                    atual = rand.nextInt(4);
+                } while (atual == (anterior+2)%4);
+                switch (atual) {
+                    case 0:
+                        while (row-1 > 0 && !(mapModel.getCell(row-1, col) instanceof ObstacleCellModel) && rand.nextInt(4) != 0)
+                            row--;
+                        break;
+                    case 1:
+                        while (col+1 < mapModel.getCols()-1 && !(mapModel.getCell(row, col+1) instanceof ObstacleCellModel) && rand.nextInt(4) != 0)
+                            col++;
+                        break;
+                    case 2:
+                        while (row+1 < mapModel.getRows()-1 && !(mapModel.getCell(row+1, col) instanceof ObstacleCellModel) && rand.nextInt(4) != 0)
+                            row++;
+                        break;
+                    case 3:
+                        while (col-1 > 0 && !(mapModel.getCell(row, col-1) instanceof ObstacleCellModel) && rand.nextInt(4) != 0)
+                            col--;
+                        break;
+                }
+                anterior = atual;
+            }
+            fruitModel.setPosition(col, row);
+        }
+        fruitModel.setCounter(counter);
+    }
+    
+    // deixa a fruta visivel ou nao
+    public void updateCherryView (CherryModel cherryModel) {
+        // atualiza a posicao de acordo com o modelo
+        view.getCherryView().setCellPosition(view.getGrid().getCellPosition(cherryModel.getY(), cherryModel.getX()));
+        
+        // verifica se deveria estar visivel ou nao
+        if (cherryModel.getCounter() < 0)
+            view.getCherryView().show();
+        else
+            view.getCherryView().hide();
+    }
+    
+    // deixa a fruta visivel ou nao
+    public void updateStrawberryView (StrawberryModel strawberryModel) {
+        // atualiza a posicao de acordo com o modelo
+        view.getStrawberryView().setCellPosition(view.getGrid().getCellPosition(strawberryModel.getY(), strawberryModel.getX()));
+        
+        // verifica se deveria estar visivel ou nao
+        if (strawberryModel.getCounter() < 0)
+            view.getStrawberryView().show();
+        else
+            view.getStrawberryView().hide();
     }
     
     // retorna o fantasma para a porta do spawn

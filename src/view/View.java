@@ -16,35 +16,45 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import utils.Position;
+import view.fruits.CherryView;
+import view.fruits.StrawberryView;
 
 
 public class View{
+    // screen dimensions
     private final double SCREEN_WIDTH = 600;
     private final double SCREEN_HEIGHT = 660;
 
+    // layout variables
     private Stage stage;
     private BorderPane root;
     private Pane centerPane; //the maze
     private Group mapContainer;
     private Scene scene;
-
+    
     private GridView grid;
     private final Position gridPosition;
     private final double gridWidth;
     private final double gridHeight;
 
+    // pacman view
     private PacManView pacManView;
     
+    // ghost views
     private RedGhostView redGhostView;
     private OrangeGhostView orangeGhostView;
     private CyanGhostView cyanGhostView;
     private PinkGhostView pinkGhostView;
     
+    // fruits views
+    private CherryView cherryView;
+    private StrawberryView strawberryView;
+    
     public View(Stage stage){
         //layout configuration
         this.stage = stage;
         root = new BorderPane();
-		root.setStyle("-fx-background-color: black");
+        root.setStyle("-fx-background-color: black");
         centerPane = new Pane();
         root.setCenter(centerPane);
         mapContainer = new Group();
@@ -56,6 +66,10 @@ public class View{
         gridPosition = new Position(0, 0);
         gridWidth = SCREEN_WIDTH;
         gridHeight = SCREEN_HEIGHT;
+        
+        // create fruits
+        cherryView = new CherryView();
+        strawberryView = new StrawberryView();
     }
 
     //remove all the childrem from the mapContainer
@@ -72,6 +86,11 @@ public class View{
                 }
             }
         }
+        // insert fruits on the map
+        cherryView.setSize(grid.getCellWidth()*1.1, grid.getCellHeight()*1.1);
+        mapContainer.getChildren().add(cherryView.getNode());
+        strawberryView.setSize(grid.getCellWidth()*1.1, grid.getCellHeight()*1.1);
+        mapContainer.getChildren().add(strawberryView.getNode());
     }
 
     public void addPacManToTheMapContainer(){
@@ -166,6 +185,12 @@ public class View{
     public PinkGhostView getPinkGhostView (){
         return pinkGhostView;
     }
+    public CherryView getCherryView() {
+        return cherryView;
+    }
+    public StrawberryView getStrawberryView() {
+        return strawberryView;
+    }
+    
     //-------------------------------------
-
 }

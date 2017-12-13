@@ -1,8 +1,14 @@
 package model.fruits;
 
 public class CherryModel extends FruitModel{
+    
+    // tempo para a cereja aparecer é 60 * 50 = 3000 frames
+    private static final int SPAWN_TIME = 500;
+    
+    // tempo que a cereja fica na tela é 60 * 15 = 900 frames
+    private static final int LIFE_TIME = 300;
 
     public CherryModel() {
-        super();
+        super(SPAWN_TIME, LIFE_TIME);
     }
 }
