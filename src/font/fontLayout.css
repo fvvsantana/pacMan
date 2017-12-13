@@ -1,0 +1,9 @@
+@font-face {
+	font-family: 'Joystix Monospace';
+	src: url('/font/Joystix.ttf');
+}
+
+.label {
+	-fx-font-family: 'Joystix Monospace';
+	-fx-font-size: 20;
+}

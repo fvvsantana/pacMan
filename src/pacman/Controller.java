@@ -165,6 +165,12 @@ class Controller implements Serializable {
         view.addCyanGhostToTheMapContainer();
         updates.add(view.getCyanGhostView());
         
+        view.setLives(pacManModel.getLives());
+        view.updateScore(pacManModel.getScore());
+        view.updateStage(1);
+        view.addFruit("cherry");
+        
+        
         // play intro song (if game is starting now)
         if (gameTime == START_TIME)
             audioManager.playIntro();
@@ -330,6 +336,7 @@ class Controller implements Serializable {
                 if (mapModel.getCell((int) row, (int) col) instanceof PacDotCellModel) {
                     mapModel.addCell(new EmptyCellModel(), (int) row, (int) col);
                     view.removeCellView((int) row, (int) col);
+                    view.updateScore(pacManModel.sumPacDotScore());
                 } // caso seja uma power pellet
                 else if (mapModel.getCell((int) row, (int) col) instanceof PowerPelletCellModel) {
 
@@ -344,6 +351,7 @@ class Controller implements Serializable {
 
                     mapModel.addCell(new EmptyCellModel(), (int) row, (int) col);
                     view.removeCellView((int) row, (int) col);
+                   view.updateScore(pacManModel.sumPowerPalletScore());
                 }
             }
         }
@@ -357,8 +365,10 @@ class Controller implements Serializable {
     
     private void collisionPacmanGhost(PacManModel pacManModel, GhostModel ghostModel) {
         if (ghostModel.isAlive() && checkCollisionCharacters(pacManModel, ghostModel)) {
-            if (ghostModel.isEatable())
+            if (ghostModel.isEatable()){
                 ghostModel.setState(GhostState.DEAD1);
+                view.updateScore(pacManModel.sumGhostEaten());
+            }
             else {
                 audioManager.stopSiren();
                 audioManager.playDeath();

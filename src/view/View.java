@@ -1,4 +1,3 @@
-
 package view;
 
 import view.characters.PacManView;
@@ -11,19 +10,31 @@ import view.grid.GridView;
 
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.geometry.Pos;
+import javafx.scene.paint.Color;
+
+import java.util.ArrayList;
+import static javafx.scene.layout.BorderPane.setAlignment;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.TextAlignment;
 
 import utils.Position;
+import view.lives.liveView;
 import view.fruits.CherryView;
 import view.fruits.StrawberryView;
 
 
 public class View{
-    // screen dimensions
+    private final int HEADER_HEIGHT = 45;
+    
     private final double SCREEN_WIDTH = 600;
-    private final double SCREEN_HEIGHT = 660;
+    private final double SCREEN_HEIGHT = 660 + FruitView.BOTTOM_SIZE + HEADER_HEIGHT;
 
     // layout variables
     private Stage stage;
@@ -50,22 +61,48 @@ public class View{
     private CherryView cherryView;
     private StrawberryView strawberryView;
     
+    private Text scoreText;
+    private Text stageText;
+    private Font font = new Font("Arial", 20);
+    private Pane bottomPane;
+    private HBox topBox;
+    private ArrayList<ImageView> livesImages;
+    private ArrayList<ImageView> fruitsImages;
+    
+    
     public View(Stage stage){
         //layout configuration
         this.stage = stage;
         root = new BorderPane();
         root.setStyle("-fx-background-color: black");
         centerPane = new Pane();
+        bottomPane = new Pane();
+        topBox = new HBox(SCREEN_WIDTH/4);
         root.setCenter(centerPane);
+        root.setBottom(bottomPane);
+        root.setTop(topBox);
         mapContainer = new Group();
         centerPane.getChildren().add(mapContainer);
         scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
         stage.setTitle("Pacman");
         stage.setScene(scene);
+        
+        livesImages = new ArrayList<>();
+        fruitsImages = new ArrayList<>();
+        scoreText = new Text();
+        stageText = new Text();
+        scoreText.setFont(font);
+        stageText.setFont(font);
+        scoreText.setFill(Color.WHITE);
+        stageText.setFill(Color.WHITE);
+        scoreText.setTextAlignment(TextAlignment.CENTER);
+        stageText.setTextAlignment(TextAlignment.CENTER);
+        topBox.getChildren().addAll(scoreText, stageText);
+        topBox.setAlignment(Pos.CENTER);
 
         gridPosition = new Position(0, 0);
         gridWidth = SCREEN_WIDTH;
-        gridHeight = SCREEN_HEIGHT;
+        gridHeight = SCREEN_HEIGHT - HEADER_HEIGHT - FruitView.BOTTOM_SIZE;
         
         // create fruits
         cherryView = new CherryView();
@@ -193,4 +230,54 @@ public class View{
     }
     
     //-------------------------------------
+    
+    public void setLives(int lives){
+        
+        bottomPane.getChildren().clear();
+        
+        if (fruitsImages.size() != 0){
+            bottomPane.getChildren().addAll(fruitsImages);
+            for (int i = 0; i < fruitsImages.size(); i++){
+                bottomPane.getChildren().get(i).setLayoutX(SCREEN_WIDTH - (i + 1) * FruitView.BOTTOM_SIZE);
+            }
+        }
+        
+        if (lives  > -1){
+            livesImages.clear();
+            for (int i = 0; i < lives; i++){
+                livesImages.add(new liveView().getImg());
+            }
+        }
+        bottomPane.getChildren().addAll(livesImages);
+        
+        for (int i = fruitsImages.size(); i < bottomPane.getChildren().size(); i++){
+            bottomPane.getChildren().get(i).setLayoutX((i - fruitsImages.size()) * FruitView.BOTTOM_SIZE);
+        }
+        
+    }
+    
+    public void addFruit(String fruit){
+        
+        if (fruit == "strawberry"){
+            fruitsImages.add(new StrawberryView().getImg());
+        }
+        
+        else if (fruit == "cherry"){
+            fruitsImages.add(new CherryView().getImg());
+        }
+        
+        setLives(-1);
+        
+    }
+    
+    //Score an stage box methods
+    //-------------------------------------
+    
+    public void updateScore(Integer score){
+        scoreText.setText("Score\n" + score.toString());
+    }
+    
+    public void updateStage(Integer stage){
+        stageText.setText("Stage\n" + stage.toString());
+    }
 }
