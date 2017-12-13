@@ -12,24 +12,6 @@ import model.grid.PacDotCellModel;
 import model.grid.PowerPelletCellModel;
 
 public abstract class Maps{
-    private static final int DEFAULT_ROWS = 20;
-    private static final int DEFAULT_COLS = 20;
-
-    // cria um mapa vazio com o numero de linhas e colunas recebidos
-    public static GridModel emptyMap(int rows, int cols){
-        GridModel grid = new GridModel(rows, cols);
-        for(int i = 0; i < rows; i++){
-            for(int j = 0; j < cols; j++){
-                grid.addCell(new EmptyCellModel(), i, j);
-            }
-        }
-        return grid;
-    }
-
-    // cria um mapa vazio com o numero de linhas e colunas padrão
-    public static GridModel emptyMap(){
-        return emptyMap(DEFAULT_ROWS, DEFAULT_COLS);
-    }
     
     // carrega o mapa principal a partir do arquivo
     public static GridModel mainMap() {
