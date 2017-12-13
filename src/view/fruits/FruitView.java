@@ -12,6 +12,12 @@ public class FruitView {
         img.setVisible(false);
     }
     
+    public FruitView(String url, double width, double height) {
+        img = new ImageView(url);
+        img.setFitWidth(width);
+        img.setFitHeight(height);
+    }
+    
     public boolean isVisible() {
         return img.isVisible();
     }

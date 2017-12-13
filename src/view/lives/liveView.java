@@ -1,15 +1,14 @@
 package view.lives;
 
 import javafx.scene.image.ImageView;
-import view.fruit.FruitView;
 
 public class liveView {
     private final ImageView img;
 
-    public liveView() {
+    public liveView(double width, double height) {
         this.img = new ImageView("/images/pacmanLife.png");
-        img.setFitHeight(FruitView.BOTTOM_SIZE - 2);
-        img.setFitWidth(FruitView.BOTTOM_SIZE - 2);
+        img.setFitHeight(height);
+        img.setFitWidth(width);
     }
     
     public ImageView getImg(){

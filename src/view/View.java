@@ -10,7 +10,6 @@ import view.grid.GridView;
 
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
@@ -20,7 +19,7 @@ import javafx.geometry.Pos;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
-import static javafx.scene.layout.BorderPane.setAlignment;
+import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.TextAlignment;
 
@@ -31,10 +30,11 @@ import view.fruits.StrawberryView;
 
 
 public class View{
-    private final int HEADER_HEIGHT = 45;
+    public static final int HEADER_HEIGHT = 45;
+    public static final int BOTTOM_HEIGHT = 30;
     
-    private final double SCREEN_WIDTH = 600;
-    private final double SCREEN_HEIGHT = 660 + FruitView.BOTTOM_SIZE + HEADER_HEIGHT;
+    public static final double SCREEN_WIDTH = 600;
+    public static final double SCREEN_HEIGHT = 660 + BOTTOM_HEIGHT + HEADER_HEIGHT;
 
     // layout variables
     private Stage stage;
@@ -66,8 +66,8 @@ public class View{
     private Font font = new Font("Arial", 20);
     private Pane bottomPane;
     private HBox topBox;
-    private ArrayList<ImageView> livesImages;
-    private ArrayList<ImageView> fruitsImages;
+    private ArrayList<Node> livesImages;
+    private ArrayList<Node> fruitsImages;
     
     
     public View(Stage stage){
@@ -102,7 +102,7 @@ public class View{
 
         gridPosition = new Position(0, 0);
         gridWidth = SCREEN_WIDTH;
-        gridHeight = SCREEN_HEIGHT - HEADER_HEIGHT - FruitView.BOTTOM_SIZE;
+        gridHeight = SCREEN_HEIGHT - HEADER_HEIGHT - BOTTOM_HEIGHT;
         
         // create fruits
         cherryView = new CherryView();
@@ -235,35 +235,35 @@ public class View{
         
         bottomPane.getChildren().clear();
         
-        if (fruitsImages.size() != 0){
+        if (!fruitsImages.isEmpty()){
             bottomPane.getChildren().addAll(fruitsImages);
             for (int i = 0; i < fruitsImages.size(); i++){
-                bottomPane.getChildren().get(i).setLayoutX(SCREEN_WIDTH - (i + 1) * FruitView.BOTTOM_SIZE);
+                bottomPane.getChildren().get(i).setLayoutX(SCREEN_WIDTH - (i + 1) * BOTTOM_HEIGHT);
             }
         }
         
         if (lives  > -1){
             livesImages.clear();
             for (int i = 0; i < lives; i++){
-                livesImages.add(new liveView().getImg());
+                livesImages.add(new liveView(BOTTOM_HEIGHT, BOTTOM_HEIGHT).getImg());
             }
         }
         bottomPane.getChildren().addAll(livesImages);
         
         for (int i = fruitsImages.size(); i < bottomPane.getChildren().size(); i++){
-            bottomPane.getChildren().get(i).setLayoutX((i - fruitsImages.size()) * FruitView.BOTTOM_SIZE);
+            bottomPane.getChildren().get(i).setLayoutX((i - fruitsImages.size()) * BOTTOM_HEIGHT);
         }
         
     }
     
     public void addFruit(String fruit){
         
-        if (fruit == "strawberry"){
-            fruitsImages.add(new StrawberryView().getImg());
+        if (fruit.equals("strawberry")){
+            fruitsImages.add(new StrawberryView(BOTTOM_HEIGHT, BOTTOM_HEIGHT).getNode());
         }
         
-        else if (fruit == "cherry"){
-            fruitsImages.add(new CherryView().getImg());
+        else if (fruit.equals("cherry")){
+            fruitsImages.add(new CherryView(BOTTOM_HEIGHT, BOTTOM_HEIGHT).getNode());
         }
         
         setLives(-1);
