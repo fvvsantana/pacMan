@@ -53,20 +53,25 @@ public class PacManModel extends CharacterModel implements Updatable{
         setMoving(false);
     }
     
-    public int sumPacDotScore(){
+    public void sumPacDotScore(){
         score += 10;
-        return score;
     }
     
-    public int sumPowerPalletScore(){
+    public void sumPowerPalletScore(){
         score += 50;
-        return score;
     }
     
-    public int sumGhostEaten(){
+    public void sumGhostScore(){
         score += 200*Math.pow(2, ghostCounterEaten);
         ghostCounterEaten++;
-        return score;
+    }
+    
+    public void sumCherryScore() {
+        score += 300;
+    }
+    
+    public void sumStrawberryScore() {
+        score += 100;
     }
     
     @Override

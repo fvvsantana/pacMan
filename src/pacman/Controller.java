@@ -166,7 +166,6 @@ class Controller implements Serializable {
         updates.add(view.getCyanGhostView());
         
         view.setLives(pacManModel.getLives());
-        view.updateScore(pacManModel.getScore());
         view.updateStage(1);
         view.addFruit("cherry");
         
@@ -213,6 +212,7 @@ class Controller implements Serializable {
                 updateGhostView(orangeGhostModel, view.getOrangeGhostView());
                 updateCherryView(cherryModel);
                 updateStrawberryView(strawberryModel);
+                view.updateScore(pacManModel.getScore());
                 
                 // using the Double Colon Operator to update every element on the array
                 updates.forEach(Updatable::update);
@@ -345,7 +345,7 @@ class Controller implements Serializable {
                 if (mapModel.getCell((int) row, (int) col) instanceof PacDotCellModel) {
                     mapModel.addCell(new EmptyCellModel(), (int) row, (int) col);
                     view.removeCellView((int) row, (int) col);
-                    view.updateScore(pacManModel.sumPacDotScore());
+                    pacManModel.sumPacDotScore();
                     mapModel.setEatables(mapModel.getEatables()-1);
                 } // caso seja uma power pellet
                 else if (mapModel.getCell((int) row, (int) col) instanceof PowerPelletCellModel) {
@@ -361,8 +361,18 @@ class Controller implements Serializable {
 
                     mapModel.addCell(new EmptyCellModel(), (int) row, (int) col);
                     view.removeCellView((int) row, (int) col);
-                    view.updateScore(pacManModel.sumPowerPalletScore());
+                    pacManModel.sumPowerPalletScore();
                     mapModel.setEatables(mapModel.getEatables()-1);
+                }
+                // caso seja uma cereja
+                if (cherryModel.isVisible() && row == cherryModel.getY() && col == cherryModel.getX()) {
+                    cherryModel.reset();
+                    pacManModel.sumCherryScore();
+                }
+                // caso seja um morango
+                if (strawberryModel.isVisible() && row == strawberryModel.getY() && col == strawberryModel.getX()) {
+                    strawberryModel.reset();
+                    pacManModel.sumStrawberryScore();
                 }
             }
         }
@@ -377,8 +387,9 @@ class Controller implements Serializable {
     private void collisionPacmanGhost(PacManModel pacManModel, GhostModel ghostModel) {
         if (ghostModel.isAlive() && checkCollisionCharacters(pacManModel, ghostModel)) {
             if (ghostModel.isEatable()){
+                audioManager.playEatGhost();
                 ghostModel.setState(GhostState.DEAD1);
-                view.updateScore(pacManModel.sumGhostEaten());
+                pacManModel.sumGhostScore();
             }
             else {
                 audioManager.stopSiren();
@@ -664,7 +675,7 @@ class Controller implements Serializable {
         view.getCherryView().setCellPosition(view.getGrid().getCellPosition(cherryModel.getY(), cherryModel.getX()));
         
         // verifica se deveria estar visivel ou nao
-        if (cherryModel.getCounter() < 0)
+        if (cherryModel.isVisible())
             view.getCherryView().show();
         else
             view.getCherryView().hide();

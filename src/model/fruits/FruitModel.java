@@ -28,6 +28,10 @@ public class FruitModel implements Serializable {
         this.counter = counter;
     }
     
+    public boolean isVisible() {
+        return counter < 0;
+    }
+    
     public int getX() {
         return x;
     }
