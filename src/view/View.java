@@ -273,11 +273,11 @@ public class View{
     //Score an stage box methods
     //-------------------------------------
     
-    public void updateScore(Integer score){
-        scoreText.setText("Score\n" + score.toString());
+    public void updateScore(int score){
+        scoreText.setText("Score\n" + Integer.toString(score));
     }
     
     public void updateStage(Integer stage){
-        stageText.setText("Stage\n" + stage.toString());
+        stageText.setText("Stage\n" + Integer.toString(stage));
     }
 }
