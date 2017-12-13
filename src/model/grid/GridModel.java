@@ -10,9 +10,6 @@ public class GridModel implements Serializable {
     private int spawnRow;
     private int spawnCol;
     
-    private double fruitRow;
-    private double fruitCol;
-    
     private double pacmanRow;
     private double pacmanCol;
     
@@ -58,22 +55,6 @@ public class GridModel implements Serializable {
 
     public void setSpawnCol(int spawnCol) {
         this.spawnCol = spawnCol;
-    }
-
-    public double getFruitRow() {
-        return fruitRow;
-    }
-
-    public void setFruitRow(double fruitRow) {
-        this.fruitRow = fruitRow;
-    }
-
-    public double getFruitCol() {
-        return fruitCol;
-    }
-
-    public void setFruitCol(double fruitCol) {
-        this.fruitCol = fruitCol;
     }
 
     public double getPacmanRow() {

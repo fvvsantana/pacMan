@@ -53,10 +53,6 @@ public abstract class Maps{
             grid.setSpawnRow(arquivo.nextInt());
             grid.setSpawnCol(arquivo.nextInt());
             
-            // le a posicao da fruta
-            grid.setFruitRow(arquivo.nextDouble());
-            grid.setFruitCol(arquivo.nextDouble());
-            
             // le a posicao inicial do pacman
             grid.setPacmanRow(arquivo.nextDouble());
             grid.setPacmanCol(arquivo.nextDouble());
