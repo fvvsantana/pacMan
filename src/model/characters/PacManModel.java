@@ -32,6 +32,12 @@ public class PacManModel extends CharacterModel implements Updatable{
         return powerful;
     }
     
+    public void resetLives(){
+        lives = 3;
+    }
+    public void resetScore(){
+        score = 0;
+    }
     public void updateLives(int lives){
         this.lives += lives;
     }

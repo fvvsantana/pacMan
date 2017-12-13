@@ -337,6 +337,7 @@ class Controller implements Serializable {
                     mapModel.addCell(new EmptyCellModel(), (int) row, (int) col);
                     view.removeCellView((int) row, (int) col);
                     view.updateScore(pacManModel.sumPacDotScore());
+                    System.out.println(pacManModel.getScore());
                 } // caso seja uma power pellet
                 else if (mapModel.getCell((int) row, (int) col) instanceof PowerPelletCellModel) {
 
@@ -348,7 +349,7 @@ class Controller implements Serializable {
                     pinkGhostModel.startRunning();
                     cyanGhostModel.startRunning();
                     orangeGhostModel.startRunning();
-
+                       
                     mapModel.addCell(new EmptyCellModel(), (int) row, (int) col);
                     view.removeCellView((int) row, (int) col);
                    view.updateScore(pacManModel.sumPowerPalletScore());
@@ -370,11 +371,22 @@ class Controller implements Serializable {
                 view.updateScore(pacManModel.sumGhostEaten());
             }
             else {
+                if(pacManModel.getLives() == 0){
+                    pacManModel.resetLives();
+                    pacManModel.resetScore();
+                    System.out.println("Morreu 3x");
+                    
+                }else {
+                    System.out.println("Morreu");
+                    pacManModel.updateLives(-1);
+                }
+                
                 audioManager.stopSiren();
                 audioManager.playDeath();
                 gameTime = -2_000000000L;
                 resetCharacters();
                 view.getPacManView().reset();
+                
             }
         }
     }
