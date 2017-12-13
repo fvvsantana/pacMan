@@ -200,6 +200,9 @@ class Controller implements Serializable {
                     updateOrangeGhostModel();
                     updateFruitModel(cherryModel);
                     updateFruitModel(strawberryModel);
+                    
+                    // check if pacman won the game
+                    checkWin();
                 }
                 
                 // passing models information to views
@@ -299,6 +302,12 @@ class Controller implements Serializable {
             }
         });
     }
+    
+    // verifica se já ganhou o jogo
+    private void checkWin () {
+        if (mapModel.getEatables() == 0)
+            System.exit(0);
+    }
    
     //move the pacManModel to the specified orientation 
     private void updateChracterModel(CharacterModel characterModel){
@@ -337,6 +346,7 @@ class Controller implements Serializable {
                     mapModel.addCell(new EmptyCellModel(), (int) row, (int) col);
                     view.removeCellView((int) row, (int) col);
                     view.updateScore(pacManModel.sumPacDotScore());
+                    mapModel.setEatables(mapModel.getEatables()-1);
                 } // caso seja uma power pellet
                 else if (mapModel.getCell((int) row, (int) col) instanceof PowerPelletCellModel) {
 
@@ -351,7 +361,8 @@ class Controller implements Serializable {
 
                     mapModel.addCell(new EmptyCellModel(), (int) row, (int) col);
                     view.removeCellView((int) row, (int) col);
-                   view.updateScore(pacManModel.sumPowerPalletScore());
+                    view.updateScore(pacManModel.sumPowerPalletScore());
+                    mapModel.setEatables(mapModel.getEatables()-1);
                 }
             }
         }

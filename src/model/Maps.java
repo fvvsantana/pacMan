@@ -39,6 +39,9 @@ public abstract class Maps{
             grid.setPacmanRow(arquivo.nextDouble());
             grid.setPacmanCol(arquivo.nextDouble());
             
+            // eatables conta o numero de coisas comiveis
+            int eatables = 0;
+            
             // adiciona os elementos no grid
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
@@ -49,9 +52,11 @@ public abstract class Maps{
                             break;
                         case 2:
                             grid.addCell(new PacDotCellModel(), i, j);
+                            eatables++;
                             break;
                         case 3:
                             grid.addCell(new PowerPelletCellModel(), i, j);
+                            eatables++;
                             break;
                         case 4:
                             grid.addCell(new DoorCellModel(), i, j);
@@ -62,9 +67,10 @@ public abstract class Maps{
                     }
                 }
             }
+            grid.setEatables(eatables);
             return grid;
         } catch (FileNotFoundException ex) {
-            System.err.println("Erro ao abrir arquivo do mapa");
+            System.err.println("\nErro ao abrir arquivo do mapa");
             System.exit(0);
             return null;
         }

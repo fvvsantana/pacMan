@@ -13,6 +13,9 @@ public class GridModel implements Serializable {
     private double pacmanRow;
     private double pacmanCol;
     
+    // conta o numero de coisas comiveis restante (o pacman deve comer todas para ganhar)
+    private int eatables;
+    
     //set the dimensions and the position of the grid
     public GridModel(int rows, int cols) {
         this.rows = rows;
@@ -71,5 +74,13 @@ public class GridModel implements Serializable {
 
     public void setPacmanCol(double pacmanCol) {
         this.pacmanCol = pacmanCol;
+    }
+
+    public int getEatables() {
+        return eatables;
+    }
+
+    public void setEatables(int eatables) {
+        this.eatables = eatables;
     }
 }
