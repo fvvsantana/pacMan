@@ -22,7 +22,7 @@ import pacman.Controller;
 
 
 public class MenuController {
-    private final int STAGE_NUMBER = 3;
+    private final int STAGE_NUMBER = 2;
     
     private int option = 0;
 
@@ -44,7 +44,6 @@ public class MenuController {
             @Override
             public void handle(long now){
                 menuView.printMenu(option);
-                System.out.println(option);
             }
         }.start();
         
@@ -110,24 +109,24 @@ public class MenuController {
     }
     
     // le o controller a partir do arquivo
-    public void read() {
-        try {
-            FileInputStream fileInput = new FileInputStream("pacman.ser");
-            ObjectInputStream objectInput = new ObjectInputStream(fileInput);
-            controller = (Controller) objectInput.readObject();
-            fileInput.close();
-            objectInput.close();
-            System.out.println("Jogo carregado com sucesso!");
-        } catch (FileNotFoundException ex) {
-            System.out.println("Nenhum jogo salvo foi encontrado, iniciando um novo jogo.");
-            controller = new Controller();
-        } catch (IOException | ClassNotFoundException ex) {
-            System.out.println("Erro ao ler arquivo do jogo:");
-            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
-            controller = new Controller();
-            System.out.println("Criando novo jogo.");
-        }
-    }
+//    public void read() {
+//        try {
+//            FileInputStream fileInput = new FileInputStream("pacman.ser");
+//            ObjectInputStream objectInput = new ObjectInputStream(fileInput);
+//            controller = (Controller) objectInput.readObject();
+//            fileInput.close();
+//            objectInput.close();
+//            System.out.println("Jogo carregado com sucesso!");
+//        } catch (FileNotFoundException ex) {
+//            System.out.println("Nenhum jogo salvo foi encontrado, iniciando um novo jogo.");
+//            controller = new Controller();
+//        } catch (IOException | ClassNotFoundException ex) {
+//            System.out.println("Erro ao ler arquivo do jogo:");
+//            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+//            controller = new Controller();
+//            System.out.println("Criando novo jogo.");
+//        }
+//    }
     
     public boolean verifySaveFile(){
         try {
