@@ -285,19 +285,27 @@ class Controller implements Serializable {
         scene.setOnKeyPressed((KeyEvent event) -> {
             switch(event.getCode()){
                 case UP:
+                    pacManModel.setStopped(false);
                     pacManModel.setNextOrientation(Orientation.UP);
                     break;
                     
                 case RIGHT:
+                    pacManModel.setStopped(false);
                     pacManModel.setNextOrientation(Orientation.RIGHT);
                     break;
                     
                 case DOWN:
+                    pacManModel.setStopped(false);
                     pacManModel.setNextOrientation(Orientation.DOWN);
                     break;
                     
                 case LEFT:
+                    pacManModel.setStopped(false);
                     pacManModel.setNextOrientation(Orientation.LEFT);
+                    break;
+                    
+                case SPACE:
+                    pacManModel.setStopped(true);
                     break;
             }
         });
@@ -334,7 +342,8 @@ class Controller implements Serializable {
     
     private void updatePacmanModel (PacManModel pacManModel) {
         
-        updateChracterModel(pacManModel);
+        if (!pacManModel.isStopped())
+            updateChracterModel(pacManModel);
         
         //se o pacman estiver com poder, ativa sirene do power pellet
         if(pacManModel.getPowerful()) {
@@ -637,7 +646,7 @@ class Controller implements Serializable {
         view.getPacManView().setCellPosition(view.getGrid().getCellPosition(pacManModel.getRealRow(), pacManModel.getRealCol()));
         view.getPacManView().setOrientation(pacManModel.getOrientation());
         
-        view.getPacManView().setMoving(pacManModel.isMoving());
+        view.getPacManView().setMoving(!pacManModel.isStopped() && pacManModel.isMoving());
     }
     
     // atualiza a GhostView recebida com base no GhostModel

@@ -16,6 +16,7 @@ public class PacManModel extends CharacterModel implements Updatable{
     private int ghostCounterEaten = 0;
     private boolean powerful;
     private ArrayList<FruitModel> fruits;
+    private boolean stopped = false;
     
     public PacManModel() {
         super(1, 1);
@@ -85,10 +86,13 @@ public class PacManModel extends CharacterModel implements Updatable{
             counter++;
         }
     }
-    
+
+    public boolean isStopped() {
+        return stopped;
+    }
+
+    public void setStopped(boolean stopped) {
+        this.stopped = stopped;
+    }
 }
-    
-    
-    
-    
     
