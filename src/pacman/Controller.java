@@ -397,11 +397,13 @@ class Controller implements Serializable {
                 if (cherryModel.isVisible() && row == cherryModel.getY() && col == cherryModel.getX()) {
                     cherryModel.reset();
                     pacManModel.sumCherryScore();
+                    audioManager.playEatFruit();
                 }
                 // caso seja um morango
                 if (strawberryModel.isVisible() && row == strawberryModel.getY() && col == strawberryModel.getX()) {
                     strawberryModel.reset();
                     pacManModel.sumStrawberryScore();
+                    audioManager.playEatFruit();
                 }
             }
         }
