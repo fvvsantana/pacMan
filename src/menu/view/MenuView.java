@@ -28,7 +28,9 @@ public class MenuView {
     private final ImageView backgroundImage;
     private final ImageView rightArrow;
     private final ImageView leftArrow;
+    private final ImageView frame;
     private Text text;
+
     
     private ArrayList<MenuItemView> itemsView;
     
@@ -42,7 +44,7 @@ public class MenuView {
       
       text = new Text();
       text.setFont(new Font("Arial", 20));
-      text.setFill(Color.WHITE);
+      text.setFill(Color.BLUE);
       
       itemsView = new ArrayList<>();
       
@@ -62,6 +64,11 @@ public class MenuView {
       leftArrow = new ImageView("images/left.png");
       leftArrow.setFitHeight(70);
       leftArrow.setFitWidth(70);
+      
+      frame = new ImageView("images/frame.png");
+      frame.setFitHeight(350);
+      frame.setFitWidth(300);
+      
     }
     
     public Scene getScene(){
@@ -86,13 +93,16 @@ public class MenuView {
         root.getChildren().add(titleImage);
         root.getChildren().get(1).setLayoutX(30);
         root.getChildren().get(1).setLayoutY(50);
+        root.getChildren().add(frame);
+        root.getChildren().get(2).setLayoutX(154);
+        root.getChildren().get(2).setLayoutY(275);
         root.getChildren().add(itemsView.get(option).getImg());
-        root.getChildren().get(2).setLayoutX(180);
-        root.getChildren().get(2).setLayoutY(300);
+        root.getChildren().get(3).setLayoutX(180);
+        root.getChildren().get(3).setLayoutY(300);
         setText(itemsView.get(option));
         root.getChildren().add(text);
-        root.getChildren().get(3).setLayoutX(270);
-        root.getChildren().get(3).setLayoutY(600);
+        root.getChildren().get(4).setLayoutX(270);
+        root.getChildren().get(4).setLayoutY(600);
         printArrow(option);
 
 
