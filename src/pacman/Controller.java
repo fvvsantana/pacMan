@@ -96,7 +96,7 @@ public class Controller implements Serializable {
         
         if (!initialized) {
             //get the mapModel from the Maps class
-            mapModel = Maps.fileMap(Integer.toString(fase)+".txt");
+            mapModel = Maps.fileMap("src/maps/" + Integer.toString(fase)+".txt");
         
             //create a PacManModel
             pacManModel = new PacManModel();
