@@ -336,18 +336,37 @@ class Controller implements Serializable {
         
         updateChracterModel(pacManModel);
         
+        //se o pacman estiver com poder, ativa sirene do power pellet
+        if(pacManModel.getPowerful()) {
+            audioManager.stopSiren();
+            audioManager.startPelletSong();
+        }
+        else {
+            audioManager.startSiren();
+            audioManager.stopPelletSong();
+        }
+        
         // verifica se está pegando um item
         if (!checkTunnel(pacManModel)) {
             double row = pacManModel.getRealRow();
             double col = pacManModel.getRealCol();
+            
+             
+             
             if (row % 1 == 0 && col % 1 == 0) {
                 // caso seja uma pacdot normal
+                if (mapModel.getCell((int) row, (int) col) instanceof PacDotCellModel    ||
+                    mapModel.getCell((int) row, (int) col) instanceof PowerPelletCellModel) audioManager.startWaka();
+                else audioManager.stopWaka();
+                
                 if (mapModel.getCell((int) row, (int) col) instanceof PacDotCellModel) {
                     mapModel.addCell(new EmptyCellModel(), (int) row, (int) col);
                     view.removeCellView((int) row, (int) col);
                     pacManModel.sumPacDotScore();
                     mapModel.setEatables(mapModel.getEatables()-1);
-                } // caso seja uma power pellet
+                }
+                   // 
+                // caso seja uma power pellet
                 else if (mapModel.getCell((int) row, (int) col) instanceof PowerPelletCellModel) {
 
                     // marca o pacman como poderoso
@@ -363,6 +382,7 @@ class Controller implements Serializable {
                     view.removeCellView((int) row, (int) col);
                     pacManModel.sumPowerPalletScore();
                     mapModel.setEatables(mapModel.getEatables()-1);
+                
                 }
                 // caso seja uma cereja
                 if (cherryModel.isVisible() && row == cherryModel.getY() && col == cherryModel.getX()) {
@@ -394,6 +414,7 @@ class Controller implements Serializable {
             else {
                 audioManager.stopSiren();
                 audioManager.playDeath();
+                audioManager.stopWaka();
                 gameTime = -2_000000000L;
                 resetCharacters();
                 view.getPacManView().reset();
