@@ -22,7 +22,7 @@ import pacman.Controller;
 
 
 public class MenuController {
-    private final int STAGE_NUMBER = 2;
+    private final int STAGE_NUMBER = 3;
     
     private int option = 0;
     private boolean selected = false;
@@ -54,10 +54,11 @@ public class MenuController {
                     menuView.printMenu(option);
                 }
                 if (!running && selected) {
-                    if (option == 0)
+                    int currentStage =  menuList.get(option).getStageNumber();
+                    if (currentStage == 0)
                         read();
                     else
-                        controller = new Controller(option);
+                        controller = new Controller(currentStage);
                     
                     controller.run(primaryStage);
                     running = true;
