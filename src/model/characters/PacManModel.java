@@ -11,6 +11,7 @@ public class PacManModel extends CharacterModel implements Updatable{
     public static final int POWER_TIME = 420;
     
     private int score;
+    private int relativeScore;
     private int lives;
     private int counter = 0;
     private int ghostCounterEaten = 0;
@@ -21,6 +22,7 @@ public class PacManModel extends CharacterModel implements Updatable{
     public PacManModel() {
         super(1, 1);
         score = 0;
+        relativeScore = score;
         lives = 3;
         powerful = false;
         fruits = new ArrayList<>();
@@ -42,6 +44,12 @@ public class PacManModel extends CharacterModel implements Updatable{
     
     public void updateScore (int score){
         this.score += score;
+        relativeScore += score;
+        
+        if (relativeScore > 10000){
+            relativeScore -= 10000;
+            lives++;
+        }
     }
     public int getScore (){
         return score;
@@ -55,24 +63,24 @@ public class PacManModel extends CharacterModel implements Updatable{
     }
     
     public void sumPacDotScore(){
-        score += 10;
+        updateScore(10);
     }
     
     public void sumPowerPalletScore(){
-        score += 50;
+        updateScore(50);
     }
     
     public void sumGhostScore(){
-        score += 200*Math.pow(2, ghostCounterEaten);
+        updateScore((int)(200*Math.pow(2, ghostCounterEaten)));
         ghostCounterEaten++;
     }
     
     public void sumCherryScore() {
-        score += 300;
+        updateScore(300);
     }
     
     public void sumStrawberryScore() {
-        score += 100;
+        updateScore(100);
     }
     
     @Override

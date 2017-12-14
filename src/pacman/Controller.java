@@ -175,7 +175,7 @@ public class Controller implements Serializable {
         view.addCyanGhostToTheMapContainer();
         updates.add(view.getCyanGhostView());
         
-        view.setLives(pacManModel.getLives());
+        view.setBottom(pacManModel.getLives());
         view.updateStage(fase);
         
         
@@ -222,6 +222,7 @@ public class Controller implements Serializable {
                 updateCherryView(cherryModel);
                 updateStrawberryView(strawberryModel);
                 view.updateScore(pacManModel.getScore());
+                view.updateLives(pacManModel.getLives());
                 
                 // using the Double Colon Operator to update every element on the array
                 updates.forEach(Updatable::update);
@@ -436,7 +437,6 @@ public class Controller implements Serializable {
             }
             else {
                 pacManModel.updateLives(-1);
-                view.setLives(pacManModel.getLives());
                 audioManager.stopSiren();
                 audioManager.playDeath();
                 audioManager.stopWaka();

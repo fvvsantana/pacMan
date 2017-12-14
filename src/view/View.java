@@ -231,7 +231,7 @@ public class View{
     
     //-------------------------------------
     
-    public void setLives(int lives){
+    public void setBottom(int lives){
         
         bottomPane.getChildren().clear();
         
@@ -266,8 +266,28 @@ public class View{
             fruitsImages.add(new CherryView(BOTTOM_HEIGHT, BOTTOM_HEIGHT).getNode());
         }
         
-        setLives(-1);
+        setBottom(-1);
         
+    }
+    
+    public void updateLives(int lives){
+        if (lives > livesImages.size()){
+            addLive();
+        }
+        else if (lives < livesImages.size()){
+            deductLive();
+        }
+    }
+    
+    public void addLive(){
+        livesImages.add(new liveView(BOTTOM_HEIGHT, BOTTOM_HEIGHT).getImg());
+        bottomPane.getChildren().add(livesImages.get(livesImages.size()-1));
+        bottomPane.getChildren().get(bottomPane.getChildren().size() - 1).setLayoutX((livesImages.size() - 1) * BOTTOM_HEIGHT);
+    }
+    
+    public void deductLive(){
+        livesImages.remove(livesImages.size() - 1);
+        bottomPane.getChildren().remove(bottomPane.getChildren().size() - 1);
     }
     
     //Score an stage box methods
