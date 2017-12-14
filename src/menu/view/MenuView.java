@@ -93,6 +93,7 @@ public class MenuView {
         root.getChildren().add(text);
         root.getChildren().get(3).setLayoutX(270);
         root.getChildren().get(3).setLayoutY(600);
+        printArrow(option);
 
 
         
@@ -105,6 +106,20 @@ public class MenuView {
         }
         text.setText("Stage " + Integer.toString(item.getStage()));
         
+    }
+    
+    public void printArrow(int option){
+        if (option != 0){
+            root.getChildren().add(leftArrow);
+            root.getChildren().get(root.getChildren().size() - 1).setLayoutX(20);
+            root.getChildren().get(root.getChildren().size() - 1).setLayoutY(370);
+        }
+        if (option != itemsView.size() - 1){
+            root.getChildren().add(rightArrow);
+            root.getChildren().get(root.getChildren().size() - 1).setLayoutX(520);
+            root.getChildren().get(root.getChildren().size() - 1).setLayoutY(370);
+        }
+    
     }
     
 }
