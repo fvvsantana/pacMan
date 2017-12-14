@@ -70,6 +70,9 @@ public class Controller implements Serializable {
     // inform if the controller is already initialized (used for serialization)
     private boolean initialized = false;
     
+    // guarda a fase atual
+    private int fase;
+    
     // array for objects with Updatable interface
     private transient ArrayList<Updatable> updates;
     
@@ -81,6 +84,10 @@ public class Controller implements Serializable {
     
     // random number generator
     private transient Random rand;
+    
+    public Controller (int fase) {
+        this.fase = fase;
+    }
     
     public void run(Stage primaryStage){
         
@@ -167,7 +174,7 @@ public class Controller implements Serializable {
         
         view.setLives(pacManModel.getLives());
         view.updateScore(pacManModel.getScore());
-        view.updateStage(1);
+        view.updateStage(fase);
         view.addFruit("cherry");
         
         

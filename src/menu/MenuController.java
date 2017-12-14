@@ -85,7 +85,7 @@ public class MenuController {
                         option--;
                     break;
                 case ENTER:
-                    
+                    controller = new Controller(option);
             }
         });
     }
@@ -94,7 +94,7 @@ public class MenuController {
     
     
     
-        // salva o controller no arquivo utilizando serializacao
+    // salva o controller no arquivo utilizando serializacao
     public void save() {
         try {
             FileOutputStream fileOutput = new FileOutputStream("pacman.ser");
