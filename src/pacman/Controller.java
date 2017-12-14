@@ -48,7 +48,7 @@ import view.characters.CyanGhostView;
 import view.characters.GhostView;
 import view.grid.DoorCellView;
 
-class Controller implements Serializable {
+public class Controller implements Serializable {
     
     // constants
     private static final int DISTANCE = 15;
