@@ -48,7 +48,7 @@ import view.characters.CyanGhostView;
 import view.characters.GhostView;
 import view.grid.DoorCellView;
 
-class Controller implements Serializable {
+public class Controller implements Serializable {
     
     // constants
     private static final int DISTANCE = 15;
@@ -70,6 +70,9 @@ class Controller implements Serializable {
     // inform if the controller is already initialized (used for serialization)
     private boolean initialized = false;
     
+    // guarda a fase atual
+    private int fase;
+    
     // array for objects with Updatable interface
     private transient ArrayList<Updatable> updates;
     
@@ -81,6 +84,10 @@ class Controller implements Serializable {
     
     // random number generator
     private transient Random rand;
+    
+    public Controller (int fase) {
+        this.fase = fase;
+    }
     
     public void run(Stage primaryStage){
         
@@ -166,7 +173,7 @@ class Controller implements Serializable {
         updates.add(view.getCyanGhostView());
         
         view.setLives(pacManModel.getLives());
-        view.updateStage(1);
+        view.updateStage(fase);
         view.addFruit("cherry");
         
         

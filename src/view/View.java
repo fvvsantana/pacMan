@@ -277,7 +277,7 @@ public class View{
         scoreText.setText("Score\n" + Integer.toString(score));
     }
     
-    public void updateStage(Integer stage){
+    public void updateStage(int stage){
         stageText.setText("Stage\n" + Integer.toString(stage));
     }
 }
