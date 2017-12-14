@@ -46,6 +46,11 @@ public class MenuController {
             @Override
             public void handle(long now){
                 if (!running) {
+                    if (controller != null){
+                        controller = null;
+                        menuView.updateStage();
+                    }
+                    
                     menuView.printMenu(option);
                     menuView.show();
                 }

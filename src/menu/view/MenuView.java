@@ -132,4 +132,7 @@ public class MenuView {
     
     }
     
+    public void updateStage(){
+        stage.setScene(scene);
+    }
 }
