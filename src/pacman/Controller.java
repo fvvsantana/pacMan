@@ -86,7 +86,7 @@ public class Controller implements Serializable {
     // random number generator
     private transient Random rand;
     
-    private AnimationTimer animationTimer;
+    transient private AnimationTimer animationTimer;
     
     public Controller (int fase) {
         this.fase = fase;
@@ -317,6 +317,12 @@ public class Controller implements Serializable {
                     
                 case SPACE:
                     pacManModel.setStopped(true);
+                    break;
+                
+                case F2:
+                    animationTimer.stop();
+                    MenuController.save = true;
+                    animationTimer.start();
                     break;
             }
         });

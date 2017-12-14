@@ -27,6 +27,7 @@ public class MenuController {
     private int option = 0;
     private boolean selected = false;
     public static boolean running = false;
+    public static boolean save = false;
 
     private MenuView menuView;
     private Controller controller;
@@ -63,6 +64,10 @@ public class MenuController {
                     controller.run(primaryStage);
                     running = true;
                     selected = false;
+                }
+                if (save){
+                    save();
+                    save = false;
                 }
             }
         }.start();
