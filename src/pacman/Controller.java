@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyEvent;
 import javafx.animation.AnimationTimer;
+import menu.MenuController;
 
 import view.View;
 
@@ -85,6 +86,8 @@ public class Controller implements Serializable {
     // random number generator
     private transient Random rand;
     
+    private AnimationTimer animationTimer;
+    
     public Controller (int fase) {
         this.fase = fase;
     }
@@ -93,7 +96,7 @@ public class Controller implements Serializable {
         
         if (!initialized) {
             //get the mapModel from the Maps class
-            mapModel = Maps.mainMap();
+            mapModel = Maps.fileMap(Integer.toString(fase)+".txt");
         
             //create a PacManModel
             pacManModel = new PacManModel();
@@ -174,14 +177,13 @@ public class Controller implements Serializable {
         
         view.setLives(pacManModel.getLives());
         view.updateStage(fase);
-        view.addFruit("cherry");
         
         
         // play intro song (if game is starting now)
         if (gameTime == START_TIME)
             audioManager.playIntro();
         
-        new AnimationTimer() {
+        animationTimer = new AnimationTimer() {
             long lastTime = 0;
             
             @Override
@@ -225,7 +227,8 @@ public class Controller implements Serializable {
                 updates.forEach(Updatable::update);
             }
 
-        }.start();
+        };
+        animationTimer.start();
 
         //update the screen
         view.show();
@@ -405,12 +408,14 @@ public class Controller implements Serializable {
                     cherryModel.reset();
                     pacManModel.sumCherryScore();
                     audioManager.playEatFruit();
+                    view.addFruit("cherry");
                 }
                 // caso seja um morango
                 if (strawberryModel.isVisible() && row == strawberryModel.getY() && col == strawberryModel.getX()) {
                     strawberryModel.reset();
                     pacManModel.sumStrawberryScore();
                     audioManager.playEatFruit();
+                    view.addFruit("strawberry");
                 }
             }
         }
@@ -430,12 +435,18 @@ public class Controller implements Serializable {
                 pacManModel.sumGhostScore();
             }
             else {
+                pacManModel.updateLives(-1);
+                view.setLives(pacManModel.getLives());
                 audioManager.stopSiren();
                 audioManager.playDeath();
                 audioManager.stopWaka();
                 gameTime = -2_000000000L;
                 resetCharacters();
                 view.getPacManView().reset();
+                if (pacManModel.getLives() == 0) {
+                    animationTimer.stop();
+                    MenuController.running = false;
+                }
             }
         }
     }
