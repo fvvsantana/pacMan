@@ -1,0 +1,995 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ClassDiagram name="pacMan">
+  <ClassDiagramComponents>
+    <Class name="CharacterModel" package="model.characters" visibility="public" isAbstract="true" xPosition="20.0" yPosition="20.0">
+      <Fields>
+        <Field name="FACTOR" type="int" visibility="public" isStatic="true" isFinal="true"/>
+        <Field name="STANDARD_SPEED" type="int" visibility="public" isStatic="true" isFinal="true"/>
+        <Field name="orientation" type="Orientation" visibility="private"/>
+        <Field name="nextOrientation" type="Orientation" visibility="private"/>
+        <Field name="row" type="int" visibility="private"/>
+        <Field name="col" type="int" visibility="private"/>
+        <Field name="speed" type="int" visibility="private"/>
+        <Field name="moving" type="boolean" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="double" name="realRow"/>
+          <Argument type="double" name="realCol"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="move" returnType="void" visibility="public"/>
+        <Method name="moveUp" returnType="void" visibility="public"/>
+        <Method name="moveDown" returnType="void" visibility="public"/>
+        <Method name="moveLeft" returnType="void" visibility="public"/>
+        <Method name="moveRight" returnType="void" visibility="public"/>
+        <Method name="getRow" returnType="int" visibility="public"/>
+        <Method name="getCol" returnType="int" visibility="public"/>
+        <Method name="getSpeed" returnType="int" visibility="public"/>
+        <Method name="getRealRow" returnType="double" visibility="public"/>
+        <Method name="getRealCol" returnType="double" visibility="public"/>
+        <Method name="getRealSpeed" returnType="double" visibility="public"/>
+        <Method name="setRow" returnType="void" visibility="public">
+          <Argument type="int" name="row"/>
+        </Method>
+        <Method name="setRealRow" returnType="void" visibility="public">
+          <Argument type="double" name="row"/>
+        </Method>
+        <Method name="setCol" returnType="void" visibility="public">
+          <Argument type="int" name="col"/>
+        </Method>
+        <Method name="setRealCol" returnType="void" visibility="public">
+          <Argument type="double" name="col"/>
+        </Method>
+        <Method name="setSpeed" returnType="void" visibility="public">
+          <Argument type="int" name="speed"/>
+        </Method>
+        <Method name="setRealSpeed" returnType="void" visibility="public">
+          <Argument type="double" name="speed"/>
+        </Method>
+        <Method name="adjustPosition" returnType="void" visibility="private"/>
+        <Method name="getOrientation" returnType="Orientation" visibility="public"/>
+        <Method name="setOrientation" returnType="void" visibility="public">
+          <Argument type="Orientation" name="orientation"/>
+        </Method>
+        <Method name="getNextOrientation" returnType="Orientation" visibility="public"/>
+        <Method name="setNextOrientation" returnType="void" visibility="public">
+          <Argument type="Orientation" name="nextOrientation"/>
+        </Method>
+        <Method name="isMoving" returnType="boolean" visibility="public"/>
+        <Method name="setMoving" returnType="void" visibility="public">
+          <Argument type="boolean" name="moving"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="GhostModel" package="model.characters" visibility="public" xPosition="320.0" yPosition="20.0">
+      <Fields>
+        <Field name="state" type="GhostState" visibility="private"/>
+        <Field name="eatableTime" type="int" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods>
+        <Method name="getState" returnType="GhostState" visibility="public"/>
+        <Method name="setState" returnType="void" visibility="public">
+          <Argument type="GhostState" name="state"/>
+        </Method>
+        <Method name="startRunning" returnType="void" visibility="public"/>
+        <Method name="isEatable" returnType="boolean" visibility="public"/>
+        <Method name="isAlive" returnType="boolean" visibility="public"/>
+        <Method name="reset" returnType="void" visibility="public"/>
+        <Method name="getViewState" returnType="GhostState" visibility="public"/>
+        <Method name="update" returnType="void" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="PacManModel" package="model.characters" visibility="public" xPosition="620.0" yPosition="20.0">
+      <Fields>
+        <Field name="POWER_TIME" type="int" visibility="public" isStatic="true" isFinal="true"/>
+        <Field name="score" type="int" visibility="private"/>
+        <Field name="lives" type="int" visibility="private"/>
+        <Field name="counter" type="int" visibility="private"/>
+        <Field name="ghostCounterEaten" type="int" visibility="private"/>
+        <Field name="powerful" type="boolean" visibility="private"/>
+        <Field name="fruits" type="ArrayList&lt;FruitModel&gt;" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods>
+        <Method name="setPowerful" returnType="void" visibility="public">
+          <Argument type="boolean" name="powerful"/>
+        </Method>
+        <Method name="getPowerful" returnType="boolean" visibility="public"/>
+        <Method name="updateLives" returnType="void" visibility="public">
+          <Argument type="int" name="lives"/>
+        </Method>
+        <Method name="getLives" returnType="int" visibility="public"/>
+        <Method name="updateScore" returnType="void" visibility="public">
+          <Argument type="int" name="score"/>
+        </Method>
+        <Method name="getScore" returnType="int" visibility="public"/>
+        <Method name="reset" returnType="void" visibility="public"/>
+        <Method name="sumPacDotScore" returnType="int" visibility="public"/>
+        <Method name="sumPowerPalletScore" returnType="int" visibility="public"/>
+        <Method name="sumGhostEaten" returnType="int" visibility="public"/>
+        <Method name="update" returnType="void" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="CherryModel" package="model.fruits" visibility="public" xPosition="920.0" yPosition="20.0">
+      <Fields>
+        <Field name="SPAWN_TIME" type="int" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="LIFE_TIME" type="int" visibility="private" isStatic="true" isFinal="true"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="FruitModel" package="model.fruits" visibility="public" xPosition="1220.0" yPosition="20.0">
+      <Fields>
+        <Field name="counter" type="int" visibility="private"/>
+        <Field name="spawnTime" type="int" visibility="private" isFinal="true"/>
+        <Field name="lifeTime" type="int" visibility="private" isFinal="true"/>
+        <Field name="x" type="int" visibility="private"/>
+        <Field name="y" type="int" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="int" name="spawnTime"/>
+          <Argument type="int" name="lifeTime"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="reset" returnType="void" visibility="public"/>
+        <Method name="getCounter" returnType="int" visibility="public"/>
+        <Method name="setCounter" returnType="void" visibility="public">
+          <Argument type="int" name="counter"/>
+        </Method>
+        <Method name="getX" returnType="int" visibility="public"/>
+        <Method name="getY" returnType="int" visibility="public"/>
+        <Method name="setPosition" returnType="void" visibility="public">
+          <Argument type="int" name="x"/>
+          <Argument type="int" name="y"/>
+        </Method>
+        <Method name="getLifeTime" returnType="int" visibility="public"/>
+        <Method name="getSpawnTime" returnType="int" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="StrawberryModel" package="model.fruits" visibility="public" xPosition="1520.0" yPosition="20.0">
+      <Fields>
+        <Field name="SPAWN_TIME" type="int" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="LIFE_TIME" type="int" visibility="private" isStatic="true" isFinal="true"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="CellModel" package="model.grid" visibility="public" isAbstract="true" xPosition="1820.0" yPosition="20.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="DoorCellModel" package="model.grid" visibility="public" xPosition="2120.0" yPosition="20.0">
+      <Fields/>
+      <Constructors/>
+      <Methods/>
+    </Class>
+    <Class name="EmptyCellModel" package="model.grid" visibility="public" xPosition="20.0" yPosition="420.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="GridModel" package="model.grid" visibility="public" xPosition="320.0" yPosition="420.0">
+      <Fields>
+        <Field name="grid" type="CellModel[][]" visibility="private" isFinal="true"/>
+        <Field name="rows" type="int" visibility="private" isFinal="true"/>
+        <Field name="cols" type="int" visibility="private" isFinal="true"/>
+        <Field name="spawnRow" type="int" visibility="private"/>
+        <Field name="spawnCol" type="int" visibility="private"/>
+        <Field name="pacmanRow" type="double" visibility="private"/>
+        <Field name="pacmanCol" type="double" visibility="private"/>
+        <Field name="eatables" type="int" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="int" name="rows"/>
+          <Argument type="int" name="cols"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="addCell" returnType="void" visibility="public">
+          <Argument type="CellModel" name="cell"/>
+          <Argument type="int" name="row"/>
+          <Argument type="int" name="col"/>
+        </Method>
+        <Method name="removeCell" returnType="void" visibility="public">
+          <Argument type="int" name="row"/>
+          <Argument type="int" name="col"/>
+        </Method>
+        <Method name="getCell" returnType="CellModel" visibility="public">
+          <Argument type="int" name="row"/>
+          <Argument type="int" name="col"/>
+        </Method>
+        <Method name="getRows" returnType="int" visibility="public"/>
+        <Method name="getCols" returnType="int" visibility="public"/>
+        <Method name="getSpawnRow" returnType="int" visibility="public"/>
+        <Method name="setSpawnRow" returnType="void" visibility="public">
+          <Argument type="int" name="spawnRow"/>
+        </Method>
+        <Method name="getSpawnCol" returnType="int" visibility="public"/>
+        <Method name="setSpawnCol" returnType="void" visibility="public">
+          <Argument type="int" name="spawnCol"/>
+        </Method>
+        <Method name="getPacmanRow" returnType="double" visibility="public"/>
+        <Method name="setPacmanRow" returnType="void" visibility="public">
+          <Argument type="double" name="pacmanRow"/>
+        </Method>
+        <Method name="getPacmanCol" returnType="double" visibility="public"/>
+        <Method name="setPacmanCol" returnType="void" visibility="public">
+          <Argument type="double" name="pacmanCol"/>
+        </Method>
+        <Method name="getEatables" returnType="int" visibility="public"/>
+        <Method name="setEatables" returnType="void" visibility="public">
+          <Argument type="int" name="eatables"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="ObstacleCellModel" package="model.grid" visibility="public" xPosition="620.0" yPosition="420.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="PacDotCellModel" package="model.grid" visibility="public" xPosition="920.0" yPosition="420.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="PowerPelletCellModel" package="model.grid" visibility="public" xPosition="1220.0" yPosition="420.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="Maps" package="model" visibility="public" isAbstract="true" xPosition="1520.0" yPosition="420.0">
+      <Fields/>
+      <Constructors/>
+      <Methods>
+        <Method name="mainMap" returnType="GridModel" visibility="public" isStatic="true"/>
+        <Method name="fileMap" returnType="GridModel" visibility="public" isStatic="true">
+          <Argument type="String" name="filePath"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="Controller" package="pacman" visibility="public" xPosition="1820.0" yPosition="420.0">
+      <Fields>
+        <Field name="DISTANCE" type="int" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="START_TIME" type="long" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="mapModel" type="GridModel" visibility="private"/>
+        <Field name="pacManModel" type="PacManModel" visibility="private"/>
+        <Field name="redGhostModel" type="GhostModel" visibility="private"/>
+        <Field name="pinkGhostModel" type="GhostModel" visibility="private"/>
+        <Field name="orangeGhostModel" type="GhostModel" visibility="private"/>
+        <Field name="cyanGhostModel" type="GhostModel" visibility="private"/>
+        <Field name="cherryModel" type="CherryModel" visibility="private"/>
+        <Field name="strawberryModel" type="StrawberryModel" visibility="private"/>
+        <Field name="gameTime" type="long" visibility="private"/>
+        <Field name="initialized" type="boolean" visibility="private"/>
+        <Field name="updates" type="ArrayList&lt;Updatable&gt;" visibility="private" isTransient="true"/>
+        <Field name="view" type="View" visibility="private" isTransient="true"/>
+        <Field name="audioManager" type="AudioManager" visibility="private" isTransient="true"/>
+        <Field name="rand" type="Random" visibility="private" isTransient="true"/>
+      </Fields>
+      <Constructors/>
+      <Methods>
+        <Method name="run" returnType="void" visibility="public">
+          <Argument type="Stage" name="primaryStage"/>
+        </Method>
+        <Method name="resetCharacters" returnType="void" visibility="public"/>
+        <Method name="generateGridView" returnType="GridView" visibility="private">
+          <Argument type="GridModel" name="mapModel"/>
+        </Method>
+        <Method name="addPacManModelController" returnType="void" visibility="private">
+          <Argument type="Scene" name="scene"/>
+        </Method>
+        <Method name="checkWin" returnType="void" visibility="private"/>
+        <Method name="updateChracterModel" returnType="void" visibility="private">
+          <Argument type="CharacterModel" name="characterModel"/>
+        </Method>
+        <Method name="updatePacmanModel" returnType="void" visibility="private">
+          <Argument type="PacManModel" name="pacManModel"/>
+        </Method>
+        <Method name="collisionPacmanGhost" returnType="void" visibility="private">
+          <Argument type="PacManModel" name="pacManModel"/>
+          <Argument type="GhostModel" name="ghostModel"/>
+        </Method>
+        <Method name="checkTunnel" returnType="boolean" visibility="public">
+          <Argument type="CharacterModel" name="characterModel"/>
+        </Method>
+        <Method name="applyTunnel" returnType="void" visibility="public">
+          <Argument type="CharacterModel" name="characterModel"/>
+        </Method>
+        <Method name="distanceCharacterPoint" returnType="double" visibility="public">
+          <Argument type="CharacterModel" name="characterModel"/>
+          <Argument type="double" name="row"/>
+          <Argument type="double" name="col"/>
+        </Method>
+        <Method name="distanceBetweenCharacters" returnType="double" visibility="public">
+          <Argument type="CharacterModel" name="characterModel1"/>
+          <Argument type="CharacterModel" name="characterModel2"/>
+        </Method>
+        <Method name="checkCollisionCharacters" returnType="boolean" visibility="public">
+          <Argument type="CharacterModel" name="characterModel1"/>
+          <Argument type="CharacterModel" name="characterModel2"/>
+        </Method>
+        <Method name="updateRedGhostModel" returnType="void" visibility="private"/>
+        <Method name="updatePinkGhostModel" returnType="void" visibility="private"/>
+        <Method name="updateCyanGhostModel" returnType="void" visibility="private"/>
+        <Method name="updateOrangeGhostModel" returnType="void" visibility="private"/>
+        <Method name="pinkyMovements" returnType="void" visibility="private">
+          <Argument type="CharacterModel" name="characterModel"/>
+        </Method>
+        <Method name="blinkyMovements" returnType="void" visibility="private">
+          <Argument type="CharacterModel" name="characterModel"/>
+        </Method>
+        <Method name="updatePacManView" returnType="void" visibility="public">
+          <Argument type="PacManModel" name="pacManModel"/>
+        </Method>
+        <Method name="updateGhostView" returnType="void" visibility="public">
+          <Argument type="GhostModel" name="ghostModel"/>
+          <Argument type="GhostView" name="ghostView"/>
+        </Method>
+        <Method name="updateFruitModel" returnType="void" visibility="public">
+          <Argument type="FruitModel" name="fruitModel"/>
+        </Method>
+        <Method name="updateCherryView" returnType="void" visibility="public">
+          <Argument type="CherryModel" name="cherryModel"/>
+        </Method>
+        <Method name="updateStrawberryView" returnType="void" visibility="public">
+          <Argument type="StrawberryModel" name="strawberryModel"/>
+        </Method>
+        <Method name="returnGhost" returnType="void" visibility="public">
+          <Argument type="GhostModel" name="ghostModel"/>
+        </Method>
+        <Method name="respawnGhost" returnType="void" visibility="public">
+          <Argument type="GhostModel" name="ghostModel"/>
+        </Method>
+        <Method name="waitGhost" returnType="void" visibility="public">
+          <Argument type="GhostModel" name="ghostModel"/>
+        </Method>
+        <Method name="randomWalk" returnType="void" visibility="public">
+          <Argument type="CharacterModel" name="characterModel"/>
+        </Method>
+        <Method name="chasePoint" returnType="void" visibility="public">
+          <Argument type="CharacterModel" name="characterModel"/>
+          <Argument type="double" name="row"/>
+          <Argument type="double" name="col"/>
+        </Method>
+        <Method name="runAwayPoint" returnType="void" visibility="public">
+          <Argument type="CharacterModel" name="characterModel"/>
+          <Argument type="double" name="row"/>
+          <Argument type="double" name="col"/>
+        </Method>
+        <Method name="checkCollision" returnType="boolean" visibility="public">
+          <Argument type="CharacterModel" name="characterModel"/>
+        </Method>
+        <Method name="checkCollisionOrientation" returnType="boolean" visibility="public">
+          <Argument type="CharacterModel" name="characterModel"/>
+          <Argument type="Orientation" name="orientation"/>
+        </Method>
+        <Method name="checkCollisionNext" returnType="boolean" visibility="public">
+          <Argument type="CharacterModel" name="characterModel"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="Main" package="pacman" visibility="public" xPosition="2120.0" yPosition="420.0">
+      <Fields>
+        <Field name="controller" type="Controller" visibility="package"/>
+      </Fields>
+      <Constructors/>
+      <Methods>
+        <Method name="init" returnType="void" visibility="public"/>
+        <Method name="start" returnType="void" visibility="public">
+          <Argument type="Stage" name="primaryStage"/>
+        </Method>
+        <Method name="stop" returnType="void" visibility="public"/>
+        <Method name="save" returnType="void" visibility="public"/>
+        <Method name="read" returnType="void" visibility="public"/>
+        <Method name="main" returnType="void" visibility="public" isStatic="true">
+          <Argument type="String[]" name="args"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="AudioManager" package="utils" visibility="public" xPosition="20.0" yPosition="820.0">
+      <Fields>
+        <Field name="death" type="AudioClip" visibility="private" isFinal="true"/>
+        <Field name="eatFruit" type="AudioClip" visibility="private" isFinal="true"/>
+        <Field name="eatGhost" type="AudioClip" visibility="private" isFinal="true"/>
+        <Field name="extraLife" type="AudioClip" visibility="private" isFinal="true"/>
+        <Field name="intro" type="AudioClip" visibility="private" isFinal="true"/>
+        <Field name="siren" type="AudioClip" visibility="private" isFinal="true"/>
+        <Field name="waka" type="AudioClip" visibility="private" isFinal="true"/>
+        <Field name="powerPelletSiren" type="AudioClip" visibility="private" isFinal="true"/>
+        <Field name="playingSiren" type="boolean" visibility="private"/>
+        <Field name="playingWaka" type="boolean" visibility="private"/>
+        <Field name="playingPelletSiren" type="boolean" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods>
+        <Method name="startPelletSong" returnType="void" visibility="public"/>
+        <Method name="stopPelletSong" returnType="void" visibility="public"/>
+        <Method name="startWaka" returnType="void" visibility="public"/>
+        <Method name="stopWaka" returnType="void" visibility="public"/>
+        <Method name="playDeath" returnType="void" visibility="public"/>
+        <Method name="playEatFruit" returnType="void" visibility="public"/>
+        <Method name="playEatGhost" returnType="void" visibility="public"/>
+        <Method name="playExtraLife" returnType="void" visibility="public"/>
+        <Method name="playIntro" returnType="void" visibility="public"/>
+        <Method name="startSiren" returnType="void" visibility="public"/>
+        <Method name="stopSiren" returnType="void" visibility="public"/>
+      </Methods>
+    </Class>
+    <Enum name="GhostState" package="utils" visibility="public" xPosition="320.0" yPosition="820.0">
+      <Literals>
+        <Literal name="START"/>
+        <Literal name="NORMAL"/>
+        <Literal name="RUNNING"/>
+        <Literal name="RUNNING_END"/>
+        <Literal name="DEAD1"/>
+        <Literal name="DEAD2"/>
+        <Literal name="DEAD3"/>
+      </Literals>
+    </Enum>
+    <Enum name="Orientation" package="utils" visibility="public" xPosition="620.0" yPosition="820.0">
+      <Literals>
+        <Literal name="UP"/>
+        <Literal name="RIGHT"/>
+        <Literal name="DOWN"/>
+        <Literal name="LEFT"/>
+        <Literal name="NONE"/>
+      </Literals>
+    </Enum>
+    <Class name="Position" package="utils" visibility="public" xPosition="920.0" yPosition="820.0">
+      <Fields>
+        <Field name="x" type="double" visibility="package"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="double" name="x"/>
+          <Argument type="double" name="y"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getX" returnType="double" visibility="public"/>
+        <Method name="setX" returnType="void" visibility="public">
+          <Argument type="double" name="x"/>
+        </Method>
+        <Method name="getY" returnType="double" visibility="public"/>
+        <Method name="setY" returnType="void" visibility="public">
+          <Argument type="double" name="y"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Interface name="Updatable" package="utils" visibility="public" xPosition="1220.0" yPosition="820.0">
+      <Methods>
+        <Method name="update" returnType="void" visibility="package"/>
+      </Methods>
+    </Interface>
+    <Class name="CyanGhostView" package="view.characters" visibility="public" xPosition="1520.0" yPosition="820.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="double" name="width"/>
+          <Argument type="double" name="height"/>
+        </Constructor>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="GhostView" package="view.characters" visibility="public" isAbstract="true" xPosition="1820.0" yPosition="820.0">
+      <Fields>
+        <Field name="img" type="ImageView" visibility="private" isFinal="true"/>
+        <Field name="imageAlive1" type="Image" visibility="private" isFinal="true"/>
+        <Field name="imageAlive2" type="Image" visibility="private" isFinal="true"/>
+        <Field name="imageRunning1" type="Image" visibility="private" isFinal="true"/>
+        <Field name="imageRunning2" type="Image" visibility="private" isFinal="true"/>
+        <Field name="imageRunning3" type="Image" visibility="private" isFinal="true"/>
+        <Field name="imageEye" type="Image" visibility="private" isFinal="true"/>
+        <Field name="viewState" type="GhostState" visibility="private"/>
+        <Field name="cellWidth" type="double" visibility="private" isFinal="true"/>
+        <Field name="cellHeight" type="double" visibility="private" isFinal="true"/>
+        <Field name="SIZE_MULTIPLIER" type="double" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="counter" type="int" visibility="private"/>
+        <Field name="INTERVAL" type="int" visibility="private" isStatic="true" isFinal="true"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="String" name="imagePath1"/>
+          <Argument type="String" name="imagePath2"/>
+          <Argument type="double" name="cellWidth"/>
+          <Argument type="double" name="cellHeight"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getState" returnType="GhostState" visibility="public"/>
+        <Method name="setState" returnType="void" visibility="public">
+          <Argument type="GhostState" name="state"/>
+        </Method>
+        <Method name="update" returnType="void" visibility="public"/>
+        <Method name="setImage" returnType="void" visibility="public">
+          <Argument type="Image" name="image"/>
+        </Method>
+        <Method name="getImg" returnType="ImageView" visibility="public"/>
+        <Method name="setCellPosition" returnType="void" visibility="public">
+          <Argument type="Position" name="position"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="OrangeGhostView" package="view.characters" visibility="public" xPosition="2120.0" yPosition="820.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="double" name="width"/>
+          <Argument type="double" name="height"/>
+        </Constructor>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="PacManView" package="view.characters" visibility="public" xPosition="20.0" yPosition="1220.0">
+      <Fields>
+        <Field name="arc" type="Arc" visibility="private" isFinal="true"/>
+        <Field name="radiusX" type="double" visibility="private" isFinal="true"/>
+        <Field name="radiusY" type="double" visibility="private" isFinal="true"/>
+        <Field name="opening" type="boolean" visibility="private"/>
+        <Field name="moving" type="boolean" visibility="private"/>
+        <Field name="SIZE_MULTIPLIER" type="double" visibility="private" isStatic="true" isFinal="true"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="double" name="cellWidth"/>
+          <Argument type="double" name="cellHeight"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="reset" returnType="void" visibility="public"/>
+        <Method name="setCellPosition" returnType="void" visibility="public">
+          <Argument type="Position" name="position"/>
+        </Method>
+        <Method name="setOrientation" returnType="void" visibility="public">
+          <Argument type="Orientation" name="orientation"/>
+        </Method>
+        <Method name="getArc" returnType="Arc" visibility="public"/>
+        <Method name="setMoving" returnType="void" visibility="public">
+          <Argument type="boolean" name="moving"/>
+        </Method>
+        <Method name="update" returnType="void" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="PinkGhostView" package="view.characters" visibility="public" xPosition="320.0" yPosition="1220.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="double" name="width"/>
+          <Argument type="double" name="height"/>
+        </Constructor>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="RedGhostView" package="view.characters" visibility="public" xPosition="620.0" yPosition="1220.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="double" name="width"/>
+          <Argument type="double" name="height"/>
+        </Constructor>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="CherryView" package="view.fruits" visibility="public" xPosition="920.0" yPosition="1220.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public"/>
+        <Constructor visibility="public">
+          <Argument type="double" name="width"/>
+          <Argument type="double" name="height"/>
+        </Constructor>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="FruitView" package="view.fruits" visibility="public" xPosition="1220.0" yPosition="1220.0">
+      <Fields>
+        <Field name="img" type="ImageView" visibility="private" isFinal="true"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="String" name="url"/>
+        </Constructor>
+        <Constructor visibility="public">
+          <Argument type="String" name="url"/>
+          <Argument type="double" name="width"/>
+          <Argument type="double" name="height"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="isVisible" returnType="boolean" visibility="public"/>
+        <Method name="show" returnType="void" visibility="public"/>
+        <Method name="hide" returnType="void" visibility="public"/>
+        <Method name="getPosition" returnType="Position" visibility="public"/>
+        <Method name="setCellPosition" returnType="void" visibility="public">
+          <Argument type="Position" name="position"/>
+        </Method>
+        <Method name="setSize" returnType="void" visibility="public">
+          <Argument type="double" name="cellWidth"/>
+          <Argument type="double" name="cellHeight"/>
+        </Method>
+        <Method name="getNode" returnType="Node" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="StrawberryView" package="view.fruits" visibility="public" xPosition="1520.0" yPosition="1220.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public"/>
+        <Constructor visibility="public">
+          <Argument type="double" name="width"/>
+          <Argument type="double" name="height"/>
+        </Constructor>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="CellView" package="view.grid" visibility="public" isAbstract="true" xPosition="1820.0" yPosition="1220.0">
+      <Fields>
+        <Field name="node" type="Node" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods>
+        <Method name="getPosition" returnType="Position" visibility="public" isAbstract="true"/>
+        <Method name="setPosition" returnType="void" visibility="public" isAbstract="true">
+          <Argument type="Position" name="position"/>
+        </Method>
+        <Method name="setSize" returnType="void" visibility="public" isAbstract="true">
+          <Argument type="double" name="cellWidth"/>
+          <Argument type="double" name="cellHeight"/>
+        </Method>
+        <Method name="setNode" returnType="void" visibility="public" isFinal="true">
+          <Argument type="Node" name="node"/>
+        </Method>
+        <Method name="getNode" returnType="Node" visibility="public" isFinal="true"/>
+      </Methods>
+    </Class>
+    <Class name="DoorCellView" package="view.grid" visibility="public" xPosition="2120.0" yPosition="1220.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="GridView" package="view.grid" visibility="public" xPosition="20.0" yPosition="1620.0">
+      <Fields>
+        <Field name="position" type="Position" visibility="package"/>
+        <Field name="width" type="double" visibility="private"/>
+        <Field name="height" type="double" visibility="private"/>
+        <Field name="rows" type="int" visibility="private"/>
+        <Field name="cols" type="int" visibility="private"/>
+        <Field name="grid" type="CellView[][]" visibility="private"/>
+        <Field name="cellWidth" type="double" visibility="private"/>
+        <Field name="cellHeight" type="double" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="int" name="rows"/>
+          <Argument type="int" name="cols"/>
+          <Argument type="double" name="width"/>
+          <Argument type="double" name="height"/>
+          <Argument type="Position" name="position"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="addCell" returnType="void" visibility="public">
+          <Argument type="CellView" name="cell"/>
+          <Argument type="int" name="row"/>
+          <Argument type="int" name="col"/>
+        </Method>
+        <Method name="removeCell" returnType="void" visibility="public">
+          <Argument type="int" name="row"/>
+          <Argument type="int" name="col"/>
+        </Method>
+        <Method name="getCell" returnType="CellView" visibility="public">
+          <Argument type="int" name="row"/>
+          <Argument type="int" name="col"/>
+        </Method>
+        <Method name="getCellWidth" returnType="double" visibility="public"/>
+        <Method name="getCellHeight" returnType="double" visibility="public"/>
+        <Method name="getRows" returnType="int" visibility="public"/>
+        <Method name="getCols" returnType="int" visibility="public"/>
+        <Method name="getCellPosition" returnType="Position" visibility="public">
+          <Argument type="int" name="row"/>
+          <Argument type="int" name="col"/>
+        </Method>
+        <Method name="getCellPosition" returnType="Position" visibility="public">
+          <Argument type="double" name="row"/>
+          <Argument type="double" name="col"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="ImageCellView" package="view.grid" visibility="public" xPosition="320.0" yPosition="1620.0">
+      <Fields>
+        <Field name="img" type="ImageView" visibility="private" isFinal="true"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="String" name="url"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getPosition" returnType="Position" visibility="public"/>
+        <Method name="setPosition" returnType="void" visibility="public">
+          <Argument type="Position" name="position"/>
+        </Method>
+        <Method name="setSize" returnType="void" visibility="public">
+          <Argument type="double" name="cellWidth"/>
+          <Argument type="double" name="cellHeight"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="ObstacleCellView" package="view.grid" visibility="public" xPosition="620.0" yPosition="1620.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="PacDotCellView" package="view.grid" visibility="public" xPosition="920.0" yPosition="1620.0">
+      <Fields>
+        <Field name="rec" type="Rectangle" visibility="private" isFinal="true"/>
+        <Field name="PROPORCAO" type="int" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="cellPosition" type="Position" visibility="private"/>
+        <Field name="cellWidth" type="double" visibility="private"/>
+        <Field name="cellHeight" type="double" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods>
+        <Method name="updateRectangle" returnType="void" visibility="private"/>
+        <Method name="getPosition" returnType="Position" visibility="public"/>
+        <Method name="setPosition" returnType="void" visibility="public">
+          <Argument type="Position" name="position"/>
+        </Method>
+        <Method name="setSize" returnType="void" visibility="public">
+          <Argument type="double" name="cellWidth"/>
+          <Argument type="double" name="cellHeight"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="PowerPelletCellView" package="view.grid" visibility="public" xPosition="1220.0" yPosition="1620.0">
+      <Fields>
+        <Field name="ellipse" type="Ellipse" visibility="private" isFinal="true"/>
+        <Field name="PROPORCAO_MIN" type="int" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="PROPORCAO_MAX" type="int" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="VAR" type="double" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="aumentando" type="boolean" visibility="private"/>
+        <Field name="cellPosition" type="Position" visibility="private"/>
+        <Field name="cellWidth" type="double" visibility="private"/>
+        <Field name="cellHeight" type="double" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods>
+        <Method name="updateCenter" returnType="void" visibility="private"/>
+        <Method name="getPosition" returnType="Position" visibility="public"/>
+        <Method name="setPosition" returnType="void" visibility="public">
+          <Argument type="Position" name="position"/>
+        </Method>
+        <Method name="setSize" returnType="void" visibility="public">
+          <Argument type="double" name="cellWidth"/>
+          <Argument type="double" name="cellHeight"/>
+        </Method>
+        <Method name="update" returnType="void" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="liveView" package="view.lives" visibility="public" xPosition="1520.0" yPosition="1620.0">
+      <Fields>
+        <Field name="img" type="ImageView" visibility="private" isFinal="true"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="double" name="width"/>
+          <Argument type="double" name="height"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getImg" returnType="ImageView" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="View" package="view" visibility="public" xPosition="1820.0" yPosition="1620.0">
+      <Fields>
+        <Field name="HEADER_HEIGHT" type="int" visibility="public" isStatic="true" isFinal="true"/>
+        <Field name="BOTTOM_HEIGHT" type="int" visibility="public" isStatic="true" isFinal="true"/>
+        <Field name="SCREEN_WIDTH" type="double" visibility="public" isStatic="true" isFinal="true"/>
+        <Field name="SCREEN_HEIGHT" type="double" visibility="public" isStatic="true" isFinal="true"/>
+        <Field name="stage" type="Stage" visibility="private"/>
+        <Field name="root" type="BorderPane" visibility="private"/>
+        <Field name="centerPane" type="Pane" visibility="private"/>
+        <Field name="mapContainer" type="Group" visibility="private"/>
+        <Field name="scene" type="Scene" visibility="private"/>
+        <Field name="grid" type="GridView" visibility="private"/>
+        <Field name="gridPosition" type="Position" visibility="private" isFinal="true"/>
+        <Field name="gridWidth" type="double" visibility="private" isFinal="true"/>
+        <Field name="gridHeight" type="double" visibility="private" isFinal="true"/>
+        <Field name="pacManView" type="PacManView" visibility="private"/>
+        <Field name="redGhostView" type="RedGhostView" visibility="private"/>
+        <Field name="orangeGhostView" type="OrangeGhostView" visibility="private"/>
+        <Field name="cyanGhostView" type="CyanGhostView" visibility="private"/>
+        <Field name="pinkGhostView" type="PinkGhostView" visibility="private"/>
+        <Field name="cherryView" type="CherryView" visibility="private"/>
+        <Field name="strawberryView" type="StrawberryView" visibility="private"/>
+        <Field name="scoreText" type="Text" visibility="private"/>
+        <Field name="stageText" type="Text" visibility="private"/>
+        <Field name="font" type="Font" visibility="private"/>
+        <Field name="bottomPane" type="Pane" visibility="private"/>
+        <Field name="topBox" type="HBox" visibility="private"/>
+        <Field name="livesImages" type="ArrayList&lt;Node&gt;" visibility="private"/>
+        <Field name="fruitsImages" type="ArrayList&lt;Node&gt;" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="Stage" name="stage"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="clearMapContainer" returnType="void" visibility="public"/>
+        <Method name="drawMap" returnType="void" visibility="public"/>
+        <Method name="addPacManToTheMapContainer" returnType="void" visibility="public"/>
+        <Method name="addRedGhostToTheMapContainer" returnType="void" visibility="public"/>
+        <Method name="addCyanGhostToTheMapContainer" returnType="void" visibility="public"/>
+        <Method name="addOrangeGhostToTheMapContainer" returnType="void" visibility="public"/>
+        <Method name="addPinkGhostToTheMapContainer" returnType="void" visibility="public"/>
+        <Method name="show" returnType="void" visibility="public"/>
+        <Method name="removeCellView" returnType="void" visibility="public">
+          <Argument type="int" name="row"/>
+          <Argument type="int" name="col"/>
+        </Method>
+        <Method name="setGrid" returnType="void" visibility="public">
+          <Argument type="GridView" name="grid"/>
+        </Method>
+        <Method name="getGrid" returnType="GridView" visibility="public"/>
+        <Method name="getGridPosition" returnType="Position" visibility="public"/>
+        <Method name="getGridWidth" returnType="double" visibility="public"/>
+        <Method name="getGridHeight" returnType="double" visibility="public"/>
+        <Method name="getScene" returnType="Scene" visibility="public"/>
+        <Method name="getMapContainer" returnType="Group" visibility="public"/>
+        <Method name="setPacManView" returnType="void" visibility="public">
+          <Argument type="PacManView" name="pacManView"/>
+        </Method>
+        <Method name="setRedGhostView" returnType="void" visibility="public">
+          <Argument type="RedGhostView" name="redGhostView"/>
+        </Method>
+        <Method name="setOrangeGhostView" returnType="void" visibility="public">
+          <Argument type="OrangeGhostView" name="orangeGhostView"/>
+        </Method>
+        <Method name="setPinkGhostView" returnType="void" visibility="public">
+          <Argument type="PinkGhostView" name="pinkGhostView"/>
+        </Method>
+        <Method name="setCyanGhostView" returnType="void" visibility="public">
+          <Argument type="CyanGhostView" name="cyanGhostView"/>
+        </Method>
+        <Method name="getPacManView" returnType="PacManView" visibility="public"/>
+        <Method name="getRedGhostView" returnType="RedGhostView" visibility="public"/>
+        <Method name="getCyanGhostView" returnType="CyanGhostView" visibility="public"/>
+        <Method name="getOrangeGhostView" returnType="OrangeGhostView" visibility="public"/>
+        <Method name="getPinkGhostView" returnType="PinkGhostView" visibility="public"/>
+        <Method name="getCherryView" returnType="CherryView" visibility="public"/>
+        <Method name="getStrawberryView" returnType="StrawberryView" visibility="public"/>
+        <Method name="setLives" returnType="void" visibility="public">
+          <Argument type="int" name="lives"/>
+        </Method>
+        <Method name="addFruit" returnType="void" visibility="public">
+          <Argument type="String" name="fruit"/>
+        </Method>
+        <Method name="updateScore" returnType="void" visibility="public">
+          <Argument type="int" name="score"/>
+        </Method>
+        <Method name="updateStage" returnType="void" visibility="public">
+          <Argument type="Integer" name="stage"/>
+        </Method>
+      </Methods>
+    </Class>
+  </ClassDiagramComponents>
+  <ClassDiagramRelations>
+    <UseRelation source="view.grid.ImageCellView" target="utils.Position" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="orangeGhostView" source="view.View" target="view.characters.OrangeGhostView" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="pacManView" source="view.View" target="view.characters.PacManView" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="model.characters.GhostModel" target="model.characters.CharacterModel"/>
+    <HasRelation name="fruits" source="model.characters.PacManModel" target="model.fruits.FruitModel" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;FruitModel&gt;"/>
+    <HasRelation name="mapModel" source="pacman.Controller" target="model.grid.GridModel" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="view.grid.PacDotCellView" target="view.grid.CellView"/>
+    <IsRelation name="is" source="model.fruits.StrawberryModel" target="model.fruits.FruitModel"/>
+    <UseRelation source="view.View" target="view.View" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="strawberryModel" source="pacman.Controller" target="model.fruits.StrawberryModel" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="gridPosition" source="view.View" target="utils.Position" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="orientation" source="model.characters.CharacterModel" target="utils.Orientation" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="model.fruits.CherryModel" target="model.fruits.FruitModel"/>
+    <UseRelation source="pacman.Controller" target="utils.Orientation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="view.characters.PinkGhostView" target="view.characters.GhostView"/>
+    <IsRelation name="is" source="view.grid.ImageCellView" target="view.grid.CellView"/>
+    <ImplementsRelation name="&lt;&lt;implements&gt;&gt;" source="view.grid.PowerPelletCellView" target="utils.Updatable"/>
+    <HasRelation name="audioManager" source="pacman.Controller" target="utils.AudioManager" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="nextOrientation" source="model.characters.CharacterModel" target="utils.Orientation" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="orangeGhostModel" source="pacman.Controller" target="model.characters.GhostModel" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="updates" source="pacman.Controller" target="utils.Updatable" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;Updatable&gt;"/>
+    <UseRelation source="pacman.Controller" target="model.fruits.CherryModel" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="view.fruits.FruitView" target="utils.Position" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="position" source="view.grid.GridView" target="utils.Position" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="pacman.Controller" target="model.fruits.StrawberryModel" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="model.characters.GhostModel" target="utils.GhostState" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <ImplementsRelation name="&lt;&lt;implements&gt;&gt;" source="view.characters.GhostView" target="utils.Updatable"/>
+    <HasRelation name="cherryView" source="view.View" target="view.fruits.CherryView" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <ImplementsRelation name="&lt;&lt;implements&gt;&gt;" source="model.characters.GhostModel" target="utils.Updatable"/>
+    <IsRelation name="is" source="model.characters.PacManModel" target="model.characters.CharacterModel"/>
+    <IsRelation name="is" source="view.fruits.CherryView" target="view.fruits.FruitView"/>
+    <HasRelation name="viewState" source="view.characters.GhostView" target="utils.GhostState" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="pinkGhostModel" source="pacman.Controller" target="model.characters.GhostModel" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="pacman.Controller" target="model.characters.GhostModel" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <ImplementsRelation name="&lt;&lt;implements&gt;&gt;" source="model.characters.PacManModel" target="utils.Updatable"/>
+    <IsRelation name="is" source="model.grid.ObstacleCellModel" target="model.grid.CellModel"/>
+    <UseRelation source="view.characters.PacManView" target="utils.Orientation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="pinkGhostView" source="view.View" target="view.characters.PinkGhostView" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="model.grid.GridModel" target="model.grid.CellModel" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="pacman.Controller" target="model.fruits.FruitModel" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="cyanGhostModel" source="pacman.Controller" target="model.characters.GhostModel" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <ImplementsRelation name="&lt;&lt;implements&gt;&gt;" source="view.characters.PacManView" target="utils.Updatable"/>
+    <HasRelation name="view" source="pacman.Controller" target="view.View" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="view.grid.PowerPelletCellView" target="utils.Position" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="view.grid.GridView" target="utils.Position" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="model.characters.CharacterModel" target="utils.Orientation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="strawberryView" source="view.View" target="view.fruits.StrawberryView" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="pacManModel" source="pacman.Controller" target="model.characters.PacManModel" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="view.characters.GhostView" target="utils.Position" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="view.grid.GridView" target="view.View" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="cyanGhostView" source="view.View" target="view.characters.CyanGhostView" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="model.grid.DoorCellModel" target="model.grid.ObstacleCellModel"/>
+    <IsRelation name="is" source="model.grid.EmptyCellModel" target="model.grid.CellModel"/>
+    <HasRelation name="redGhostView" source="view.View" target="view.characters.RedGhostView" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="pacman.Controller" target="model.characters.CharacterModel" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="view.View" target="utils.Position" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="view.grid.PacDotCellView" target="utils.Position" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="view.lives.liveView" target="view.View" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="view.characters.OrangeGhostView" target="view.characters.GhostView"/>
+    <IsRelation name="is" source="view.grid.PowerPelletCellView" target="view.grid.CellView"/>
+    <HasRelation name="redGhostModel" source="pacman.Controller" target="model.characters.GhostModel" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="view.grid.DoorCellView" target="view.grid.ImageCellView"/>
+    <UseRelation source="model.Maps" target="model.grid.GridModel" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="view.characters.GhostView" target="utils.GhostState" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="pacman.Controller" target="view.View" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="view.characters.GhostView" target="view.View" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="model.grid.PowerPelletCellModel" target="model.grid.CellModel"/>
+    <IsRelation name="is" source="view.characters.CyanGhostView" target="view.characters.GhostView"/>
+    <HasRelation name="cherryModel" source="pacman.Controller" target="model.fruits.CherryModel" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="view.characters.RedGhostView" target="view.characters.GhostView"/>
+    <HasRelation name="controller" source="pacman.Main" target="pacman.Controller" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="view.grid.CellView" target="utils.Position" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="model.grid.PacDotCellModel" target="model.grid.CellModel"/>
+    <UseRelation source="view.characters.PacManView" target="utils.Position" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="state" source="model.characters.GhostModel" target="utils.GhostState" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="pacman.Controller" target="model.characters.PacManModel" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="cellPosition" source="view.grid.PacDotCellView" target="utils.Position" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="view.fruits.StrawberryView" target="view.fruits.FruitView"/>
+    <HasRelation name="cellPosition" source="view.grid.PowerPelletCellView" target="utils.Position" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="grid" source="view.View" target="view.grid.GridView" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="view.grid.ObstacleCellView" target="view.grid.ImageCellView"/>
+  </ClassDiagramRelations>
+</ClassDiagram>
