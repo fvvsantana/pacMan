@@ -336,6 +336,16 @@ class Controller implements Serializable {
         
         updateChracterModel(pacManModel);
         
+        //se o pacman estiver com poder, ativa sirene do power pellet
+        if(pacManModel.getPowerful()) {
+            audioManager.stopSiren();
+            audioManager.startPelletSong();
+        }
+        else {
+            audioManager.startSiren();
+            audioManager.stopPelletSong();
+        }
+        
         // verifica se está pegando um item
         if (!checkTunnel(pacManModel)) {
             double row = pacManModel.getRealRow();
