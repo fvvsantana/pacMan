@@ -52,7 +52,6 @@ public class MenuController {
                     }
                     
                     menuView.printMenu(option);
-                    menuView.show();
                 }
                 if (!running && selected) {
                     if (option == 0)

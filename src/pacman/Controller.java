@@ -444,6 +444,11 @@ public class Controller implements Serializable {
                 resetCharacters();
                 view.getPacManView().reset();
                 if (pacManModel.getLives() == 0) {
+                    try {
+                        Thread.sleep(1650);
+                    } catch (InterruptedException e) {
+                        System.err.println(e.getMessage());
+                    }
                     animationTimer.stop();
                     MenuController.running = false;
                 }
