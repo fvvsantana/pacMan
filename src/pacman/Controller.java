@@ -356,6 +356,7 @@ public class Controller implements Serializable {
     private void checkWin () {
         if (mapModel.getEatables() == 0) {
             System.out.print("\n\nGanhou o jogo!!!\n\n");
+            audioManager.stopAll();
             animationTimer.stop();
             MenuController.running = false;
         }
