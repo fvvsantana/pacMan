@@ -1,5 +1,5 @@
 package utils;
 
 public enum GameState {
-    START, RUNNING, DEAD;
+    START, RUNNING, DEAD, WIN;
 }

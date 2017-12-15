@@ -214,6 +214,12 @@ public class Controller implements Serializable {
                     } else {
                         view.getPacManView().setDeathTime(2_000_000_000L+gameTime);
                     }
+                } else if (gameState == GameState.WIN) {
+                    if (gameTime > -1_000_000_000L) {
+                        audioManager.stopAll();
+                        animationTimer.stop();
+                        MenuController.running = false;
+                    }
                 }
                     
                 // start updating models after gameTime larger than zero
@@ -356,9 +362,12 @@ public class Controller implements Serializable {
     private void checkWin () {
         if (mapModel.getEatables() == 0) {
             System.out.print("\n\nGanhou o jogo!!!\n\n");
-            audioManager.stopAll();
-            animationTimer.stop();
-            MenuController.running = false;
+            gameState = GameState.WIN;
+            gameTime = -6_000_000_000L;
+            audioManager.stopPelletSong();
+            audioManager.stopSiren();
+            audioManager.stopWaka();
+            audioManager.playWin();
         }
     }
    

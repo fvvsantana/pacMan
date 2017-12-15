@@ -12,6 +12,7 @@ public class AudioManager {
     private final AudioClip intro;
     private final AudioClip siren;
     private final AudioClip waka;
+    private final AudioClip win;
     private final AudioClip powerPelletSiren;
     
     private boolean playingSiren;
@@ -26,6 +27,7 @@ public class AudioManager {
         intro = Applet.newAudioClip(getClass().getResource("/audio/intro.wav"));
         siren = Applet.newAudioClip(getClass().getResource("/audio/siren.wav"));
         waka = Applet.newAudioClip(getClass().getResource("/audio/waka.wav"));
+        win = Applet.newAudioClip(getClass().getResource("/audio/win.wav"));        
         powerPelletSiren = Applet.newAudioClip(getClass().getResource("/audio/powerpelletsiren.wav"));
         playingSiren = false;
         playingWaka = false;
@@ -42,6 +44,7 @@ public class AudioManager {
         intro.stop();
         siren.stop();
         waka.stop();
+        win.stop();
         powerPelletSiren.stop();
     }
     
@@ -68,6 +71,10 @@ public class AudioManager {
         waka.stop();
         playingWaka = false;
        
+    }
+    
+    public void playWin() {
+        win.play();
     }
     
     public void playDeath() {
