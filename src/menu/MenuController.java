@@ -49,6 +49,8 @@ public class MenuController {
                 if (!running) {
                     if (controller != null){
                         controller = null;
+                        createMenuList();
+                        addItemsView();
                         menuView.updateStage();
                     }
                     
@@ -86,6 +88,7 @@ public class MenuController {
         }
     }
     public void addItemsView(){
+        menuView.clearMenu();
         for (MenuItemModel item: menuList){
             if (item instanceof MenuContinueModel){
                 menuView.addMenuContinue();

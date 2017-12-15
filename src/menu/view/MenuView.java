@@ -135,4 +135,8 @@ public class MenuView {
     public void updateStage(){
         stage.setScene(scene);
     }
+    
+    public void clearMenu(){
+        itemsView.clear();
+    }
 }
