@@ -33,6 +33,18 @@ public class AudioManager {
     
     }
     
+    // para todos os sons
+    public void stopAll() {
+        death.stop();
+        eatFruit.stop();
+        eatGhost.stop();
+        extraLife.stop();
+        intro.stop();
+        siren.stop();
+        waka.stop();
+        powerPelletSiren.stop();
+    }
+    
     public void startPelletSong(){
         if (!playingPelletSiren) {
             powerPelletSiren.loop();

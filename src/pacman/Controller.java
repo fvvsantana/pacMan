@@ -36,6 +36,7 @@ import model.fruits.StrawberryModel;
 import model.grid.DoorCellModel;
 import model.grid.EmptyCellModel;
 import utils.AudioManager;
+import utils.GameState;
 import utils.GhostState;
 
 import utils.Orientation;
@@ -73,6 +74,8 @@ public class Controller implements Serializable {
     
     // guarda a fase atual
     private int fase;
+    
+    private GameState gameState;
     
     // array for objects with Updatable interface
     private transient ArrayList<Updatable> updates;
@@ -117,6 +120,9 @@ public class Controller implements Serializable {
             // set initial game time
             gameTime = START_TIME;
             
+            // set initial game state
+            gameState = GameState.START;
+            
             // set initialized as true
             initialized = true;
         }
@@ -151,12 +157,6 @@ public class Controller implements Serializable {
 
         //add a controller to the PacManModel
         addPacManModelController(view.getScene());
-
-        //set PacManView in the View
-        view.setPacManView(new PacManView(view.getGrid().getCellWidth(), view.getGrid().getCellHeight()));
-        view.getPacManView().reset();
-        view.addPacManToTheMapContainer();
-        updates.add(view.getPacManView());
         
         // create the ghosts views and add their updates
         view.setRedGhostView(new RedGhostView(view.getGrid().getCellWidth(), view.getGrid().getCellHeight()));
@@ -175,9 +175,14 @@ public class Controller implements Serializable {
         view.addCyanGhostToTheMapContainer();
         updates.add(view.getCyanGhostView());
         
+        //set PacManView in the View
+        view.setPacManView(new PacManView(view.getGrid().getCellWidth(), view.getGrid().getCellHeight()));
+        view.getPacManView().reset();
+        view.addPacManToTheMapContainer();
+        updates.add(view.getPacManView());
+        
         view.setBottom(pacManModel.getLives());
         view.updateStage(fase);
-        
         
         // play intro song (if game is starting now)
         if (gameTime == START_TIME)
@@ -191,14 +196,28 @@ public class Controller implements Serializable {
                 // update gameTime
                 if (now - lastTime < 1_000000000)
                     gameTime += now - lastTime;
-                
-                // print frames per second:
-                // System.out.println(1.0/(now-lastTime)*1000000000);
-                
                 lastTime = now;
+                
+                // update game state
+                if (gameTime > 0) {
+                    gameState = GameState.RUNNING;
+                } else if (gameState == GameState.DEAD) {
+                    if (gameTime > -300_000_000L) {
+                        // verifica se acabaram as vidas
+                        if (pacManModel.getLives() == 0) {
+                            animationTimer.stop();
+                            MenuController.running = false;
+                        }
+                        gameState = GameState.START;
+                        resetCharacters();
+                        view.getPacManView().reset();
+                    } else {
+                        view.getPacManView().setDeathTime(2_000_000_000L+gameTime);
+                    }
+                }
                     
                 // start updating models after gameTime larger than zero
-                if (gameTime > 0) {
+                if (gameState == GameState.RUNNING) {
                     audioManager.startSiren();
                     // update the position and orientation on characters' models
                     updatePacmanModel(pacManModel);
@@ -319,10 +338,15 @@ public class Controller implements Serializable {
                     pacManModel.setStopped(true);
                     break;
                 
-                case F2:
+                case F1:
                     animationTimer.stop();
                     MenuController.save = true;
                     animationTimer.start();
+                    break;
+                case ESCAPE:
+                    audioManager.stopAll();
+                    animationTimer.stop();
+                    MenuController.running = false;
                     break;
             }
         });
@@ -330,8 +354,11 @@ public class Controller implements Serializable {
     
     // verifica se já ganhou o jogo
     private void checkWin () {
-        if (mapModel.getEatables() == 0)
-            System.exit(0);
+        if (mapModel.getEatables() == 0) {
+            System.out.print("\n\nGanhou o jogo!!!\n\n");
+            animationTimer.stop();
+            MenuController.running = false;
+        }
     }
    
     //move the pacManModel to the specified orientation 
@@ -377,8 +404,6 @@ public class Controller implements Serializable {
             double row = pacManModel.getRealRow();
             double col = pacManModel.getRealCol();
             
-             
-             
             if (row % 1 == 0 && col % 1 == 0) {
                 // caso seja uma pacdot normal
                 if (mapModel.getCell((int) row, (int) col) instanceof PacDotCellModel    ||
@@ -442,22 +467,14 @@ public class Controller implements Serializable {
                 pacManModel.sumGhostScore();
             }
             else {
+                gameState = GameState.DEAD;
+                pacManModel.setDead(true);
+                pacManModel.setOrientation(Orientation.UP);
                 pacManModel.updateLives(-1);
                 audioManager.stopSiren();
                 audioManager.playDeath();
                 audioManager.stopWaka();
                 gameTime = -2_000000000L;
-                resetCharacters();
-                view.getPacManView().reset();
-                if (pacManModel.getLives() == 0) {
-                    try {
-                        Thread.sleep(1650);
-                    } catch (InterruptedException e) {
-                        System.err.println(e.getMessage());
-                    }
-                    animationTimer.stop();
-                    MenuController.running = false;
-                }
             }
         }
     }
@@ -676,7 +693,7 @@ public class Controller implements Serializable {
     public void updatePacManView(PacManModel pacManModel){
         view.getPacManView().setCellPosition(view.getGrid().getCellPosition(pacManModel.getRealRow(), pacManModel.getRealCol()));
         view.getPacManView().setOrientation(pacManModel.getOrientation());
-        
+        view.getPacManView().setDead(pacManModel.isDead());
         view.getPacManView().setMoving(!pacManModel.isStopped() && pacManModel.isMoving());
     }
     

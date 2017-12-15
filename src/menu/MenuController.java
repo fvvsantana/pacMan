@@ -10,7 +10,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
@@ -22,7 +21,8 @@ import pacman.Controller;
 
 
 public class MenuController {
-    private final int STAGE_NUMBER = 3;
+    // numero de fases
+    public static final int STAGE_NUMBER = 3;
     
     private int option = 0;
     private boolean selected = false;
@@ -145,8 +145,7 @@ public class MenuController {
             System.out.println("Nenhum jogo salvo foi encontrado, iniciando um novo jogo.");
             controller = new Controller(1);
         } catch (IOException | ClassNotFoundException ex) {
-            System.out.println("Erro ao ler arquivo do jogo:");
-            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Erro ao ler arquivo do jogo!");
             controller = new Controller(1);
             System.out.println("Criando novo jogo.");
         }
