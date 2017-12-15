@@ -18,7 +18,6 @@ public class PacManModel extends CharacterModel implements Updatable{
     private boolean powerful;
     private ArrayList<FruitModel> fruits;
     private boolean stopped = false;
-    private boolean dead = false;
     
     public PacManModel() {
         super(1, 1);
@@ -57,7 +56,6 @@ public class PacManModel extends CharacterModel implements Updatable{
     }
     
     public void reset() {
-        dead = false;
         powerful = false;
         setOrientation(Orientation.RIGHT);
         setNextOrientation(Orientation.RIGHT);
@@ -103,14 +101,6 @@ public class PacManModel extends CharacterModel implements Updatable{
 
     public void setStopped(boolean stopped) {
         this.stopped = stopped;
-    }
-
-    public boolean isDead() {
-        return dead;
-    }
-
-    public void setDead(boolean dead) {
-        this.dead = dead;
     }
 }
     

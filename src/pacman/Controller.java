@@ -212,9 +212,10 @@ public class Controller implements Serializable {
                         resetCharacters();
                         view.getPacManView().reset();
                     } else {
-                        view.getPacManView().setDeathTime(2_000_000_000L+gameTime);
+                        view.getPacManView().setAnimationTime(2_000_000_000L+gameTime);
                     }
                 } else if (gameState == GameState.WIN) {
+                    view.getPacManView().setAnimationTime(6_000_000_000L+gameTime);
                     if (gameTime > -1_000_000_000L) {
                         audioManager.stopAll();
                         animationTimer.stop();
@@ -478,7 +479,6 @@ public class Controller implements Serializable {
             }
             else {
                 gameState = GameState.DEAD;
-                pacManModel.setDead(true);
                 pacManModel.setOrientation(Orientation.UP);
                 pacManModel.updateLives(-1);
                 audioManager.stopSiren();
@@ -703,7 +703,7 @@ public class Controller implements Serializable {
     public void updatePacManView(PacManModel pacManModel){
         view.getPacManView().setCellPosition(view.getGrid().getCellPosition(pacManModel.getRealRow(), pacManModel.getRealCol()));
         view.getPacManView().setOrientation(pacManModel.getOrientation());
-        view.getPacManView().setDead(pacManModel.isDead());
+        view.getPacManView().setGameState(gameState);
         view.getPacManView().setMoving(!pacManModel.isStopped() && pacManModel.isMoving());
     }
     
